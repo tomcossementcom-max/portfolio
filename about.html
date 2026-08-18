@@ -6,10 +6,22 @@
 <title>À propos — Thomas Cossement</title>
 <meta name="description" content="À propos de Thomas Cossement, étudiant en architecture des jardins et du paysage — parcours, engagement associatif et contact.">
 
+<meta property="og:type" content="profile">
+<meta property="og:site_name" content="Thomas Cossement — Architecture du Paysage">
+<meta property="og:url" content="https://tomcossementcom-max.github.io/portfolio/about.html">
+<meta property="og:title" content="À propos — Thomas Cossement">
+<meta property="og:description" content="À propos de Thomas Cossement, étudiant en architecture des jardins et du paysage — parcours, engagement associatif et contact.">
+<meta property="og:image" content="https://tomcossementcom-max.github.io/portfolio/assets/images/projet-01-palimpseste-aquarelle.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="À propos — Thomas Cossement">
+<meta name="twitter:description" content="À propos de Thomas Cossement, étudiant en architecture des jardins et du paysage — parcours, engagement associatif et contact.">
+<meta name="twitter:image" content="https://tomcossementcom-max.github.io/portfolio/assets/images/projet-01-palimpseste-aquarelle.jpg">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -117,10 +129,19 @@
       <div class="contact-info" data-reveal>
         <span class="section-num">04</span>
         <h2>Contact</h2>
+        <!--
+          Email et téléphone légèrement obfusqués (base64, décodés en JS au
+          chargement — voir js/script.js) pour limiter le moissonnage
+          automatique par des robots qui scannent le HTML brut à la recherche
+          de motifs d'e-mail/tél. Un vrai lien mailto:/tel: fonctionnel est
+          injecté pour les visiteurs (et reste utilisable au clavier).
+        -->
         <p class="contact-line">
-          <a href="mailto:th.cossement@hotmail.com">th.cossement@hotmail.com</a>
+          <a href="#" class="js-obfuscated-link" data-encoded="dGguY29zc2VtZW50QGhvdG1haWwuY29t" data-type="email">Afficher l'adresse e-mail</a>
         </p>
-        <p class="contact-line">0478&nbsp;17&nbsp;08&nbsp;64</p>
+        <p class="contact-line">
+          <a href="#" class="js-obfuscated-link" data-encoded="KzMyNDc4MTcwODY0" data-display-encoded="MDQ3OCAxNyAwOCA2NA==" data-type="tel">Afficher le numéro de téléphone</a>
+        </p>
         <p class="contact-line">Rue du Rivage 13, 4280 Cras-Avernas, Belgique</p>
         <p class="contact-line">
           <a href="https://www.linkedin.com/in/thomas-cossement-339706370" target="_blank" rel="noopener">LinkedIn ↗</a>

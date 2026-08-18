@@ -24,6 +24,13 @@
   --accent: #b2622c;      /* acier corten — alternative "lichen" : #5C6E4A */
   --accent-soft: #5f6b4a; /* lichen / mousse — alternative corten douce : #a8703f */
 
+  /* Accent secondaire "par projet" — le corten reste la couleur de marque
+     générale du site (nav, boutons, hero...) ; --accent-project n'est
+     redéfini que sur le <body> de chaque page projet (voir plus bas) et
+     n'est utilisé qu'à quelques endroits ciblés : numéro "01/02/03",
+     titre au survol dans la nav précédent/suivant, tag actif. */
+  --accent-project: var(--accent);
+
   /* Hero (vidéo sombre) — toujours du texte clair, indépendant du thème clair du reste du site */
   --hero-text: #f7f5ee;
   --hero-text-dim: #cfccbf;
@@ -88,6 +95,17 @@ body::before {
     background-image ci-dessus si tu préfères ce motif :
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='104'%3E%3Cg fill='none' stroke='%232c2d2a' stroke-width='1'%3E%3Cpath d='M0,0 L30,17 L30,52 L0,35 Z M30,17 L60,0 L60,35 L30,52 Z M0,69 L30,86 L30,104 L0,104 Z M30,86 L60,69 L60,104 L30,104 Z'/%3E%3C/g%3E%3C/svg%3E");
   */
+}
+
+/* Transition douce entre pages (voir js/script.js) : la page reste visible
+   par défaut (jamais d'état "invisible en attendant le JS" — si le script
+   est bloqué, lent, ou échoue, la page reste normalement visible et
+   utilisable) ; seul le départ vers un lien interne déclenche un fondu de
+   sortie, ajouté dynamiquement par JS juste avant de naviguer. */
+body { transition: opacity 0.35s ease; }
+body.is-leaving { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  body { transition: none; }
 }
 
 a { color: inherit; text-decoration: none; }
@@ -520,6 +538,35 @@ em { font-style: italic; color: var(--accent); }
 }
 .carousel-arrow.prev { left: clamp(0.5rem, 2vw, 1.5rem); }
 .carousel-arrow.next { right: clamp(0.5rem, 2vw, 1.5rem); }
+
+/* -------- indicateur de progression : "01 / 03" + points -------- */
+.carousel-progress {
+  max-width: var(--container-projects);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.carousel-progress-count {
+  font-family: var(--font-head);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  min-width: 4.5em;
+}
+.carousel-progress-dots { display: flex; gap: 0.5rem; }
+.carousel-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.3s, border-color 0.3s, transform 0.3s;
+}
+.carousel-dot:hover { border-color: var(--accent); }
+.carousel-dot.is-active { background: var(--accent); border-color: var(--accent); transform: scale(1.2); }
 .carousel-arrow:hover { background: var(--text); color: var(--bg); border-color: var(--text); }
 .carousel-arrow svg { width: 18px; height: 18px; }
 
@@ -658,7 +705,7 @@ em { font-style: italic; color: var(--accent); }
   font-size: clamp(1.1rem, 2vw, 1.6rem);
   transition: color .3s;
 }
-.case-nav-link:hover .case-nav-title { color: var(--accent); }
+.case-nav-link:hover .case-nav-title { color: var(--accent-project); }
 .case-nav-all {
   font-size: 0.82rem;
   color: var(--text-dim);
@@ -671,7 +718,7 @@ em { font-style: italic; color: var(--accent); }
 /* index / category / title / description reused across case pages */
 .project-index {
   font-family: var(--font-head);
-  color: var(--accent);
+  color: var(--accent-project);
   font-size: 0.85rem;
   letter-spacing: 0.16em;
   margin-bottom: 1.25rem;
@@ -724,6 +771,17 @@ em { font-style: italic; color: var(--accent); }
 }
 /* Confluant a 6 planches -> 3 colonnes x 2 rangées ; les autres pages en ont 4 -> 4 colonnes */
 .page-confluant .project-gallery { --gallery-cols: 3; }
+
+/* -------- accent secondaire par projet (voir --accent-project dans :root) -------- */
+.page-morpho      { --accent-project: #3a7d7a; } /* bleu-vert irisé, écho au papillon Morpho */
+.page-confluant   { --accent-project: #3f5c3a; } /* vert profond, écho à la trame végétale */
+.page-palimpseste { --accent-project: #8a6a45; } /* bronze/mousse, écho aux totems corten et à la friche */
+
+.project-tags li:hover,
+.project-tags li:focus-visible {
+  border-color: var(--accent-project);
+  color: var(--text);
+}
 @media (max-width: 1024px) {
   .project-gallery { --gallery-cols: 2 !important; }
 }
@@ -853,7 +911,29 @@ em { font-style: italic; color: var(--accent); }
   background: linear-gradient(160deg, var(--bg-alt) 0%, var(--bg) 100%);
   border: 1px dashed var(--line);
 }
-.media-placeholder--portrait { aspect-ratio: 4/5; position: relative; inset: auto; }
+/* Portrait : traitement "signature" (monogramme) plutôt qu'un cadre en
+   pointillés — plus présentable tant que la vraie photo n'est pas en place.
+   Remplace simplement ce <div> par une balise <img> quand tu as ta photo. */
+.media-placeholder--portrait {
+  aspect-ratio: 4/5;
+  position: relative;
+  inset: auto;
+  border: none;
+  background: linear-gradient(155deg, var(--bg-alt) 0%, var(--bg) 55%, var(--bg-alt) 100%);
+}
+.media-placeholder--portrait::before {
+  content: 'TC';
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: clamp(4rem, 13vw, 6.5rem);
+  letter-spacing: -0.03em;
+  color: var(--line);
+  line-height: 1;
+}
+.media-placeholder--portrait .ph-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+}
 .ph-index {
   font-family: var(--font-head);
   font-size: clamp(2.5rem, 6vw, 5rem);
@@ -1325,4 +1405,6 @@ em { font-style: italic; color: var(--accent); }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   [data-reveal] { opacity: 1; transform: none; }
+  /* .carousel-track déclare son propre scroll-behavior (non hérité de html) */
+  .carousel-track { scroll-behavior: auto; }
 }
