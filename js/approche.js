@@ -31,9 +31,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ------------------------------------------------------------ */
   /* LIGNE DE TIMELINE — se remplit selon la progression du scroll */
+  /* + PARALLAXE — chaque colonne image dérive légèrement à une     */
+  /* vitesse différente du texte pendant le scroll (data-parallax). */
+  /* Les deux effets partagent la même boucle rAF pour rester légers. */
   /* ------------------------------------------------------------ */
   const timeline = document.getElementById('timeline');
   const fill = document.getElementById('timelineFill');
+  const parallaxEls = document.querySelectorAll('.timeline-media[data-parallax]');
+  const PARALLAX_FACTOR = 0.08; // "légèrement différente" : effet volontairement discret
+  const PARALLAX_MAX = 26; // px
 
   if (timeline && fill && !reduceMotion) {
     let ticking = false;
@@ -48,19 +54,39 @@ document.addEventListener('DOMContentLoaded', () => {
       const progressed = start - rect.top;
       const progress = Math.max(0, Math.min(1, progressed / total));
       fill.style.height = (progress * 100) + '%';
+    };
+
+    const updateParallax = () => {
+      if (window.innerWidth <= 860) return; // colonne unique sur mobile : pas de parallaxe
+      const viewportCenter = window.innerHeight / 2;
+      parallaxEls.forEach(el => {
+        const inner = el.querySelector('.timeline-media-inner');
+        if (!inner) return;
+        const rect = el.getBoundingClientRect();
+        const elCenter = rect.top + rect.height / 2;
+        const offset = Math.max(-PARALLAX_MAX, Math.min(PARALLAX_MAX, (viewportCenter - elCenter) * PARALLAX_FACTOR));
+        // .timeline-media-inner est positionné à top:-30px (voir CSS) : on part de
+        // là et on ajoute le décalage de parallaxe par-dessus.
+        inner.style.transform = `translateY(${offset.toFixed(1)}px)`;
+      });
+    };
+
+    const update = () => {
+      updateFill();
+      updateParallax();
       ticking = false;
     };
 
     const requestTick = () => {
       if (!ticking) {
-        window.requestAnimationFrame(updateFill);
+        window.requestAnimationFrame(update);
         ticking = true;
       }
     };
 
     window.addEventListener('scroll', requestTick, { passive: true });
     window.addEventListener('resize', requestTick);
-    updateFill();
+    update();
   } else if (fill) {
     fill.style.height = '100%';
   }

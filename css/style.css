@@ -425,6 +425,7 @@ em { font-style: italic; color: var(--accent); }
 
 .carousel-track {
   display: flex;
+  align-items: flex-start; /* nécessaire pour laisser chaque carte garder sa propre hauteur (asymétrie) */
   gap: clamp(1.75rem, 3.5vw, 3rem); /* gap important entre les vignettes */
   overflow-x: auto;
   scroll-snap-type: x mandatory;
@@ -439,13 +440,21 @@ em { font-style: italic; color: var(--accent); }
 
 .carousel-card {
   position: relative;
-  flex: 0 0 min(70vw, 520px);
-  aspect-ratio: 4 / 5;
+  flex: 0 0 min(62vw, 440px);
+  aspect-ratio: 3 / 4.3; /* portrait par défaut (projets 1 et 3) */
   max-height: 62vh;
   scroll-snap-align: start;
   overflow: hidden;
   background: var(--bg-panel);
   display: block;
+}
+/* Casse la grille : la carte du milieu est décalée vers le bas et prend un
+   format paysage plutôt que portrait — l'asymétrie plutôt que l'alignement
+   parfait des templates classiques. */
+.carousel-card:nth-child(2) {
+  flex-basis: min(80vw, 640px);
+  aspect-ratio: 4 / 3;
+  margin-top: clamp(2rem, 5vw, 4.5rem);
 }
 .carousel-card img {
   position: absolute;
@@ -722,21 +731,31 @@ em { font-style: italic; color: var(--accent); }
   .project-gallery { --gallery-cols: 1 !important; }
 }
 
-/* -------- plan de masse en vedette (planche pleine largeur, hors grille) -------- */
+/* -------- plan de masse en vedette — déborde en pleine largeur d'écran -------- */
+/* Un plan de masse détaillé (noue, calepinage des pavés...) a besoin de place :
+   on le laisse déborder de la colonne de texte pour occuper toute la largeur
+   du viewport, quitte à sortir du conteneur --container. Technique de
+   "full-bleed breakout" : sans cette astuce, .body { overflow-x:hidden }
+   n'est pas nécessaire, mais elle protège quand même d'un débordement lié à
+   la barre de scroll verticale. */
 .case-plan {
-  max-width: var(--container);
-  margin: 0 auto clamp(2rem, 4vw, 3rem);
-  padding: 0 var(--gutter);
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  margin-left: -50vw;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
 }
 .case-plan img {
   width: 100%;
-  border: 1px solid var(--line);
+  display: block;
   filter: grayscale(20%);
   transition: filter 0.6s ease;
 }
 .case-plan:hover img { filter: grayscale(0%); }
 .case-plan figcaption {
-  margin-top: 0.75rem;
+  max-width: var(--container);
+  margin: 0.85rem auto 0;
+  padding: 0 var(--gutter);
   font-size: 0.78rem;
   color: var(--text-faint);
 }
@@ -940,7 +959,7 @@ em { font-style: italic; color: var(--accent); }
 
 .timeline {
   position: relative;
-  max-width: 1100px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 1rem var(--gutter) clamp(3rem, 6vw, 5rem);
 }
@@ -962,39 +981,50 @@ em { font-style: italic; color: var(--accent); }
   background: var(--accent);
 }
 
+/* Chaque étape occupe toute la largeur et se scinde en deux colonnes de part
+   et d'autre de la ligne : texte + image. `order` inverse l'ordre visuel sur
+   les étapes paires (.timeline-step--right) sans toucher à l'ordre du DOM,
+   qui reste texte-puis-image pour la lecture à l'écran. */
 .timeline-step {
   position: relative;
-  width: 50%;
-  padding: clamp(2rem, 4vw, 3rem) clamp(2rem, 4vw, 3.5rem) clamp(2rem, 4vw, 3rem) 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  column-gap: clamp(3rem, 6vw, 6rem);
+  padding: clamp(3rem, 6vw, 5rem) 0;
+}
+.timeline-text { order: 1; }
+.timeline-media { order: 2; }
+.timeline-step--right .timeline-text { order: 2; }
+.timeline-step--right .timeline-media { order: 1; }
+
+/* apparition : le texte glisse depuis son côté, l'image depuis le sien */
+.timeline-text,
+.timeline-media {
   opacity: 0;
-  transform: translateX(-36px);
   transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
 }
-.timeline-step--right {
-  margin-left: 50%;
-  padding: clamp(2rem, 4vw, 3rem) 0 clamp(2rem, 4vw, 3rem) clamp(2rem, 4vw, 3.5rem);
-  transform: translateX(36px);
-}
-.timeline-step.is-visible { opacity: 1; transform: translateX(0); }
+.timeline-text { transform: translateX(-30px); }
+.timeline-media { transform: translateX(30px); transition-delay: 0.1s; }
+.timeline-step--right .timeline-text { transform: translateX(30px); }
+.timeline-step--right .timeline-media { transform: translateX(-30px); }
+.timeline-step.is-visible .timeline-text,
+.timeline-step.is-visible .timeline-media { opacity: 1; transform: translateX(0); }
 
 .timeline-marker {
   position: absolute;
-  top: clamp(2.6rem, 4.6vw, 3.6rem);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   width: 14px; height: 14px;
   border-radius: 50%;
   background: var(--bg-alt);
   border: 2px solid var(--line);
+  z-index: 2;
   transition: background 0.4s, border-color 0.4s, transform 0.4s;
 }
-.timeline-step .timeline-marker { right: -8px; }
-.timeline-step--right .timeline-marker { left: -8px; }
-.timeline-step.is-visible .timeline-marker { background: var(--accent); border-color: var(--accent); transform: scale(1.2); }
+.timeline-step.is-visible .timeline-marker { background: var(--accent); border-color: var(--accent); transform: translate(-50%, -50%) scale(1.2); }
 
-.timeline-card {
-  position: relative;
-  background: var(--bg-panel);
-  padding: clamp(1.75rem, 3vw, 2.5rem);
-}
 .timeline-bignum {
   display: block;
   font-family: var(--font-head);
@@ -1002,17 +1032,14 @@ em { font-style: italic; color: var(--accent); }
   line-height: 1;
   font-size: clamp(2.2rem, 4.5vw, 3.4rem);
   color: var(--line);
-  position: absolute;
-  top: -0.5rem;
+  margin-bottom: 0.5rem;
 }
-.timeline-step .timeline-bignum { right: clamp(2rem, 4vw, 3.5rem); }
-.timeline-step--right .timeline-bignum { left: clamp(2rem, 4vw, 3.5rem); }
 
-.timeline-card h3 {
+.timeline-text h3 {
   font-size: clamp(1.35rem, 2.3vw, 1.85rem);
   margin-bottom: 1rem;
 }
-.timeline-card > p {
+.timeline-text p {
   font-family: var(--font-serif);
   color: var(--text-dim);
   line-height: 1.6;
@@ -1024,7 +1051,6 @@ em { font-style: italic; color: var(--accent); }
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-bottom: 1.5rem;
 }
 .tech-tags li {
   font-family: var(--font-head);
@@ -1032,24 +1058,41 @@ em { font-style: italic; color: var(--accent); }
   letter-spacing: 0.05em;
   text-transform: uppercase;
   padding: 0.45em 0.85em;
-  background: var(--bg-alt);
+  background: var(--bg-panel);
   color: var(--text-dim);
 }
 
+/* -------- colonne image : trois transforms indépendants, trois éléments --------
+   .timeline-media       : apparition (fade + slide depuis son côté) — piloté par
+                            la classe .is-visible en CSS.
+   .timeline-media-inner : parallaxe au scroll — piloté en JS (transform inline),
+                            surdimensionné verticalement pour ne jamais laisser
+                            apparaître de bord vide pendant le décalage.
+   img                    : zoom + désaturation/couleur au survol — CSS pur.
+   Ces trois transforms vivant sur trois éléments différents, ils ne se
+   court-circuitent jamais les uns les autres. */
 .timeline-media {
   position: relative;
   aspect-ratio: 4 / 3;
   overflow: hidden;
 }
-.timeline-media img {
+.timeline-media-inner {
+  position: absolute;
+  left: 0; right: 0;
+  top: -30px;
+  height: calc(100% + 60px); /* marge de sécurité pour la plage de parallaxe (±26px) */
+}
+.timeline-media-inner img {
   width: 100%; height: 100%;
   object-fit: cover;
   filter: grayscale(65%) saturate(90%);
   transition: filter 0.6s ease, transform 0.6s ease;
 }
-.timeline-card:hover .timeline-media img { filter: grayscale(0%) saturate(100%); transform: scale(1.02); }
+.timeline-media:hover .timeline-media-inner img { filter: grayscale(0%) saturate(100%); transform: scale(1.03); }
 
-.timeline-media--placeholder {
+.timeline-media--placeholder .timeline-media-inner {
+  top: 0;
+  height: 100%; /* pas d'image à cadrer : pas besoin de surdimensionner */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1066,19 +1109,23 @@ em { font-style: italic; color: var(--accent); }
 
 @media (max-width: 860px) {
   .timeline-track { left: 20px; }
-  .timeline-step,
-  .timeline-step--right {
-    width: 100%;
-    margin-left: 0;
+  .timeline-step {
+    grid-template-columns: 1fr;
+    row-gap: 1.75rem;
     padding: 2.25rem 1rem 2.25rem 3rem;
-    transform: translateY(28px);
   }
-  .timeline-step.is-visible,
-  .timeline-step--right.is-visible { transform: translateY(0); }
-  .timeline-step .timeline-marker,
-  .timeline-step--right .timeline-marker { left: 12px; right: auto; }
-  .timeline-step .timeline-bignum,
-  .timeline-step--right .timeline-bignum { left: auto; right: 0.5rem; }
+  .timeline-text,
+  .timeline-step--right .timeline-text,
+  .timeline-media,
+  .timeline-step--right .timeline-media {
+    order: initial; /* colonne unique : texte puis image, dans l'ordre du DOM */
+    transform: translateY(24px);
+    transition-delay: 0s;
+  }
+  .timeline-step.is-visible .timeline-text,
+  .timeline-step.is-visible .timeline-media { transform: translateY(0); }
+  .timeline-marker { left: 20px; top: 2.4rem; transform: translate(-50%, -50%); }
+  .timeline-step.is-visible .timeline-marker { transform: translate(-50%, -50%) scale(1.2); }
 }
 
 /* ==========================================================================
@@ -1267,7 +1314,10 @@ em { font-style: italic; color: var(--accent); }
   .process-grid { grid-template-columns: 1fr; }
   .about-meta { grid-template-columns: 1fr; gap: 1.25rem; }
   .hero-footer { flex-direction: column; align-items: flex-start; }
-  .carousel-card { flex-basis: 82vw; }
+  /* mobile : on garde l'asymétrie des formats mais on annule le décalage vertical,
+     qui n'a plus de sens sur une seule carte visible à la fois */
+  .carousel-card,
+  .carousel-card:nth-child(2) { flex-basis: 82vw; margin-top: 0; }
   .case-nav { flex-direction: column; align-items: flex-start; }
   .case-nav-link.next { align-items: flex-start; text-align: left; }
 }

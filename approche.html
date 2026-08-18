@@ -54,7 +54,13 @@
   </section>
 
   <!-- ============================================================ -->
-  <!-- 2. PROCESSUS — timeline verticale animée au scroll -->
+  <!-- 2. PROCESSUS — timeline verticale animée au scroll.
+       Chaque étape est scindée en deux colonnes de part et d'autre de la
+       ligne : texte d'un côté, image de l'autre — et ça alterne à chaque
+       étape (.timeline-step--right inverse l'ordre visuel via CSS `order`,
+       l'ordre du DOM reste identique pour la lecture à l'écran). La colonne
+       image porte data-parallax : elle dérive légèrement à une vitesse
+       différente du texte pendant le scroll (voir js/approche.js). -->
   <!-- ============================================================ -->
   <section class="timeline-section" id="processus">
     <div class="timeline-head">
@@ -71,11 +77,10 @@
         <div class="timeline-track-fill" id="timelineFill"></div>
       </div>
 
-      <!-- ÉTAPE 1 -->
+      <!-- ÉTAPE 1 — texte à gauche, image à droite -->
       <article class="timeline-step" data-step="1">
-        <span class="timeline-bignum" aria-hidden="true">01</span>
-        <div class="timeline-marker"></div>
-        <div class="timeline-card">
+        <div class="timeline-text">
+          <span class="timeline-bignum" aria-hidden="true">01</span>
           <h3>Lecture du territoire</h3>
           <p>
             L'analyse spatiale comme point de départ. Comprendre la topographie, les flux et
@@ -86,22 +91,24 @@
             <li>Python</li>
             <li>Cartographie</li>
           </ul>
-          <!--
-            Image réelle issue de ton dossier source (carte macro, rayon de marche 15 min) —
-            traitement graphique (niveaux de gris + contraste) pour évoquer une lecture
-            analytique/filaire du territoire. Remplace par ta propre carte si tu préfères.
-          -->
-          <div class="timeline-media">
+        </div>
+        <div class="timeline-marker"></div>
+        <!--
+          Image réelle issue de ton dossier source (carte macro, rayon de marche 15 min) —
+          traitement graphique (niveaux de gris + contraste) pour évoquer une lecture
+          analytique/filaire du territoire. Remplace par ta propre carte si tu préfères.
+        -->
+        <div class="timeline-media" data-parallax>
+          <div class="timeline-media-inner">
             <img src="assets/images/approche-analyse-macro-site.jpg" alt="Carte d'analyse macro du territoire — pôles d'attractivité, rayon de marche 15 minutes, trame bleue" loading="lazy">
           </div>
         </div>
       </article>
 
-      <!-- ÉTAPE 2 -->
+      <!-- ÉTAPE 2 — inversée : image à gauche, texte à droite -->
       <article class="timeline-step timeline-step--right" data-step="2">
-        <span class="timeline-bignum" aria-hidden="true">02</span>
-        <div class="timeline-marker"></div>
-        <div class="timeline-card">
+        <div class="timeline-text">
+          <span class="timeline-bignum" aria-hidden="true">02</span>
           <h3>Bio-urbanisme &amp; conception paramétrique</h3>
           <p>
             Générer des formes résilientes. Utilisation d'algorithmes pour adapter le projet
@@ -112,19 +119,21 @@
             <li>Grasshopper</li>
             <li>Outils algorithmiques</li>
           </ul>
-          <!-- IMAGE À INSÉRER : script nodal Grasshopper ou modélisation 3D abstraite —
-               assets/images/approche-script-parametrique.jpg (ratio 4:3, 2000px+) -->
-          <div class="timeline-media timeline-media--placeholder">
+        </div>
+        <div class="timeline-marker"></div>
+        <!-- IMAGE À INSÉRER : script nodal Grasshopper ou modélisation 3D abstraite —
+             assets/images/approche-script-parametrique.jpg (ratio 4:3, 2000px+) -->
+        <div class="timeline-media timeline-media--placeholder" data-parallax>
+          <div class="timeline-media-inner">
             <span class="ph-label">Insérer ici : script nodal Grasshopper / modélisation 3D abstraite</span>
           </div>
         </div>
       </article>
 
-      <!-- ÉTAPE 3 -->
+      <!-- ÉTAPE 3 — texte à gauche, image à droite -->
       <article class="timeline-step" data-step="3">
-        <span class="timeline-bignum" aria-hidden="true">03</span>
-        <div class="timeline-marker"></div>
-        <div class="timeline-card">
+        <div class="timeline-text">
+          <span class="timeline-bignum" aria-hidden="true">03</span>
           <h3>Rigueur &amp; détails techniques</h3>
           <p>
             De la macro à la micro-échelle. Traduction des concepts en plans d'exécution
@@ -135,19 +144,21 @@
             <li>AutoCAD</li>
             <li>Coupes techniques</li>
           </ul>
-          <!-- IMAGE À INSÉRER : plan de masse ou coupe épurée —
-               assets/images/approche-plan-technique.jpg (ratio 4:3, 2000px+) -->
-          <div class="timeline-media timeline-media--placeholder">
+        </div>
+        <div class="timeline-marker"></div>
+        <!-- IMAGE À INSÉRER : plan de masse ou coupe épurée —
+             assets/images/approche-plan-technique.jpg (ratio 4:3, 2000px+) -->
+        <div class="timeline-media timeline-media--placeholder" data-parallax>
+          <div class="timeline-media-inner">
             <span class="ph-label">Insérer ici : plan de masse ou coupe technique épurée</span>
           </div>
         </div>
       </article>
 
-      <!-- ÉTAPE 4 -->
+      <!-- ÉTAPE 4 — inversée : image à gauche, texte à droite -->
       <article class="timeline-step timeline-step--right" data-step="4">
-        <span class="timeline-bignum" aria-hidden="true">04</span>
-        <div class="timeline-marker"></div>
-        <div class="timeline-card">
+        <div class="timeline-text">
+          <span class="timeline-bignum" aria-hidden="true">04</span>
           <h3>Matérialité &amp; immersion</h3>
           <p>
             Donner vie au projet. Assemblage des matériaux, étude de la lumière et intégration
@@ -158,9 +169,12 @@
             <li>Adobe Suite</li>
             <li>Croquis au stylet</li>
           </ul>
-          <!-- IMAGE À INSÉRER : rendu atmosphérique ou collage de matières —
-               assets/images/approche-ambiance-materiaux.jpg (ratio 4:3, 2000px+) -->
-          <div class="timeline-media timeline-media--placeholder">
+        </div>
+        <div class="timeline-marker"></div>
+        <!-- IMAGE À INSÉRER : rendu atmosphérique ou collage de matières —
+             assets/images/approche-ambiance-materiaux.jpg (ratio 4:3, 2000px+) -->
+        <div class="timeline-media timeline-media--placeholder" data-parallax>
+          <div class="timeline-media-inner">
             <span class="ph-label">Insérer ici : rendu atmosphérique / collage de matières</span>
           </div>
         </div>
