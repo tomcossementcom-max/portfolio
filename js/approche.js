@@ -6,34 +6,46 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  /* ------------------------------------------------------------ */
-  /* TIMELINE — chaque étape apparaît (fade + slide) à son tour    */
-  /* ------------------------------------------------------------ */
   const steps = document.querySelectorAll('.timeline-step');
 
-  if (reduceMotion) {
-    steps.forEach(step => step.classList.add('is-visible'));
-  } else if ('IntersectionObserver' in window) {
-    const stepObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          stepObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.3, rootMargin: '0px 0px -10% 0px' });
+  const revealStep = (step) => step.classList.add('is-visible');
 
-    steps.forEach(step => stepObserver.observe(step));
+  if (reduceMotion) {
+    steps.forEach(revealStep);
   } else {
-    steps.forEach(step => step.classList.add('is-visible')); // très vieux navigateurs
+    /* ------------------------------------------------------------ */
+    /* TIMELINE — chaque étape apparaît (fade + slide) à son tour,   */
+    /* déclenchée par IntersectionObserver.                          */
+    /* Filet de sécurité : certains contextes (anciens navigateurs,  */
+    /* webviews, onglets d'arrière-plan qui ne composent jamais de   */
+    /* frame) ne déclenchent jamais l'observer — on vérifie donc      */
+    /* aussi, dans la même boucle de scroll qui pilote déjà la ligne  */
+    /* et la parallaxe plus bas, la position réelle de chaque étape   */
+    /* et on la révèle nous-mêmes si besoin. Ainsi le contenu n'est   */
+    /* jamais bloqué en opacité 0 quel que soit le navigateur.        */
+    /* ------------------------------------------------------------ */
+    if ('IntersectionObserver' in window) {
+      const stepObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            revealStep(entry.target);
+            stepObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.3, rootMargin: '0px 0px -10% 0px' });
+
+      steps.forEach(step => stepObserver.observe(step));
+    } else {
+      steps.forEach(revealStep); // pas d'IntersectionObserver du tout : on affiche direct
+    }
   }
 
   /* ------------------------------------------------------------ */
   /* LIGNE DE TIMELINE — se remplit selon la progression du scroll */
   /* + PARALLAXE — chaque colonne image dérive légèrement à une     */
   /* vitesse différente du texte pendant le scroll (data-parallax). */
-  /* Les deux effets partagent la même boucle rAF pour rester légers. */
+  /* + FILET DE SÉCURITÉ pour la révélation des étapes (voir plus   */
+  /* haut). Les trois effets partagent la même boucle rAF.          */
   /* ------------------------------------------------------------ */
   const timeline = document.getElementById('timeline');
   const fill = document.getElementById('timelineFill');
@@ -71,9 +83,19 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     };
 
+    const updateRevealFallback = () => {
+      const viewportH = window.innerHeight;
+      steps.forEach(step => {
+        if (step.classList.contains('is-visible')) return;
+        const rect = step.getBoundingClientRect();
+        if (rect.top < viewportH * 0.85 && rect.bottom > 0) revealStep(step);
+      });
+    };
+
     const update = () => {
       updateFill();
       updateParallax();
+      updateRevealFallback();
       ticking = false;
     };
 
