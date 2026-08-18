@@ -13,7 +13,12 @@
 | `projet-03-confluant-seuil-mobile.jpg` | Confluant — planche | `perspective 1_1.png` |
 | `projet-03-confluant-trame-mobilites.jpg` | Confluant — planche | `mobilités.png` |
 | `projet-03-confluant-trame-eau.jpg` | Confluant — planche | `gestion de l'eau.png` |
+| `projet-03-confluant-rue-commercante.jpg` | Confluant — planche | `perspective 3.png` (dossier `Links`) |
+| `projet-02-morpho-ambiance-nocturne.jpg` | Effet Morpho — planche | `Image(9).png` (dossier `Links`) |
 | `approche-analyse-macro-site.jpg` | Section Approche — carte d'analyse macro | `master plan complété.png` (en fait la carte satellite "15 min." de la page méthodologie, pas le plan de composition de Confluant — corrigé après une première erreur de tri) |
+| `projet-03-confluant-plan-masse.jpg` | Confluant — plan de masse légendé (en vedette) | `plan de composition.pdf`, retrouvé dans ton dossier OneDrive (`Waremme/rendu final/fin fin/Thomas Cossement`) |
+| `projet-03-confluant-coupe-facades.jpg` | Confluant — planche | `Coupe 1.png` (même dossier OneDrive) |
+| `projet-03-confluant-coupe-hall.jpg` | Confluant — planche | `coupe 2.png` (même dossier OneDrive) |
 
 ## Encore à déposer
 
@@ -23,6 +28,12 @@
 | `portrait-thomas-cossement.jpg` | Section À propos | 1600px+, 4:5 — **un candidat existe déjà dans ce dossier** (voir note ci-dessous) mais n'est pas branché dans `index.html` |
 | Vue aérienne + coupes techniques de gestion des eaux | Palimpseste — planches secondaires (optionnel) | pas de fichier autonome retrouvé, à exporter depuis Vectorworks/InDesign si tu veux les ajouter |
 | `projet-03-confluant-3d.mp4` (ou lien YouTube) | Confluant — vidéo 3D (un QR code y renvoyait dans le PDF original, lien non retrouvé) | — |
+| `approche-script-parametrique.jpg`, `approche-plan-technique.jpg`, `approche-ambiance-materiaux.jpg` | Page Approche — étapes 2, 3, 4 de la timeline | voir `approche.html`, ratio 4:3, 2000px+ |
+
+Ton dossier OneDrive `Waremme/rendu final/fin fin/Thomas Cossement` contient aussi
+`schéma d'intention.pdf` (diagramme de trame territoriale, basse résolution native ~490×535pt)
+et plusieurs planches jury complètes en PDF — pas encore utilisés, dis-le-moi si tu veux que je
+les exploite pour l'une des étapes de la page Approche.
 
 ## ⚠️ Portrait — à confirmer avant usage
 

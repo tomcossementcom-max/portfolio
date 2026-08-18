@@ -707,17 +707,38 @@ em { font-style: italic; color: var(--accent); }
   max-width: var(--container);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 planches par projet actuellement */
+  grid-template-columns: repeat(var(--gallery-cols, 4), 1fr);
   gap: 1px;
   background: var(--line);
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
+/* Confluant a 6 planches -> 3 colonnes x 2 rangées ; les autres pages en ont 4 -> 4 colonnes */
+.page-confluant .project-gallery { --gallery-cols: 3; }
 @media (max-width: 1024px) {
-  .project-gallery { grid-template-columns: repeat(2, 1fr); }
+  .project-gallery { --gallery-cols: 2 !important; }
 }
 @media (max-width: 640px) {
-  .project-gallery { grid-template-columns: 1fr; }
+  .project-gallery { --gallery-cols: 1 !important; }
+}
+
+/* -------- plan de masse en vedette (planche pleine largeur, hors grille) -------- */
+.case-plan {
+  max-width: var(--container);
+  margin: 0 auto clamp(2rem, 4vw, 3rem);
+  padding: 0 var(--gutter);
+}
+.case-plan img {
+  width: 100%;
+  border: 1px solid var(--line);
+  filter: grayscale(20%);
+  transition: filter 0.6s ease;
+}
+.case-plan:hover img { filter: grayscale(0%); }
+.case-plan figcaption {
+  margin-top: 0.75rem;
+  font-size: 0.78rem;
+  color: var(--text-faint);
 }
 .project-gallery figure {
   position: relative;
