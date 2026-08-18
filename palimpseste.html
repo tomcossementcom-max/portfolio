@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Jardin du Palimpseste — Thomas Cossement</title>
+<meta name="description" content="Le Jardin du Palimpseste — reconversion d'une friche industrielle à Herstal en paysage hybride, par Thomas Cossement.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="cursor-dot" aria-hidden="true"></div>
+
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-name">Thomas&nbsp;Cossement</span>
+      <span class="logo-sub">Architecture&nbsp;du&nbsp;Paysage</span>
+    </a>
+    <nav class="main-nav" id="mainNav">
+      <a href="index.html#projets" class="nav-link"><span>01</span>Projets</a>
+      <a href="approche.html" class="nav-link"><span>02</span>Approche</a>
+      <a href="about.html" class="nav-link"><span>03</span>À propos</a>
+      <a href="about.html#contact" class="nav-link"><span>04</span>Contact</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============================================================ -->
+  <!-- HERO DU PROJET — image plein cadre -->
+  <!-- ============================================================ -->
+  <section class="case-hero">
+    <!--
+      IMAGES À INSÉRER — Le Jardin du Palimpseste :
+      il te reste, si tu veux enrichir cette page : une vue aérienne du plan
+      masse (spread imprimé pages 8-9), et les coupes techniques Vectorworks
+      de gestion des eaux (pas de fichier image autonome retrouvé dans ton
+      dossier source — à exporter depuis Vectorworks/InDesign si voulu).
+    -->
+    <img src="assets/images/projet-01-palimpseste-aquarelle.jpg" alt="Aquarelle d'ambiance — chemin planté, totems corten et arche en osier tressé, Le Jardin du Palimpseste">
+    <div class="case-hero-overlay"></div>
+    <div class="case-hero-caption">
+      <span class="project-cat">Reconversion industrielle &amp; Permaculture — Herstal</span>
+      <h1>Le Jardin du Palimpseste</h1>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- TEXTE DU PROJET -->
+  <!-- ============================================================ -->
+  <div class="case-body">
+    <span class="project-index" data-reveal>01</span>
+    <p class="project-desc" data-reveal>
+      Le Jardin du Palimpseste réinvestit une friche industrielle à Herstal en un paysage
+      hybride où nature, mémoire et usages contemporains coexistent. Entre espaces aménagés
+      et zones laissées volontairement sauvages, le projet compose une mosaïque d'ambiances
+      inspirée des jardins en mouvement de Gilles Clément.
+    </p>
+    <p class="project-desc" data-reveal>
+      L'aménagement s'articule autour d'une vaste agora traversée par une noue paysagère qui
+      assure la gestion des eaux pluviales en surface. Cette structure hydraulique oriente les
+      déplacements, crée différentes séquences paysagères et contribue au rafraîchissement du
+      site. Au nord, des conteneurs réhabilités accueillent des programmes temporaires —
+      expositions, bar, ateliers — tandis qu'une large spirale accessible conduit au
+      toit-terrasse, offrant un nouveau point de vue sur Herstal.
+    </p>
+    <p class="project-desc" data-reveal>
+      Le projet met en avant un contraste délibéré entre zones actives et espaces plus
+      spontanés. Inspirée par un paysage en mouvement, la végétation alterne entre plantations
+      structurées et zones laissées plus libres, favorisant une évolution naturelle et une
+      biodiversité durable — une infrastructure paysagère résiliente, sociale et évolutive, où
+      l'eau, le végétal et les usages collectifs deviennent les principaux moteurs du lieu.
+    </p>
+    <ul class="project-tags" data-reveal>
+      <li>Friche industrielle</li>
+      <li>Gestion des eaux pluviales</li>
+      <li>Jardins en mouvement</li>
+      <li>Topographie</li>
+    </ul>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- NAVIGATION VERS LE PROJET SUIVANT -->
+  <!-- ============================================================ -->
+  <nav class="case-nav">
+    <a href="index.html#projets" class="case-nav-all">← Tous les projets</a>
+    <a href="morpho.html" class="case-nav-link next">
+      <span class="case-nav-label">Projet suivant</span>
+      <span class="case-nav-title">Effet Morpho →</span>
+    </a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>© <span id="year"></span> Thomas Cossement — Architecture du Paysage</p>
+  <a href="#top" class="back-top">Haut de page ↑</a>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

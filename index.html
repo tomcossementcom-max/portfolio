@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thomas Cossement — Architecture du Paysage</title>
+<meta name="description" content="Portfolio de Thomas Cossement, étudiant en architecture des jardins et du paysage — bio-urbanisme, biomimétisme et conception paysagère.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="cursor-dot" aria-hidden="true"></div>
+
+<!-- ============================================================ -->
+<!-- HEADER / NAVIGATION (identique sur toutes les pages) -->
+<!-- ============================================================ -->
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-name">Thomas&nbsp;Cossement</span>
+      <span class="logo-sub">Architecture&nbsp;du&nbsp;Paysage</span>
+    </a>
+
+    <nav class="main-nav" id="mainNav">
+      <a href="index.html#projets" class="nav-link"><span>01</span>Projets</a>
+      <a href="approche.html" class="nav-link"><span>02</span>Approche</a>
+      <a href="about.html" class="nav-link"><span>03</span>À propos</a>
+      <a href="about.html#contact" class="nav-link"><span>04</span>Contact</a>
+    </nav>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============================================================ -->
+  <!-- HERO IMMERSIF — vidéo plein cadre -->
+  <!-- ============================================================ -->
+  <section class="hero" id="hero">
+
+    <div class="hero-media">
+      <!--
+        Vidéo silencieuse en boucle — extrait (13-38s, sans le carton de titre
+        "EFFET MORPHO" ni le filigrane résiduel) de la vidéo 3D fournie
+        (effet morpho.mp4), réencodée pour le web.
+        Pour changer cette vidéo : remplace assets/video/hero-loop-morpho.mp4
+        (16:9 ou proche, ~20-30s, muette, 8-12 Mo conseillés).
+      -->
+      <video autoplay muted loop playsinline poster="assets/images/projet-02-morpho-ambiance-lumiere.jpg">
+        <source src="assets/video/hero-loop-morpho.mp4" type="video/mp4">
+      </video>
+      <div class="hero-overlay"></div>
+    </div>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow" data-reveal>Portfolio — Bachelier en architecture du paysage</p>
+      <h1 class="hero-title">
+        <span class="line" data-reveal>Thomas Cossement</span>
+      </h1>
+      <p class="hero-subtitle" data-reveal>
+        Construire avec le vivant : vers un urbanisme guidé par le <em>paysage</em>.
+      </p>
+      <div class="hero-footer" data-reveal>
+        <span class="hero-name">Thomas Cossement</span>
+        <a href="#projets" class="cta-scroll" id="ctaScroll">
+          <span class="cta-label">Découvrir les projets</span>
+          <span class="cta-line"></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="scroll-indicator" aria-hidden="true">
+      <span></span>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- PULL-QUOTE DE TRANSITION -->
+  <!-- ============================================================ -->
+  <section class="pullquote">
+    <p data-reveal>
+      « Pas des espaces décoratifs, mais des espaces&nbsp;<em>qui comptent</em>. »
+    </p>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- INDEX DES PROJETS — carrousel horizontal -->
+  <!-- ============================================================ -->
+  <section class="carousel-section" id="projets">
+
+    <div class="section-head">
+      <span class="section-num" data-reveal>01</span>
+      <h2 data-reveal>Index des&nbsp;projets</h2>
+      <p class="section-intro" data-reveal>
+        Trois études de cas, de l'échelle du quartier à l'échelle sensible du détail —
+        friche industrielle, patrimoine classé, place urbaine. Glisse ou utilise les flèches
+        pour parcourir, clique sur un projet pour l'ouvrir.
+      </p>
+    </div>
+
+    <div class="carousel-viewport">
+      <div class="carousel-track" id="carouselTrack">
+
+        <a class="carousel-card" href="palimpseste.html">
+          <img src="assets/images/projet-01-palimpseste-aquarelle.jpg" alt="Le Jardin du Palimpseste — aquarelle d'ambiance" loading="lazy">
+          <div class="carousel-overlay"></div>
+          <div class="carousel-caption">
+            <span class="carousel-index">01</span>
+            <h3>Le Jardin du Palimpseste</h3>
+            <span class="carousel-cat">Reconversion industrielle — Herstal</span>
+          </div>
+        </a>
+
+        <a class="carousel-card" href="morpho.html">
+          <img src="assets/images/projet-02-morpho-ambiance-lumiere.jpg" alt="Effet Morpho — rendu golden hour" loading="lazy">
+          <div class="carousel-overlay"></div>
+          <div class="carousel-caption">
+            <span class="carousel-index">02</span>
+            <h3>Effet Morpho</h3>
+            <span class="carousel-cat">Biomimétisme — Arc-et-Senans</span>
+          </div>
+        </a>
+
+        <a class="carousel-card" href="confluant.html">
+          <img src="assets/images/projet-03-confluant-axe-retrouve.jpg" alt="Confluant — vue immersive Place Albert 1er" loading="lazy">
+          <div class="carousel-overlay"></div>
+          <div class="carousel-caption">
+            <span class="carousel-index">03</span>
+            <h3>Confluant</h3>
+            <span class="carousel-cat">Masterplan urbain — Waremme</span>
+          </div>
+        </a>
+
+      </div>
+
+      <button class="carousel-arrow prev" aria-label="Projet précédent">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button class="carousel-arrow next" aria-label="Projet suivant">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- À PROPOS — teaser renvoyant vers about.html -->
+  <!-- ============================================================ -->
+  <section class="about-teaser">
+    <div class="teaser-grid">
+      <div class="teaser-media" data-reveal>
+        <!--
+          PHOTO DE PROFIL — voir la note dans about.html / assets/images/README.md
+          au sujet du candidat trouvé (filigrane IA) avant de l'utiliser ici.
+        -->
+        <div class="media-placeholder media-placeholder--portrait">
+          <span class="ph-label">Insérer ici : photo de profil</span>
+        </div>
+      </div>
+      <div class="teaser-text" data-reveal>
+        <h2>À propos de moi</h2>
+        <p>
+          Étudiant en architecture des jardins et du paysage, attiré depuis toujours par les
+          espaces verts et ce que la nature fait ressentir — et convaincu qu'on peut, à notre
+          échelle, rendre la ville un peu plus vivante et un peu plus humaine.
+        </p>
+        <a href="about.html" class="teaser-link">En savoir plus →</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>© <span id="year"></span> Thomas Cossement — Architecture du Paysage</p>
+  <a href="#top" class="back-top">Haut de page ↑</a>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

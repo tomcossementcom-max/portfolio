@@ -1,0 +1,193 @@
+/* ==========================================================================
+   THOMAS COSSEMENT — PORTFOLIO
+   Interactions & animations GSAP / ScrollTrigger — site multi-pages
+   ========================================================================== */
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  const header    = document.getElementById('siteHeader');
+  const navToggle = document.getElementById('navToggle');
+  const mainNav   = document.getElementById('mainNav');
+  const yearEl    = document.getElementById('year');
+  const hero      = document.querySelector('.hero');
+
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  /* ------------------------------------------------------------ */
+  /* HEADER — transparent/light text while over the hero video     */
+  /* (accueil uniquement) ; solid + dark text everywhere else       */
+  /* ------------------------------------------------------------ */
+  const toggleHeaderState = () => {
+    if (!hero) return; // pages without a hero keep the default solid header
+    const heroHeight = hero.offsetHeight;
+    header.classList.toggle('on-hero', window.scrollY < heroHeight - 80);
+  };
+  if (hero) {
+    toggleHeaderState();
+    window.addEventListener('scroll', toggleHeaderState, { passive: true });
+  }
+
+  /* ------------------------------------------------------------ */
+  /* CURRENT-PAGE NAV HIGHLIGHT                                    */
+  /* ------------------------------------------------------------ */
+  const currentPath = location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.nav-link').forEach(link => {
+    const linkPath = link.getAttribute('href').split('#')[0] || 'index.html';
+    if (linkPath === currentPath) link.classList.add('is-current');
+  });
+
+  /* ------------------------------------------------------------ */
+  /* MOBILE NAV                                                    */
+  /* ------------------------------------------------------------ */
+  if (navToggle && mainNav) {
+    navToggle.addEventListener('click', () => {
+      const isOpen = mainNav.classList.toggle('is-open');
+      navToggle.setAttribute('aria-expanded', isOpen);
+    });
+    mainNav.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        mainNav.classList.remove('is-open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+
+  /* ------------------------------------------------------------ */
+  /* CUSTOM CURSOR (desktop only)                                  */
+  /* ------------------------------------------------------------ */
+  const cursor = document.querySelector('.cursor-dot');
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && cursor) {
+    window.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+    });
+    document.querySelectorAll('a, button, .carousel-card, .media-placeholder').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('is-active'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('is-active'));
+    });
+  }
+
+  /* ------------------------------------------------------------ */
+  /* CAROUSEL — index des projets (accueil) : flèches + glisser    */
+  /* ------------------------------------------------------------ */
+  const track = document.querySelector('.carousel-track');
+  if (track) {
+    const prevBtn = document.querySelector('.carousel-arrow.prev');
+    const nextBtn = document.querySelector('.carousel-arrow.next');
+    const scrollByCard = dir => {
+      const card = track.querySelector('.carousel-card');
+      const gap = parseFloat(getComputedStyle(track).columnGap || 0);
+      const distance = card ? card.offsetWidth + gap : track.clientWidth * 0.8;
+      track.scrollBy({ left: dir * distance, behavior: 'smooth' });
+    };
+    if (prevBtn) prevBtn.addEventListener('click', () => scrollByCard(-1));
+    if (nextBtn) nextBtn.addEventListener('click', () => scrollByCard(1));
+
+    // pointer drag-to-slide for desktop mouse users
+    let isDown = false, startX = 0, startScroll = 0, moved = false;
+    track.addEventListener('pointerdown', e => {
+      isDown = true; moved = false;
+      startX = e.clientX;
+      startScroll = track.scrollLeft;
+      track.classList.add('is-dragging');
+    });
+    window.addEventListener('pointermove', e => {
+      if (!isDown) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 4) moved = true;
+      track.scrollLeft = startScroll - dx;
+    });
+    window.addEventListener('pointerup', () => {
+      isDown = false;
+      track.classList.remove('is-dragging');
+    });
+    // prevent the click-through to a card link right after a drag
+    track.addEventListener('click', e => {
+      if (moved) { e.preventDefault(); e.stopPropagation(); }
+    }, true);
+  }
+
+  /* ------------------------------------------------------------ */
+  /* GSAP ANIMATIONS                                               */
+  /* ------------------------------------------------------------ */
+  if (window.gsap) {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!reduceMotion) {
+      /* Hero intro — fade + rise, staggered lines (only on pages with a hero) */
+      if (hero) {
+        gsap.timeline({ defaults: { ease: 'power3.out' } })
+          .from('.hero-eyebrow', { opacity: 0, y: 24, duration: 0.9, delay: 0.3 })
+          .from('.hero-title .line', { opacity: 0, y: 40, duration: 1, stagger: 0.12 }, '-=0.5')
+          .from('.hero-subtitle', { opacity: 0, y: 24, duration: 0.9 }, '-=0.5')
+          .from('.hero-footer', { opacity: 0, y: 24, duration: 0.9 }, '-=0.4');
+      }
+
+      /* Generic fade-in-up reveal for every [data-reveal] element below the fold */
+      document.querySelectorAll('main [data-reveal]').forEach(el => {
+        if (el.closest('.hero')) return; // hero handled by the intro timeline above
+        gsap.from(el, {
+          opacity: 0,
+          y: 36,
+          duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse'
+          }
+        });
+      });
+
+      /* Staggered reveal for grouped items (tags, carousel cards) */
+      gsap.utils.toArray('.project-tags, .carousel-track').forEach(list => {
+        gsap.from(list.children, {
+          opacity: 0,
+          y: 16,
+          duration: 0.6,
+          stagger: 0.08,
+          ease: 'power2.out',
+          scrollTrigger: { trigger: list, start: 'top 88%' }
+        });
+      });
+    } else {
+      document.querySelectorAll('[data-reveal]').forEach(el => {
+        el.style.opacity = 1;
+        el.style.transform = 'none';
+      });
+    }
+  }
+
+  /* ------------------------------------------------------------ */
+  /* SMOOTH SCROLL for in-page anchors                              */
+  /* ------------------------------------------------------------ */
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', e => {
+      const targetId = link.getAttribute('href');
+      if (targetId.length < 2) return;
+      const target = document.querySelector(targetId);
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  /* ------------------------------------------------------------ */
+  /* CONTACT FORM — client-side only placeholder                   */
+  /* Ce site statique n'a pas de backend. Pour un envoi réel,       */
+  /* branche ce formulaire sur Formspree / Netlify Forms / EmailJS  */
+  /* et remplace le bloc ci-dessous par l'envoi réseau approprié.   */
+  /* ------------------------------------------------------------ */
+  const form = document.getElementById('contactForm');
+  const formNote = document.getElementById('formNote');
+  if (form) {
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      formNote.textContent = 'Merci — ce formulaire est un gabarit statique : connecte-le à Formspree / Netlify Forms / EmailJS pour recevoir de vrais messages.';
+      form.reset();
+    });
+  }
+
+});

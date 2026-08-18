@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Effet Morpho — Thomas Cossement</title>
+<meta name="description" content="Effet Morpho — projet de concours biomimétique pour le Festival des Jardins de la Saline Royale d'Arc-et-Senans, par Thomas Cossement.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="cursor-dot" aria-hidden="true"></div>
+
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-name">Thomas&nbsp;Cossement</span>
+      <span class="logo-sub">Architecture&nbsp;du&nbsp;Paysage</span>
+    </a>
+    <nav class="main-nav" id="mainNav">
+      <a href="index.html#projets" class="nav-link"><span>01</span>Projets</a>
+      <a href="approche.html" class="nav-link"><span>02</span>Approche</a>
+      <a href="about.html" class="nav-link"><span>03</span>À propos</a>
+      <a href="about.html#contact" class="nav-link"><span>04</span>Contact</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============================================================ -->
+  <!-- HERO DU PROJET — vidéo plein cadre (muette, boucle) -->
+  <!-- ============================================================ -->
+  <section class="case-hero">
+    <!--
+      Vidéo silencieuse en boucle — extrait de la vidéo 3D fournie
+      (effet morpho.mp4), recadré pour ne plus montrer le carton de titre
+      "EFFET MORPHO" ni son filigrane résiduel (visible entre ~6s et ~14s
+      dans le fichier d'origine). Le fichier complet, avec le son et ce
+      carton de titre, est proposé plus bas dans "Vidéo complète du projet".
+    -->
+    <video autoplay muted loop playsinline poster="assets/images/projet-02-morpho-ambiance-lumiere.jpg">
+      <source src="assets/video/hero-loop-morpho.mp4" type="video/mp4">
+    </video>
+    <div class="case-hero-overlay"></div>
+    <div class="case-hero-caption">
+      <span class="project-cat">Biomimétisme &amp; Concours — Festival des Jardins, Arc-et-Senans</span>
+      <h1>Effet Morpho</h1>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- TEXTE DU PROJET -->
+  <!-- ============================================================ -->
+  <div class="case-body">
+    <span class="project-index" data-reveal>02</span>
+    <p class="project-desc" data-reveal>
+      Comment un papillon tropical peut-il réinventer un site classé au patrimoine mondial&nbsp;?
+      Conçu pour le Festival des jardins de la Saline Royale d'Arc-et-Senans — œuvre maîtresse de
+      Claude-Nicolas Ledoux — ce projet de concours s'inspire du papillon Morpho, dont
+      l'irisation bleue ne provient d'aucun pigment mais de la diffraction de la lumière à
+      travers une architecture nanométrique.
+    </p>
+    <p class="project-desc" data-reveal>
+      Ce phénomène optique devient le principe générateur du projet paysager&nbsp;: un espace qui
+      change selon qui le traverse, selon l'heure, selon la saison. Des strates végétales
+      superposées filtrent et colorent la lumière rasante, des cheminements orientés révèlent des
+      vues changeantes, une palette chromatique irisée — reflets bleu-vert, nuances dorées, ombres
+      profondes — dialogue avec la pierre ocre de Ledoux. Comme l'aile du Morpho, le site ne
+      montre jamais le même visage.
+    </p>
+    <p class="project-desc" data-reveal>
+      Des parois en plexiglas recouvertes d'un film dichroïque tamisent la lumière solaire et
+      projettent des reflets changeants et irisés sur les parcours, ornés d'une mosaïque de
+      carreaux récupérés. Une mare légèrement teintée de bleu est bordée d'une série de piquets
+      asymétriques, peints en bleu sur trois faces et en brun sur la quatrième&nbsp;: en se
+      déplaçant, le visiteur déclenche un effet optique où les couleurs apparaissent ou
+      disparaissent selon son point de vue, rendant l'expérience spatiale totalement évolutive.
+    </p>
+    <ul class="project-tags" data-reveal>
+      <li>Biomimétisme</li>
+      <li>Patrimoine UNESCO</li>
+      <li>Matérialité optique</li>
+      <li>Concours international</li>
+    </ul>
+
+    <!-- Vidéo complète du projet — le fichier fourni (effet morpho.mp4), avec le son
+         et sa narration ; lue au clic plutôt qu'en boucle muette. -->
+    <div class="project-video" data-reveal>
+      <span class="project-video-label">Vidéo complète du projet (avec le son)</span>
+      <div class="video-embed">
+        <video controls preload="none" poster="assets/images/projet-02-morpho-plan-masse.jpg">
+          <source src="assets/video/projet-02-morpho-full.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PLANCHES TECHNIQUES -->
+  <!-- ============================================================ -->
+  <div class="project-gallery">
+    <figure>
+      <img src="assets/images/projet-02-morpho-plan-masse.jpg" alt="Plan de masse du jardin Effet Morpho — cheminement sinueux, mare teintée de bleu, mosaïque de carreaux récupérés" loading="lazy">
+      <figcaption>Plan de masse</figcaption>
+    </figure>
+    <figure>
+      <img src="assets/images/projet-02-morpho-coupe-zone1.jpg" alt="Coupe 1 — vue sur la zone 1, parois dichroïques et claustra en osier" loading="lazy">
+      <figcaption>Coupe 1 — vue sur zone 1</figcaption>
+    </figure>
+    <figure>
+      <img src="assets/images/projet-02-morpho-coupe-zone2.jpg" alt="Coupe 2 — vue sur la zone 2, piquets bicolores bleu et brun" loading="lazy">
+      <figcaption>Coupe 2 — vue sur zone 2</figcaption>
+    </figure>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- NAVIGATION VERS LE PROJET SUIVANT -->
+  <!-- ============================================================ -->
+  <nav class="case-nav">
+    <a href="palimpseste.html" class="case-nav-link">
+      <span class="case-nav-label">← Projet précédent</span>
+      <span class="case-nav-title">Le Jardin du Palimpseste</span>
+    </a>
+    <a href="index.html#projets" class="case-nav-all">Tous les projets</a>
+    <a href="confluant.html" class="case-nav-link next">
+      <span class="case-nav-label">Projet suivant</span>
+      <span class="case-nav-title">Confluant →</span>
+    </a>
+  </nav>
+
+</main>
+
+<footer class="site-footer">
+  <p>© <span id="year"></span> Thomas Cossement — Architecture du Paysage</p>
+  <a href="#top" class="back-top">Haut de page ↑</a>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>
