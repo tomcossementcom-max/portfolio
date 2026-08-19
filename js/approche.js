@@ -8,7 +8,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const steps = document.querySelectorAll('.timeline-step');
 
-  const revealStep = (step) => step.classList.add('is-visible');
+  // Optimisation : une fois qu'une étape est révélée, elle sort de cette
+  // liste — le filet de sécurité plus bas (updateRevealFallback) peut alors
+  // sauter entièrement son test de position dès que la liste est vide,
+  // au lieu de recalculer un getBoundingClientRect() pour chaque étape à
+  // chaque frame de scroll (les 4 étapes sont normalement toutes révélées
+  // tôt dans le défilement de la page).
+  let remainingSteps = Array.from(steps);
+  const revealStep = (step) => {
+    step.classList.add('is-visible');
+    const idx = remainingSteps.indexOf(step);
+    if (idx !== -1) remainingSteps.splice(idx, 1);
+  };
 
   if (reduceMotion) {
     steps.forEach(revealStep);
@@ -84,9 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const updateRevealFallback = () => {
+      if (!remainingSteps.length) return; // tout est déjà révélé : rien à mesurer
       const viewportH = window.innerHeight;
-      steps.forEach(step => {
-        if (step.classList.contains('is-visible')) return;
+      remainingSteps.slice().forEach(step => {
         const rect = step.getBoundingClientRect();
         if (rect.top < viewportH * 0.85 && rect.bottom > 0) revealStep(step);
       });

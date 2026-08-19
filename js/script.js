@@ -140,9 +140,28 @@ document.addEventListener('DOMContentLoaded', () => {
       if (moved) { e.preventDefault(); e.stopPropagation(); }
     }, true);
 
-    // indicateur de progression
+    // Navigation clavier : quand une carte du carrousel a le focus (les cartes
+    // sont de vrais <a>, donc déjà atteignables au Tab), les flèches gauche/
+    // droite déplacent à la fois le scroll et le focus vers la carte
+    // voisine — pas besoin de sortir du carrousel pour le parcourir au clavier.
+    const scrollToCard = index => {
+      const target = cards[Math.max(0, Math.min(cards.length - 1, index))];
+      track.scrollTo({ left: target.offsetLeft - track.offsetLeft, behavior: scrollBehavior });
+      return target;
+    };
+    track.addEventListener('keydown', e => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      e.preventDefault();
+      const dir = e.key === 'ArrowRight' ? 1 : -1;
+      const fromIndex = Math.max(0, cards.indexOf(document.activeElement));
+      scrollToCard(fromIndex + dir).focus();
+    });
+
+    // indicateur de progression "01 / 03" + points + annonce aux lecteurs
+    // d'écran (aria-live) à chaque changement de diapositive.
     const countEl = document.getElementById('carouselCount');
     const dotsEl = document.getElementById('carouselDots');
+    const announceEl = document.getElementById('carouselAnnounce');
     if (countEl && dotsEl && cards.length) {
       const pad = n => String(n).padStart(2, '0');
       const dots = cards.map((card, i) => {
@@ -150,9 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dot.className = 'carousel-dot';
         dot.type = 'button';
         dot.setAttribute('aria-label', `Aller au projet ${i + 1} sur ${cards.length}`);
-        dot.addEventListener('click', () => {
-          track.scrollTo({ left: card.offsetLeft - track.offsetLeft, behavior: scrollBehavior });
-        });
+        dot.addEventListener('click', () => scrollToCard(i));
         dotsEl.appendChild(dot);
         return dot;
       });
@@ -168,6 +185,10 @@ document.addEventListener('DOMContentLoaded', () => {
         activeIndex = closest;
         dots.forEach((d, i) => d.classList.toggle('is-active', i === activeIndex));
         countEl.textContent = `${pad(activeIndex + 1)} / ${pad(cards.length)}`;
+        if (announceEl) {
+          const title = cards[activeIndex].querySelector('h3');
+          announceEl.textContent = `Projet ${activeIndex + 1} sur ${cards.length} : ${title ? title.textContent : ''}`;
+        }
       };
 
       track.addEventListener('scroll', updateActive, { passive: true });

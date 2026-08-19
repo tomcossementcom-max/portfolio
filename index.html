@@ -123,6 +123,7 @@
 
         <a class="carousel-card" href="palimpseste.html">
           <img src="assets/images/projet-01-palimpseste-aquarelle.jpg" alt="Le Jardin du Palimpseste — aquarelle d'ambiance" loading="lazy">
+          <div class="carousel-tint" aria-hidden="true"></div>
           <div class="carousel-overlay"></div>
           <div class="carousel-caption">
             <span class="carousel-index">01</span>
@@ -133,6 +134,7 @@
 
         <a class="carousel-card" href="morpho.html">
           <img src="assets/images/projet-02-morpho-ambiance-lumiere.jpg" alt="Effet Morpho — rendu golden hour" loading="lazy">
+          <div class="carousel-tint" aria-hidden="true"></div>
           <div class="carousel-overlay"></div>
           <div class="carousel-caption">
             <span class="carousel-index">02</span>
@@ -143,6 +145,7 @@
 
         <a class="carousel-card" href="confluant.html">
           <img src="assets/images/projet-03-confluant-axe-retrouve.jpg" alt="Confluant — vue immersive Place Albert 1er" loading="lazy">
+          <div class="carousel-tint" aria-hidden="true"></div>
           <div class="carousel-overlay"></div>
           <div class="carousel-caption">
             <span class="carousel-index">03</span>
@@ -167,6 +170,12 @@
       <span class="carousel-progress-count" id="carouselCount" aria-hidden="true"></span>
       <div class="carousel-progress-dots" id="carouselDots"></div>
     </div>
+
+    <!-- Région annoncée aux lecteurs d'écran à chaque changement de diapositive
+         (survol des flèches/points, glisser, ou flèches clavier ← → une fois le
+         carrousel focus) — voir js/script.js. Invisible à l'écran (.sr-only) :
+         ne duplique pas visuellement l'indicateur "01 / 03" ci-dessus. -->
+    <p class="sr-only" id="carouselAnnounce" aria-live="polite"></p>
   </section>
 
   <!-- ============================================================ -->
@@ -178,6 +187,10 @@
         <!--
           PHOTO DE PROFIL — voir la note dans about.html / assets/images/README.md
           au sujet du candidat trouvé (filigrane IA) avant de l'utiliser ici.
+          Pour la déposer : remplace tout ce <div class="media-placeholder...">
+          par -> <img class="portrait-photo" src="assets/images/portrait-thomas-cossement.jpg" alt="Thomas Cossement">
+          Le cadrage (ratio 4:5, object-fit cover) est déjà réglé par le
+          conteneur .teaser-media : aucune autre retouche CSS nécessaire.
         -->
         <div class="media-placeholder media-placeholder--portrait">
           <span class="ph-label">Insérer ici : photo de profil</span>

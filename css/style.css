@@ -24,11 +24,20 @@
   --accent: #b2622c;      /* acier corten — alternative "lichen" : #5C6E4A */
   --accent-soft: #5f6b4a; /* lichen / mousse — alternative corten douce : #a8703f */
 
-  /* Accent secondaire "par projet" — le corten reste la couleur de marque
-     générale du site (nav, boutons, hero...) ; --accent-project n'est
-     redéfini que sur le <body> de chaque page projet (voir plus bas) et
-     n'est utilisé qu'à quelques endroits ciblés : numéro "01/02/03",
-     titre au survol dans la nav précédent/suivant, tag actif. */
+  /* Accents "par projet" — source unique de vérité pour les 3 teintes,
+     réutilisées à la fois sur les pages projet (via --accent-project,
+     piloté par la classe .page-xxx sur <body> — voir plus bas) ET sur les
+     vignettes du carrousel en page d'accueil (via --card-accent, voir la
+     section CAROUSEL) : les deux endroits restent ainsi cohérents entre
+     eux sans dupliquer les valeurs. */
+  --accent-palimpseste: #8a6a45; /* bronze/mousse, écho aux totems corten et à la friche */
+  --accent-morpho: #3a7d7a;      /* bleu-vert irisé, écho au papillon Morpho */
+  --accent-confluant: #3f5c3a;   /* vert profond, écho à la trame bleue et verte */
+
+  /* Le corten reste la couleur de marque générale du site (nav, boutons,
+     hero...) ; --accent-project n'est redéfini que sur le <body> de chaque
+     page projet et n'est utilisé qu'à quelques endroits ciblés : numéro
+     "01/02/03", titre au survol dans la nav précédent/suivant, tag actif. */
   --accent-project: var(--accent);
 
   /* Hero (vidéo sombre) — toujours du texte clair, indépendant du thème clair du reste du site */
@@ -176,6 +185,37 @@ em { font-style: italic; color: var(--accent); }
   .cursor-dot { opacity: 1; }
 }
 .cursor-dot.is-active { width: 46px; height: 46px; }
+
+/* ==========================================================================
+   UTILITAIRES ACCESSIBILITÉ
+   ========================================================================== */
+/* Contenu présent pour les technologies d'assistance mais retiré du rendu
+   visuel — utilisé pour la région aria-live du carrousel (voir js/script.js
+   et index.html) qui annonce le projet affiché sans dupliquer visuellement
+   l'indicateur "01 / 03" déjà visible. */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==========================================================================
+   PHOTO PRÊTE À L'EMPLOI — voir P2 : dépose juste un <img class="portrait-photo">
+   à la place d'un <div class="media-placeholder media-placeholder--portrait">
+   (about.html et le teaser de index.html) : le cadrage/ratio est déjà réglé
+   par le conteneur parent, aucune autre modification CSS n'est nécessaire.
+   ========================================================================== */
+.portrait-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
 /* ==========================================================================
    HEADER
@@ -474,6 +514,15 @@ em { font-style: italic; color: var(--accent); }
   aspect-ratio: 4 / 3;
   margin-top: clamp(2rem, 5vw, 4.5rem);
 }
+/* Signature couleur par carte : reprend les mêmes teintes que la page projet
+   correspondante (voir --accent-palimpseste/morpho/confluant dans :root),
+   pour que l'aperçu en page d'accueil annonce déjà l'identité de la page de
+   destination. --card-accent pilote à la fois le numéro "01/02/03" et un
+   léger lavis de couleur au survol (voir .carousel-tint plus bas). */
+.carousel-card:nth-child(1) { --card-accent: var(--accent-palimpseste); }
+.carousel-card:nth-child(2) { --card-accent: var(--accent-morpho); }
+.carousel-card:nth-child(3) { --card-accent: var(--accent-confluant); }
+
 .carousel-card img {
   position: absolute;
   inset: 0;
@@ -485,7 +534,25 @@ em { font-style: italic; color: var(--accent); }
   filter: grayscale(80%) saturate(85%);
   transition: transform .6s ease, filter .6s ease;
 }
-.carousel-card:hover img { transform: scale(1.02); filter: grayscale(0%) saturate(100%); }
+.carousel-card:hover img,
+.carousel-card:focus-visible img { transform: scale(1.02); filter: grayscale(0%) saturate(100%); }
+
+/* Lavis de couleur commun à toutes les cartes (même mécanisme, même
+   intensité) mais teinté par la couleur propre à chaque projet : "cadre"
+   partagé qui signe le site sans effacer la spécificité de chaque visuel
+   (aquarelle / rendu / plan). Placé entre l'image et le dégradé sombre,
+   donc toujours sous la légende : jamais de risque de contraste réduit. */
+.carousel-tint {
+  position: absolute;
+  inset: 0;
+  background: var(--card-accent, var(--accent));
+  mix-blend-mode: color;
+  opacity: 0;
+  transition: opacity .6s ease;
+  pointer-events: none;
+}
+.carousel-card:hover .carousel-tint,
+.carousel-card:focus-visible .carousel-tint { opacity: 0.28; }
 
 .carousel-overlay {
   position: absolute;
@@ -505,7 +572,7 @@ em { font-style: italic; color: var(--accent); }
   font-family: var(--font-head);
   font-size: 0.78rem;
   letter-spacing: 0.14em;
-  color: var(--accent);
+  color: var(--card-accent, var(--accent));
   margin-bottom: 0.6rem;
 }
 .carousel-caption h3 {
@@ -538,6 +605,19 @@ em { font-style: italic; color: var(--accent); }
 }
 .carousel-arrow.prev { left: clamp(0.5rem, 2vw, 1.5rem); }
 .carousel-arrow.next { right: clamp(0.5rem, 2vw, 1.5rem); }
+
+/* Focus clavier — les cartes sont de vrais <a>, donc déjà atteignables au
+   Tab ; ceci rend ce focus visible, et les flèches gauche/droite (voir
+   js/script.js) permettent ensuite de naviguer sans quitter le carrousel. */
+.carousel-card:focus-visible {
+  outline: 2px solid var(--card-accent, var(--accent));
+  outline-offset: -2px;
+}
+.carousel-arrow:focus-visible,
+.carousel-dot:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 
 /* -------- indicateur de progression : "01 / 03" + points -------- */
 .carousel-progress {
@@ -772,10 +852,10 @@ em { font-style: italic; color: var(--accent); }
 /* Confluant a 6 planches -> 3 colonnes x 2 rangées ; les autres pages en ont 4 -> 4 colonnes */
 .page-confluant .project-gallery { --gallery-cols: 3; }
 
-/* -------- accent secondaire par projet (voir --accent-project dans :root) -------- */
-.page-morpho      { --accent-project: #3a7d7a; } /* bleu-vert irisé, écho au papillon Morpho */
-.page-confluant   { --accent-project: #3f5c3a; } /* vert profond, écho à la trame végétale */
-.page-palimpseste { --accent-project: #8a6a45; } /* bronze/mousse, écho aux totems corten et à la friche */
+/* -------- accent secondaire par projet (valeurs définies une seule fois dans :root) -------- */
+.page-morpho      { --accent-project: var(--accent-morpho); }
+.page-confluant   { --accent-project: var(--accent-confluant); }
+.page-palimpseste { --accent-project: var(--accent-palimpseste); }
 
 .project-tags li:hover,
 .project-tags li:focus-visible {
@@ -1161,6 +1241,7 @@ em { font-style: italic; color: var(--accent); }
   left: 0; right: 0;
   top: -30px;
   height: calc(100% + 60px); /* marge de sécurité pour la plage de parallaxe (±26px) */
+  will-change: transform; /* cet élément reçoit un nouveau transform à chaque tick de scroll (voir js/approche.js) */
 }
 .timeline-media-inner img {
   width: 100%; height: 100%;
