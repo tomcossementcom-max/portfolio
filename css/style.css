@@ -42,6 +42,7 @@
   --accent-morpho: #3a7d7a;      /* bleu-vert irisé, écho au papillon Morpho */
   --accent-confluant: #3f5c3a;   /* vert profond, écho à la trame bleue et verte */
   --accent-haccourt: #4a6b7c;    /* bleu ardoise, écho à l'eau infiltrée et au grès */
+  --water: #4d84a6;              /* le fil d'eau — signature transversale (voir .fil-eau) */
 
   /* Le corten reste la couleur de marque générale du site (nav, boutons,
      hero...) ; --accent-project n'est redéfini que sur le <body> de chaque
@@ -109,31 +110,38 @@ body {
 }
 
 /* ==========================================================================
-   FILIGRANE "SIGNATURE" — courbes de niveau topographiques
-   Motif SVG encodé en data-URI, tuilé, fixé au scroll (position:fixed),
-   opacité extrêmement faible (3%). Assis derrière le contenu (z-index -1) :
-   les éléments en flux normal (non positionnés) passent naturellement
-   au-dessus de lui, donc aucun autre changement n'est nécessaire.
-   Pour le remplacer par une trame isométrique fine, échange le contenu du
-   <svg> ci-dessous par un quadrillage de losanges (exemple en commentaire
-   plus bas). Pour ajuster l'intensité, ne touche qu'à `opacity`.
+   FIL D'EAU — la signature transversale (couche C)
+   Trois des quatre projets parlent d'eau (noue, trame bleue, infiltration).
+   Plutôt qu'un motif de fond (l'ancien filigrane topographique à 3 %, qui
+   ne signait rien), un seul trait fin, bleu, qui descend la marge gauche de
+   chaque page en méandre et se dessine au rythme du scroll, sa pointe
+   toujours un peu en avance sur la lecture (voir js/script.js). Il passe
+   sous les images et les bandes de fond (z-index négatif) et ne recouvre
+   jamais rien. Injecté par JS : sans script, il n'existe pas (décoratif).
+   La page Approche, qui a déjà sa propre ligne de scroll (la timeline),
+   le désactive avec <body data-fil="off">.
    ========================================================================== */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
+main { position: relative; }
+.fil-eau {
+  position: absolute;
+  top: 0;
+  /* au milieu de la gouttière du conteneur, quelle que soit la largeur */
+  left: calc(max(0px, 50% - var(--container) / 2) + var(--gutter) / 2 - 8px);
+  width: 16px;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.03;
-  background-repeat: repeat;
-  background-size: 340px 340px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='340' height='340'%3E%3Cg fill='none' stroke='%232c2d2a' stroke-width='1.1'%3E%3Cpath d='M-20,26 C40,4 80,48 140,26 S240,4 300,26 S380,48 400,26'/%3E%3Cpath d='M-20,66 C30,90 90,46 150,68 S250,92 310,68 S390,44 420,68'/%3E%3Cpath d='M-20,108 C50,84 100,126 160,106 S260,82 320,106 S400,128 430,106'/%3E%3Cpath d='M-20,152 C40,176 95,132 155,152 S255,178 315,152 S395,130 425,152'/%3E%3Cpath d='M-20,194 C45,170 100,212 165,192 S265,168 325,192 S405,214 435,192'/%3E%3Cpath d='M-20,238 C35,262 90,218 150,240 S250,264 310,240 S390,216 420,240'/%3E%3Cpath d='M-20,280 C50,256 105,298 170,278 S270,254 330,278 S410,300 440,278'/%3E%3Cpath d='M-20,320 C40,300 95,336 155,318 S255,296 315,318 S395,338 425,318'/%3E%3C/g%3E%3C/svg%3E");
-  /*
-    Alternative "trame isométrique fine" (losanges), à coller à la place du
-    background-image ci-dessus si tu préfères ce motif :
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='104'%3E%3Cg fill='none' stroke='%232c2d2a' stroke-width='1'%3E%3Cpath d='M0,0 L30,17 L30,52 L0,35 Z M30,17 L60,0 L60,35 L30,52 Z M0,69 L30,86 L30,104 L0,104 Z M30,86 L60,69 L60,104 L30,104 Z'/%3E%3C/g%3E%3C/svg%3E");
-  */
+  overflow: visible;
 }
+.fil-eau path {
+  fill: none;
+  stroke: var(--water);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  transition: stroke-dashoffset .25s ease-out; /* légère traîne, comme un filet d'eau */
+}
+/* le point d'arrivée : l'eau s'infiltre en bas de page */
+.fil-eau circle { fill: var(--water); opacity: 0; transition: opacity .6s ease; }
+.fil-eau.is-complete circle { opacity: 1; }
 
 /* Transition douce entre pages (voir js/script.js) : la page reste visible
    par défaut (jamais d'état "invisible en attendant le JS" — si le script
