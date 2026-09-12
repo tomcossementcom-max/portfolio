@@ -1658,3 +1658,82 @@ h1 em, h2 em, h3 em,
   html { scroll-behavior: auto; }
   [data-reveal] { opacity: 1; transform: none; }
 }
+
+/* ==========================================================================
+   REGARD — grille de photographies (regard.html)
+   Trois colonnes qui s'écoulent (multi-colonnes CSS) : chaque photo garde
+   son format, portrait ou paysage, sans recadrage. Les .photo--placeholder
+   ne servent qu'en attendant les vraies images.
+   ========================================================================== */
+.photo-grid {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: clamp(2rem, 4vw, 3rem) var(--gutter) clamp(5rem, 9vw, 8rem);
+  columns: 3;
+  column-gap: clamp(1rem, 2.5vw, 2rem);
+}
+.photo {
+  break-inside: avoid;
+  margin: 0 0 clamp(1rem, 2.5vw, 2rem);
+}
+.photo img { width: 100%; display: block; background: var(--bg-alt); }
+.photo figcaption { margin-top: 0.5rem; font-size: var(--fs-xs); color: var(--text-faint); }
+.photo--placeholder {
+  aspect-ratio: var(--ph-ratio, 3 / 2);
+  border: 1px dashed var(--line);
+  background: var(--bg-alt);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem; text-align: center;
+  font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-faint);
+}
+@media (max-width: 1024px) { .photo-grid { columns: 2; } }
+@media (max-width: 720px)  { .photo-grid { columns: 1; } }
+
+/* ==========================================================================
+   IMPRESSION — « Imprimer / Enregistrer en PDF » sur une page projet donne
+   une planche propre : ni menu, ni fil d'eau, ni vidéo, ni animations en
+   cours ; texte noir sur blanc, images et blocs insécables. Un portfolio
+   PDF pour les candidatures, généré depuis le site, toujours à jour.
+   ========================================================================== */
+@media print {
+  @page { margin: 14mm; }
+  html { scroll-behavior: auto; }
+  body { background: #fff; color: #000; font-size: 11pt; line-height: 1.45; }
+  .site-header, .site-footer, .nav-toggle, .main-nav, .case-nav, .fil-eau,
+  .home-video, .project-video, .featured-all, .home-cover-foot, .back-top,
+  .manifesto-scroll, .timeline-track, .contact-form { display: none !important; }
+  main { padding-top: 0; }
+  /* neutralise les états intermédiaires des animations (opacité, balayage) */
+  [data-reveal], .case-figure, .case-plan, .case-pair figure, .pcard-media, .feat-media,
+  .case-cover-num, .timeline-step, .project-tags li {
+    opacity: 1 !important; transform: none !important; clip-path: none !important;
+  }
+  .case-cover { min-height: 0; padding: 0 0 8mm; display: block; overflow: visible; }
+  .case-cover-num {
+    position: static; display: block; font-size: 30pt; line-height: 1;
+    color: #888 !important; mix-blend-mode: normal; margin-bottom: 4mm;
+  }
+  .case-cover h1, .page-hero h1 { font-size: 26pt; max-width: none; margin-bottom: 4mm; }
+  .case-cover-lead { font-size: 13pt; color: #333; max-width: none; }
+  .case-facts { padding: 4mm 0; border-color: #ccc; gap: 4mm 8mm; }
+  .case-facts > div { border-top-color: #000; }
+  .case-facts dt { color: #555; }
+  .case-section, .case-pull { display: block; padding: 4mm 0; max-width: none; }
+  .case-section > *, .case-pull p { max-width: none; }
+  .project-desc { color: #000; font-size: 11pt; max-width: none; }
+  .case-pull p { font-size: 14pt; border-left-color: #000; padding-left: 5mm; }
+  .case-figure, .case-plan, .case-pair, .case-facts, .case-pull, figure {
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .case-figure, .case-plan { width: 100%; margin: 4mm 0; }
+  .case-figure figcaption, .case-plan figcaption, .case-pair figcaption { color: #555; padding: 0; margin-top: 2mm; }
+  .case-pair { grid-template-columns: 1fr 1fr; gap: 6mm; padding: 0; }
+  .case-pair img { background: none; }
+  .project-tags li, .palette-list li { border-color: #999; color: #000; }
+  .palette-label, .project-video-label { color: #000; }
+  a { color: #000; }
+  /* les liens externes montrent leur adresse ; les liens internes non */
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.85em; color: #555; }
+  img { max-width: 100%; }
+}

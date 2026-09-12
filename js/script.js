@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ------------------------------------------------------------ */
   const currentPath = location.pathname.split('/').pop() || 'index.html';
   // les pages projet (body.page-xxx) relèvent de l'entrée "Projets"
-  const isProjectPage = /(^|\s)page-\w+(\s|$)/.test(document.body.className);
+  const isProjectPage = /(^|\s)page-(palimpseste|morpho|confluant|haccourt)(\s|$)/.test(document.body.className);
   document.querySelectorAll('.nav-link').forEach(link => {
     const linkPath = link.getAttribute('href').split('#')[0] || 'index.html';
     if (linkPath === currentPath || (isProjectPage && linkPath === 'projets.html')) link.classList.add('is-current');

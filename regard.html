@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regard — Thomas Cossement</title>
+<meta name="description" content="Photographies de Thomas Cossement — le regard qui l'a mené vers l'architecture du paysage.">
+<!--
+  PAGE « REGARD » — PRÊTE, EN ATTENTE DES PHOTOS.
+  Elle n'est pas encore reliée au menu ni indexée (meta robots ci-dessous).
+  Pour l'activer :
+  1. dépose 12 à 20 photos (JPG, 2000 px de large ou plus) dans assets/images/,
+     nommées regard-01.jpg, regard-02.jpg, … ;
+  2. lance  python tools/optimise-images.py  (variantes AVIF/WebP) ;
+  3. remplace chaque <figure class="photo photo--placeholder"> ci-dessous par le
+     gabarit <picture> donné en commentaire dans la grille, avec ta légende ;
+  4. supprime la ligne <meta name="robots" content="noindex"> ;
+  5. ajoute « Regard » dans le menu de chaque page (header + footer) — par exemple
+     en 04, et décale À propos en 05 et Contact en 06 ;
+  6. ajoute la page dans sitemap.xml.
+-->
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-name">Thomas&nbsp;Cossement</span>
+      <span class="logo-sub">Architecture&nbsp;du&nbsp;Paysage</span>
+    </a>
+    <nav class="main-nav" id="mainNav">
+      <a href="projets.html" class="nav-link"><span>01</span>Projets</a>
+      <a href="approche.html" class="nav-link"><span>02</span>Approche</a>
+      <a href="visites.html" class="nav-link"><span>03</span>Visites</a>
+      <a href="about.html" class="nav-link"><span>04</span>À propos</a>
+      <a href="about.html#contact" class="nav-link"><span>05</span>Contact</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+
+  <div class="page-hero">
+    <span class="section-num" data-reveal>Regard</span>
+    <h1 data-reveal>Photographies</h1>
+    <p data-reveal>
+      C'est en partie par la photographie que j'ai développé ma sensibilité au paysage&nbsp;:
+      apprendre à cadrer, à lire la lumière, à observer la nature autrement. Quelques images,
+      sans autre intention que de montrer ce que je regarde.
+    </p>
+  </div>
+
+  <!-- GRILLE — trois colonnes qui s'écoulent (deux sur tablette, une sur mobile) ;
+       les photos gardent leur format d'origine, portrait ou paysage.
+       Gabarit d'une photo, à copier pour chaque image :
+
+       <figure class="photo">
+         <picture>
+           <source type="image/avif" srcset="assets/images/regard-01-800.avif 800w, assets/images/regard-01-1200.avif 1200w, assets/images/regard-01.avif 2000w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+           <source type="image/webp" srcset="assets/images/regard-01-800.webp 800w, assets/images/regard-01-1200.webp 1200w, assets/images/regard-01.webp 2000w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+           <img src="assets/images/regard-01.jpg" alt="Ce que montre la photo" loading="lazy" decoding="async" width="2000" height="1333">
+         </picture>
+         <figcaption>Lieu, année</figcaption>
+       </figure>
+  -->
+  <section class="photo-grid" aria-label="Photographies">
+    <figure class="photo photo--placeholder" style="--ph-ratio: 3 / 2"><span>Photo à déposer — regard-01.jpg</span></figure>
+    <figure class="photo photo--placeholder" style="--ph-ratio: 4 / 5"><span>Photo à déposer — regard-02.jpg</span></figure>
+    <figure class="photo photo--placeholder" style="--ph-ratio: 3 / 2"><span>Photo à déposer — regard-03.jpg</span></figure>
+    <figure class="photo photo--placeholder" style="--ph-ratio: 4 / 5"><span>Photo à déposer — regard-04.jpg</span></figure>
+    <figure class="photo photo--placeholder" style="--ph-ratio: 1 / 1"><span>Photo à déposer — regard-05.jpg</span></figure>
+    <figure class="photo photo--placeholder" style="--ph-ratio: 3 / 2"><span>Photo à déposer — regard-06.jpg</span></figure>
+    <figure class="photo photo--placeholder" style="--ph-ratio: 4 / 5"><span>Photo à déposer — regard-07.jpg</span></figure>
+    <figure class="photo photo--placeholder" style="--ph-ratio: 3 / 2"><span>Photo à déposer — regard-08.jpg</span></figure>
+    <figure class="photo photo--placeholder" style="--ph-ratio: 3 / 2"><span>Photo à déposer — regard-09.jpg</span></figure>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="footer-name">Thomas Cossement</span>
+      <span class="footer-role">Architecture des jardins et du paysage — Liège / Cras-Avernas, Belgique</span>
+    </div>
+    <nav class="footer-nav" aria-label="Navigation de pied de page">
+      <span class="footer-col-label">Le site</span>
+      <a href="projets.html">Projets</a>
+      <a href="approche.html">Approche</a>
+      <a href="visites.html">Visites &amp; conférences</a>
+      <a href="about.html">À propos</a>
+    </nav>
+    <div class="footer-contact">
+      <span class="footer-col-label">Prendre contact</span>
+      <a href="about.html#contact">Formulaire &amp; coordonnées</a>
+      <a href="https://www.linkedin.com/in/thomas-cossement-339706370" target="_blank" rel="noopener">LinkedIn ↗</a>
+    </div>
+  </div>
+  <div class="footer-base">
+    <p>© <span id="year"></span> Thomas Cossement</p>
+    <a href="#top" class="back-top">Haut de page ↑</a>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>
