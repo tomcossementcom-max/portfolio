@@ -33,7 +33,7 @@
       <span class="logo-sub">Architecture&nbsp;du&nbsp;Paysage</span>
     </a>
     <nav class="main-nav" id="mainNav">
-      <a href="index.html#projets" class="nav-link"><span>01</span>Projets</a>
+      <a href="projets.html" class="nav-link"><span>01</span>Projets</a>
       <a href="approche.html" class="nav-link"><span>02</span>Approche</a>
       <a href="visites.html" class="nav-link"><span>03</span>Visites</a>
       <a href="about.html" class="nav-link"><span>04</span>À propos</a>
@@ -48,21 +48,18 @@
 <main id="top">
 
   <!-- ============================================================ -->
-  <!-- HERO DU PROJET — image plein cadre -->
+  <!-- COUVERTURE TYPOGRAPHIQUE — numéro, titre, une phrase, du blanc.
+       L'image n'arrive qu'au scroll suivant, en pleine largeur. -->
   <!-- ============================================================ -->
-  <section class="case-hero">
-    <!--
-      IMAGES À INSÉRER — Le Jardin du Palimpseste :
-      il te reste, si tu veux enrichir cette page : une vue aérienne du plan
-      masse (spread imprimé pages 8-9), et les coupes techniques Vectorworks
-      de gestion des eaux (pas de fichier image autonome retrouvé dans ton
-      dossier source — à exporter depuis Vectorworks/InDesign si voulu).
-    -->
-    <img src="assets/images/projet-01-palimpseste-aquarelle.jpg" alt="Aquarelle d'ambiance — chemin planté, totems corten et arche en osier tressé, Le Jardin du Palimpseste">
-    <div class="case-hero-overlay"></div>
-    <div class="case-hero-caption">
-      <span class="project-cat">Reconversion industrielle &amp; Permaculture — Herstal</span>
-      <h1>Le Jardin du Palimpseste</h1>
+  <section class="case-cover">
+    <span class="bignum case-cover-num" aria-hidden="true">01</span>
+    <div class="case-cover-inner">
+      <span class="project-cat" data-reveal>Reconversion industrielle &amp; Permaculture — Herstal</span>
+      <h1 data-reveal>Le Jardin du Palimpseste</h1>
+      <p class="case-cover-lead" data-reveal>
+        Une friche industrielle réinvestie en paysage hybride, où nature, mémoire et usages
+        contemporains coexistent.
+      </p>
     </div>
   </section>
 
@@ -89,16 +86,36 @@
   </dl>
 
   <!-- ============================================================ -->
-  <!-- TEXTE DU PROJET -->
+  <!-- IMAGE DE COUVERTURE — pleine largeur, sans voile -->
+  <!--
+    IMAGES À INSÉRER — Le Jardin du Palimpseste :
+    il te reste, si tu veux enrichir cette page : une vue aérienne du plan
+    masse (spread imprimé pages 8-9), et les coupes techniques Vectorworks
+    de gestion des eaux (pas de fichier image autonome retrouvé dans ton
+    dossier source — à exporter depuis Vectorworks/InDesign si voulu).
+    Pour les ajouter : une <figure class="case-figure"> (pleine largeur) ou
+    une <div class="case-pair"> (deux planches côte à côte), entre deux
+    blocs de texte ci-dessous.
+  -->
   <!-- ============================================================ -->
-  <div class="case-body">
-    <span class="project-index" data-reveal>01</span>
+  <figure class="case-figure">
+    <img src="assets/images/projet-01-palimpseste-aquarelle.jpg" alt="Aquarelle d'ambiance — chemin planté, totems corten et arche en osier tressé, Le Jardin du Palimpseste">
+    <figcaption>Aquarelle d'ambiance — chemin planté, totems corten et arche en osier tressé</figcaption>
+  </figure>
+
+  <!-- ============================================================ -->
+  <!-- RÉCIT — texte, citation, texte, en alternance sur la grille -->
+  <!-- ============================================================ -->
+  <section class="case-section">
     <p class="project-desc" data-reveal>
       Le Jardin du Palimpseste réinvestit une friche industrielle à Herstal en un paysage
       hybride où nature, mémoire et usages contemporains coexistent. Entre espaces aménagés
       et zones laissées volontairement sauvages, le projet compose une mosaïque d'ambiances
       inspirée des jardins en mouvement de Gilles Clément.
     </p>
+  </section>
+
+  <section class="case-section case-section--right">
     <p class="project-desc" data-reveal>
       L'aménagement s'articule autour d'une vaste agora traversée par une noue paysagère qui
       assure la gestion des eaux pluviales en surface. Cette structure hydraulique oriente les
@@ -107,12 +124,21 @@
       expositions, bar, ateliers — tandis qu'une large spirale accessible conduit au
       toit-terrasse, offrant un nouveau point de vue sur Herstal.
     </p>
+  </section>
+
+  <div class="case-pull">
+    <p data-reveal>
+      Une infrastructure paysagère résiliente, sociale et évolutive, où l'eau, le végétal et
+      les usages collectifs deviennent les principaux moteurs du lieu.
+    </p>
+  </div>
+
+  <section class="case-section">
     <p class="project-desc" data-reveal>
       Le projet met en avant un contraste délibéré entre zones actives et espaces plus
       spontanés. Inspirée par un paysage en mouvement, la végétation alterne entre plantations
       structurées et zones laissées plus libres, favorisant une évolution naturelle et une
-      biodiversité durable — une infrastructure paysagère résiliente, sociale et évolutive, où
-      l'eau, le végétal et les usages collectifs deviennent les principaux moteurs du lieu.
+      biodiversité durable.
     </p>
     <ul class="project-tags" data-reveal>
       <li>Friche industrielle</li>
@@ -120,13 +146,13 @@
       <li>Jardins en mouvement</li>
       <li>Topographie</li>
     </ul>
-  </div>
+  </section>
 
   <!-- ============================================================ -->
   <!-- NAVIGATION VERS LE PROJET SUIVANT -->
   <!-- ============================================================ -->
   <nav class="case-nav">
-    <a href="index.html#projets" class="case-nav-all">← Tous les projets</a>
+    <a href="projets.html" class="case-nav-all">← Tous les projets</a>
     <a href="morpho.html" class="case-nav-link next">
       <span class="case-nav-label">Projet suivant</span>
       <span class="case-nav-title">Effet Morpho →</span>
@@ -143,7 +169,7 @@
     </div>
     <nav class="footer-nav" aria-label="Navigation de pied de page">
       <span class="footer-col-label">Le site</span>
-      <a href="index.html#projets">Projets</a>
+      <a href="projets.html">Projets</a>
       <a href="approche.html">Approche</a>
       <a href="visites.html">Visites &amp; conférences</a>
       <a href="about.html">À propos</a>

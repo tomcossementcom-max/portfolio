@@ -33,7 +33,7 @@
       <span class="logo-sub">Architecture&nbsp;du&nbsp;Paysage</span>
     </a>
     <nav class="main-nav" id="mainNav">
-      <a href="index.html#projets" class="nav-link"><span>01</span>Projets</a>
+      <a href="projets.html" class="nav-link"><span>01</span>Projets</a>
       <a href="approche.html" class="nav-link"><span>02</span>Approche</a>
       <a href="visites.html" class="nav-link"><span>03</span>Visites</a>
       <a href="about.html" class="nav-link"><span>04</span>À propos</a>
@@ -48,17 +48,21 @@
 <main id="top">
 
   <!-- ============================================================ -->
-  <!-- HERO DU PROJET — image plein cadre -->
+  <!-- COUVERTURE TYPOGRAPHIQUE — numéro, titre, une phrase, du blanc. -->
+  <!-- Vidéo 3D à insérer : un QR code y renvoyait dans le dossier original, mais le
+       fichier/lien n'a pas été retrouvé dans tes exports — dépose-le dans
+       assets/video/projet-03-confluant-3d.mp4 si tu veux l'ajouter (même
+       gabarit que la vidéo de couverture de morpho.html). -->
   <!-- ============================================================ -->
-  <section class="case-hero">
-    <!-- Vidéo 3D à insérer : un QR code y renvoyait dans le dossier original, mais le
-         fichier/lien n'a pas été retrouvé dans tes exports — dépose-le dans
-         assets/video/projet-03-confluant-3d.mp4 si tu veux l'ajouter ici. -->
-    <img src="assets/images/projet-03-confluant-axe-retrouve.jpg" alt="Vue immersive — gradins et platanes conservés, avenue Reine Astrid, Confluant">
-    <div class="case-hero-overlay"></div>
-    <div class="case-hero-caption">
-      <span class="project-cat">Masterplan &amp; Place multimodale — Waremme</span>
-      <h1>Confluant</h1>
+  <section class="case-cover">
+    <span class="bignum case-cover-num" aria-hidden="true">03</span>
+    <div class="case-cover-inner">
+      <span class="project-cat" data-reveal>Masterplan &amp; Place multimodale — Waremme</span>
+      <h1 data-reveal>Confluant</h1>
+      <p class="case-cover-lead" data-reveal>
+        Né d'un constat simple&nbsp;: Waremme tourne le dos à ses flux — l'eau, les mobilités,
+        les usagers. Le projet fait de cette confluence une force structurante.
+      </p>
     </div>
   </section>
 
@@ -85,10 +89,17 @@
   </dl>
 
   <!-- ============================================================ -->
-  <!-- TEXTE DU PROJET -->
+  <!-- IMAGE DE COUVERTURE — pleine largeur, sans voile -->
   <!-- ============================================================ -->
-  <div class="case-body">
-    <span class="project-index" data-reveal>03</span>
+  <figure class="case-figure">
+    <img src="assets/images/projet-03-confluant-axe-retrouve.jpg" alt="Vue immersive — gradins et platanes conservés, avenue Reine Astrid, Confluant">
+    <figcaption>L'axe retrouvé — gradins et platanes conservés, avenue Reine Astrid</figcaption>
+  </figure>
+
+  <!-- ============================================================ -->
+  <!-- RÉCIT — texte, planches, citation, plan, en alternance -->
+  <!-- ============================================================ -->
+  <section class="case-section">
     <p class="project-desc" data-reveal>
       Confluant est né d'un constat simple&nbsp;: Waremme tourne le dos à ses flux — flux de
       l'eau, flux des mobilités, flux des usagers — autant de dynamiques qui traversent la ville
@@ -103,14 +114,44 @@
       séquences du parcours. Parallèlement, la requalification des mobilités replace le piéton et
       le cycliste au centre de l'espace public.
     </p>
+  </section>
+
+  <div class="case-pair" data-reveal>
+    <figure>
+      <img src="assets/images/projet-03-confluant-trame-mobilites.jpg" alt="Trame créatrice de la place — mobilités douces, Confluant" loading="lazy">
+      <figcaption>Trame verte — mobilités douces</figcaption>
+    </figure>
+    <figure>
+      <img src="assets/images/projet-03-confluant-trame-eau.jpg" alt="Trame bleue — gestion de l'eau, Confluant" loading="lazy">
+      <figcaption>Trame bleue — gestion de l'eau</figcaption>
+    </figure>
+  </div>
+
+  <section class="case-section case-section--right">
     <p class="project-desc" data-reveal>
       Sur l'avenue Reine Astrid — autrefois une entrée de place aveugle, absorbée par le
       stationnement — des gradins disposés en sifflet selon le dénivelé naturel du site
-      reconstituent un axe de déplacement fort en direction de la gare&nbsp;: ce n'est pas un
-      aménagement posé sur le sol, c'est le sol lui-même qui devient assise, repère, direction.
-      Les platanes existants, protégés et mis en valeur par un banc circulaire, ancrent la mémoire
-      du lieu dans le projet.
+      reconstituent un axe de déplacement fort en direction de la gare. Les platanes existants,
+      protégés et mis en valeur par un banc circulaire, ancrent la mémoire du lieu dans le
+      projet.
     </p>
+  </section>
+
+  <div class="case-pull">
+    <p data-reveal>
+      Ce n'est pas un aménagement posé sur le sol, c'est le sol lui-même qui devient assise,
+      repère, direction.
+    </p>
+  </div>
+
+  <!-- PLAN DE MASSE LÉGENDÉ — planche jury retrouvée dans ton dossier OneDrive
+       (Waremme/rendu final/fin fin/Thomas Cossement/plan de composition.pdf) -->
+  <figure class="case-plan">
+    <img src="assets/images/projet-03-confluant-plan-masse.jpg" alt="Plan de masse légendé — noue, gradins, platanes conservés, jardin de pluies, Place Albert 1er, Confluant" loading="lazy">
+    <figcaption>Plan de masse — Place du Roi Albert 1er, échelle 1:250e</figcaption>
+  </figure>
+
+  <section class="case-section">
     <p class="project-desc" data-reveal>
       L'arrêt de bus n'est plus un mobilier isolé sur un trottoir résiduel&nbsp;: dessiné en acier
       corten, le même matériau que sur l'ensemble du site, il est positionné à la lisière de la
@@ -126,11 +167,34 @@
       <li>Espace public événementiel</li>
       <li>Masterplan urbain</li>
     </ul>
+  </section>
 
-    <!-- Palette végétale du projet (24 espèces) — reprise en texte plutôt qu'en photos :
-         les visuels de référence de ta planche originale sont des photos de pépinière
-         sous copyright (noms de fichiers avec mention "copyright"), à ne pas republier
-         telles quelles sur un site public. Remplace par tes propres photos si tu en as. -->
+  <figure class="case-figure">
+    <img src="assets/images/projet-03-confluant-seuil-mobile.jpg" alt="Le seuil mobile — arrêt de bus en acier corten intégré à la trame végétale, Confluant" loading="lazy">
+    <figcaption>Le seuil mobile — arrêt de bus en acier corten à la lisière de la trame végétale</figcaption>
+  </figure>
+
+  <div class="case-pair" data-reveal>
+    <figure>
+      <img src="assets/images/projet-03-confluant-coupe-facades.jpg" alt="Coupe-élévation — façades de la rue Joseph Wauters, Confluant" loading="lazy">
+      <figcaption>Coupe — façades rue Joseph Wauters</figcaption>
+    </figure>
+    <figure>
+      <img src="assets/images/projet-03-confluant-coupe-hall.jpg" alt="Coupe-élévation — arrêt de bus et hall Étiasse, Confluant" loading="lazy">
+      <figcaption>Coupe — arrêt de bus et hall Étiasse</figcaption>
+    </figure>
+  </div>
+
+  <figure class="case-figure">
+    <img src="assets/images/projet-03-confluant-rue-commercante.jpg" alt="Vue immersive — rue commerçante végétalisée, terrasses et cheminement piéton, Confluant" loading="lazy">
+    <figcaption>Rue commerçante végétalisée — terrasses et cheminement piéton</figcaption>
+  </figure>
+
+  <!-- Palette végétale du projet (24 espèces) — reprise en texte plutôt qu'en photos :
+       les visuels de référence de ta planche originale sont des photos de pépinière
+       sous copyright (noms de fichiers avec mention "copyright"), à ne pas republier
+       telles quelles sur un site public. Remplace par tes propres photos si tu en as. -->
+  <section class="case-section case-section--wide">
     <div class="palette-vegetale" data-reveal>
       <span class="palette-label">Palette végétale — 24 espèces</span>
       <div class="palette-group">
@@ -158,46 +222,7 @@
         </ul>
       </div>
     </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- PLAN DE MASSE LÉGENDÉ — planche jury retrouvée dans ton dossier OneDrive
-       (Waremme/rendu final/fin fin/Thomas Cossement/plan de composition.pdf) -->
-  <!-- ============================================================ -->
-  <figure class="case-plan">
-    <img src="assets/images/projet-03-confluant-plan-masse.jpg" alt="Plan de masse légendé — noue, gradins, platanes conservés, jardin de pluies, Place Albert 1er, Confluant" loading="lazy">
-    <figcaption>Plan de masse — Place du Roi Albert 1er, échelle 1:250e</figcaption>
-  </figure>
-
-  <!-- ============================================================ -->
-  <!-- PLANCHES TECHNIQUES -->
-  <!-- ============================================================ -->
-  <div class="project-gallery">
-    <figure>
-      <img src="assets/images/projet-03-confluant-seuil-mobile.jpg" alt="Le seuil mobile — arrêt de bus en acier corten intégré à la trame végétale, Confluant" loading="lazy">
-      <figcaption>Le seuil mobile</figcaption>
-    </figure>
-    <figure>
-      <img src="assets/images/projet-03-confluant-trame-mobilites.jpg" alt="Trame créatrice de la place — mobilités douces, Confluant" loading="lazy">
-      <figcaption>Trame mobilités</figcaption>
-    </figure>
-    <figure>
-      <img src="assets/images/projet-03-confluant-trame-eau.jpg" alt="Trame bleue — gestion de l'eau, Confluant" loading="lazy">
-      <figcaption>Trame bleue — gestion de l'eau</figcaption>
-    </figure>
-    <figure>
-      <img src="assets/images/projet-03-confluant-rue-commercante.jpg" alt="Vue immersive — rue commerçante végétalisée, terrasses et cheminement piéton, Confluant" loading="lazy">
-      <figcaption>Rue commerçante végétalisée</figcaption>
-    </figure>
-    <figure>
-      <img src="assets/images/projet-03-confluant-coupe-facades.jpg" alt="Coupe-élévation — façades de la rue Joseph Wauters, Confluant" loading="lazy">
-      <figcaption>Coupe — façades rue Joseph Wauters</figcaption>
-    </figure>
-    <figure>
-      <img src="assets/images/projet-03-confluant-coupe-hall.jpg" alt="Coupe-élévation — arrêt de bus et hall Étiasse, Confluant" loading="lazy">
-      <figcaption>Coupe — arrêt de bus et hall Étiasse</figcaption>
-    </figure>
-  </div>
+  </section>
 
   <!-- ============================================================ -->
   <!-- NAVIGATION -->
@@ -207,7 +232,7 @@
       <span class="case-nav-label">← Projet précédent</span>
       <span class="case-nav-title">Effet Morpho</span>
     </a>
-    <a href="index.html#projets" class="case-nav-all">Tous les projets</a>
+    <a href="projets.html" class="case-nav-all">Tous les projets</a>
     <a href="haccourt.html" class="case-nav-link next">
       <span class="case-nav-label">Projet suivant</span>
       <span class="case-nav-title">Place bioclimatique →</span>
@@ -224,7 +249,7 @@
     </div>
     <nav class="footer-nav" aria-label="Navigation de pied de page">
       <span class="footer-col-label">Le site</span>
-      <a href="index.html#projets">Projets</a>
+      <a href="projets.html">Projets</a>
       <a href="approche.html">Approche</a>
       <a href="visites.html">Visites &amp; conférences</a>
       <a href="about.html">À propos</a>

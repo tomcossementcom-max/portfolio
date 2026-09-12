@@ -33,7 +33,7 @@
       <span class="logo-sub">Architecture&nbsp;du&nbsp;Paysage</span>
     </a>
     <nav class="main-nav" id="mainNav">
-      <a href="index.html#projets" class="nav-link"><span>01</span>Projets</a>
+      <a href="projets.html" class="nav-link"><span>01</span>Projets</a>
       <a href="approche.html" class="nav-link"><span>02</span>Approche</a>
       <a href="visites.html" class="nav-link"><span>03</span>Visites</a>
       <a href="about.html" class="nav-link"><span>04</span>À propos</a>
@@ -48,19 +48,17 @@
 <main id="top">
 
   <!-- ============================================================ -->
-  <!-- HERO DU PROJET — plan d'avant-projet en plein cadre -->
-  <!-- Les deux planches ont été recadrées pour retirer le cartouche
-       (noms du bourgmestre et du directeur général, numéros de téléphone
-       de la commune, de l'atelier et du géomètre) : seul le dessin est
-       publié. Ne remets pas les versions complètes en ligne sans l'accord
-       explicite de l'Atelier CUP et de la commune. -->
+  <!-- COUVERTURE TYPOGRAPHIQUE — numéro, titre, une phrase, du blanc. -->
   <!-- ============================================================ -->
-  <section class="case-hero">
-    <img src="assets/images/projet-04-haccourt-plan-avp001.jpg" alt="Plan d'avant-projet de la place communale de Haccourt — zones d'infiltration, massifs mixtes et arbres projetés">
-    <div class="case-hero-overlay"></div>
-    <div class="case-hero-caption">
-      <span class="project-cat">Espace public &amp; désimperméabilisation — Haccourt (Oupeye)</span>
-      <h1>Place bioclimatique</h1>
+  <section class="case-cover">
+    <span class="bignum case-cover-num" aria-hidden="true">04</span>
+    <div class="case-cover-inner">
+      <span class="project-cat" data-reveal>Espace public &amp; désimperméabilisation — Haccourt (Oupeye)</span>
+      <h1 data-reveal>Place bioclimatique</h1>
+      <p class="case-cover-lead" data-reveal>
+        Végétaliser la place communale de Haccourt en transformant le sol lui-même — un
+        avant-projet dessiné à l'Atelier CUP pour la Commune d'Oupeye.
+      </p>
     </div>
   </section>
 
@@ -95,15 +93,29 @@
   </dl>
 
   <!-- ============================================================ -->
-  <!-- TEXTE DU PROJET -->
-  <!-- ⚠️ Ce texte a été rédigé à partir de ce que les deux planches AVP
+  <!-- PLANCHE AVP 001 — dans le conteneur (format presque carré).
+       Les deux planches ont été recadrées pour retirer le cartouche
+       (noms du bourgmestre et du directeur général, numéros de téléphone
+       de la commune, de l'atelier et du géomètre) : seul le dessin est
+       publié. Ne remets pas les versions complètes en ligne sans l'accord
+       explicite de l'Atelier CUP et de la commune. -->
+  <!-- ============================================================ -->
+  <section class="case-section case-section--wide">
+    <figure class="case-figure case-figure--contained">
+      <img src="assets/images/projet-04-haccourt-plan-avp001.jpg" alt="Planche AVP 001 — place communale : parvis planté, zones d'infiltration, fontaine et mobilier, côté Avenue Reine Élisabeth">
+      <figcaption>AVP 001 — Place communale, situation projetée, échelle 1/100</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- RÉCIT
+       ⚠️ Ce texte a été rédigé à partir de ce que les deux planches AVP
        disent réellement (légende, niveaux, intervenants, phase). Relis-le
        et enrichis-le avec ce que les plans ne peuvent pas raconter :
        la demande de la commune, les contraintes du site, ce que tu as
        dessiné toi-même par rapport au reste de l'équipe. -->
   <!-- ============================================================ -->
-  <div class="case-body">
-    <span class="project-index" data-reveal>04</span>
+  <section class="case-section">
     <p class="project-desc" data-reveal>
       Projet mené en agence&nbsp;: la végétalisation de la place communale de Haccourt, pour la
       Commune d'Oupeye. Il est développé par l'<strong>Atelier CUP</strong> (Liège), où je
@@ -112,12 +124,20 @@
       à l'échelle 1/100.
     </p>
     <p class="project-desc" data-reveal>
-      La place est repensée comme une <em>place bioclimatique</em>&nbsp;: il s'agit moins d'ajouter
-      du végétal décoratif que de transformer le sol lui-même. Une partie des surfaces minérales
-      cède la place à des dalles drainantes à joints engazonnés et à des zones d'infiltration
-      plantées, qui laissent l'eau de pluie rejoindre le sol là où elle tombe plutôt que de la
-      renvoyer directement au réseau.
+      La place est repensée comme une <em>place bioclimatique</em>&nbsp;: une partie des surfaces
+      minérales cède la place à des dalles drainantes à joints engazonnés et à des zones
+      d'infiltration plantées, qui laissent l'eau de pluie rejoindre le sol là où elle tombe
+      plutôt que de la renvoyer directement au réseau.
     </p>
+  </section>
+
+  <div class="case-pull">
+    <p data-reveal>
+      Il s'agit moins d'ajouter du végétal décoratif que de transformer le sol lui-même.
+    </p>
+  </div>
+
+  <section class="case-section case-section--right">
     <p class="project-desc" data-reveal>
       Les arbres existants sont relevés et conservés&nbsp;; de nouveaux sujets — haute-tige et
       multi-troncs — complètent le couvert pour porter de l'ombre sur les zones de séjour. Massifs
@@ -137,10 +157,20 @@
       <li>Espace public communal</li>
       <li>Phase avant-projet (AVP)</li>
     </ul>
+  </section>
 
-    <!-- Programme technique repris de la légende des planches : c'est du
-         contenu réel, lisible sur les plans, présenté ici en texte pour
-         rester lisible sur mobile et indexable. -->
+  <!-- PLANCHE AVP 002 — même recadrage que la 001 (voir note plus haut) -->
+  <section class="case-section case-section--wide">
+    <figure class="case-figure case-figure--contained" data-reveal>
+      <img src="assets/images/projet-04-haccourt-plan-avp002.jpg" alt="Planche AVP 002 — abords de l'Avenue Reine Élisabeth et de la Rue du Canal : stationnement planté et massifs d'accompagnement" loading="lazy">
+      <figcaption>AVP 002 — Avenue Reine Élisabeth et Rue du Canal, situation projetée, échelle 1/100</figcaption>
+    </figure>
+  </section>
+
+  <!-- Programme technique repris de la légende des planches : c'est du
+       contenu réel, lisible sur les plans, présenté ici en texte pour
+       rester lisible sur mobile et indexable. -->
+  <section class="case-section case-section--wide">
     <div class="palette-vegetale" data-reveal>
       <span class="palette-label">Programme technique — extrait de la légende</span>
       <div class="palette-group">
@@ -181,20 +211,7 @@
         </ul>
       </div>
     </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- LES DEUX PLANCHES EN PLEINE LARGEUR -->
-  <!-- ============================================================ -->
-  <figure class="case-plan">
-    <img src="assets/images/projet-04-haccourt-plan-avp001.jpg" alt="Planche AVP 001 — place communale : parvis planté, zones d'infiltration, fontaine et mobilier, côté Avenue Reine Élisabeth" loading="lazy">
-    <figcaption>AVP 001 — Place communale, situation projetée, échelle 1/100</figcaption>
-  </figure>
-
-  <figure class="case-plan">
-    <img src="assets/images/projet-04-haccourt-plan-avp002.jpg" alt="Planche AVP 002 — abords de l'Avenue Reine Élisabeth et de la Rue du Canal : stationnement planté et massifs d'accompagnement" loading="lazy">
-    <figcaption>AVP 002 — Avenue Reine Élisabeth et Rue du Canal, situation projetée, échelle 1/100</figcaption>
-  </figure>
+  </section>
 
   <!-- ============================================================ -->
   <!-- NAVIGATION -->
@@ -204,7 +221,7 @@
       <span class="case-nav-label">← Projet précédent</span>
       <span class="case-nav-title">Confluant</span>
     </a>
-    <a href="index.html#projets" class="case-nav-all">Tous les projets</a>
+    <a href="projets.html" class="case-nav-all">Tous les projets</a>
     <a href="palimpseste.html" class="case-nav-link next">
       <span class="case-nav-label">Projet suivant</span>
       <span class="case-nav-title">Le Jardin du Palimpseste →</span>
@@ -221,7 +238,7 @@
     </div>
     <nav class="footer-nav" aria-label="Navigation de pied de page">
       <span class="footer-col-label">Le site</span>
-      <a href="index.html#projets">Projets</a>
+      <a href="projets.html">Projets</a>
       <a href="approche.html">Approche</a>
       <a href="visites.html">Visites &amp; conférences</a>
       <a href="about.html">À propos</a>

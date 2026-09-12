@@ -37,7 +37,7 @@
     </a>
 
     <nav class="main-nav" id="mainNav">
-      <a href="index.html#projets" class="nav-link"><span>01</span>Projets</a>
+      <a href="projets.html" class="nav-link"><span>01</span>Projets</a>
       <a href="approche.html" class="nav-link"><span>02</span>Approche</a>
       <a href="visites.html" class="nav-link"><span>03</span>Visites</a>
       <a href="about.html" class="nav-link"><span>04</span>À propos</a>
@@ -103,89 +103,49 @@
   </section>
 
   <!-- ============================================================ -->
-  <!-- INDEX DES PROJETS — carrousel horizontal -->
+  <!-- SÉLECTION — deux projets en grand, puis renvoi vers l'index complet
+       (projets.html). La home ne montre plus tout : elle donne envie. -->
   <!-- ============================================================ -->
-  <section class="carousel-section" id="projets">
+  <section class="featured" id="projets">
 
     <div class="section-head">
       <span class="section-num" data-reveal>01</span>
-      <h2 data-reveal>Index des&nbsp;projets</h2>
+      <h2 data-reveal>Sélection</h2>
       <p class="section-intro" data-reveal>
-        Quatre études de cas, de l'échelle du quartier à l'échelle sensible du détail — friche
-        industrielle, patrimoine classé, place urbaine, et un projet mené en agence. Glisse ou
-        utilise les flèches pour parcourir, clique sur un projet pour l'ouvrir.
+        Deux projets pour donner le ton — un concours, et un premier travail en agence.
+        Les quatre sont dans l'index.
       </p>
     </div>
 
-    <div class="carousel-viewport">
-      <div class="carousel-track" id="carouselTrack">
-
-        <a class="carousel-card" href="palimpseste.html">
-          <img src="assets/images/projet-01-palimpseste-aquarelle.jpg" alt="Le Jardin du Palimpseste — aquarelle d'ambiance" loading="lazy">
-          <div class="carousel-tint" aria-hidden="true"></div>
-          <div class="carousel-overlay"></div>
-          <div class="carousel-caption">
-            <span class="carousel-index">01</span>
-            <h3>Le Jardin du Palimpseste</h3>
-            <span class="carousel-cat">Reconversion industrielle — Herstal</span>
-          </div>
-        </a>
-
-        <a class="carousel-card" href="morpho.html">
-          <img src="assets/images/projet-02-morpho-ambiance-lumiere.jpg" alt="Effet Morpho — rendu golden hour" loading="lazy">
-          <div class="carousel-tint" aria-hidden="true"></div>
-          <div class="carousel-overlay"></div>
-          <div class="carousel-caption">
-            <span class="carousel-index">02</span>
-            <h3>Effet Morpho</h3>
-            <span class="carousel-cat">Biomimétisme — Arc-et-Senans</span>
-          </div>
-        </a>
-
-        <a class="carousel-card" href="confluant.html">
-          <img src="assets/images/projet-03-confluant-axe-retrouve.jpg" alt="Confluant — vue immersive Place Albert 1er" loading="lazy">
-          <div class="carousel-tint" aria-hidden="true"></div>
-          <div class="carousel-overlay"></div>
-          <div class="carousel-caption">
-            <span class="carousel-index">03</span>
-            <h3>Confluant</h3>
-            <span class="carousel-cat">Masterplan urbain — Waremme</span>
-          </div>
-        </a>
-
-        <a class="carousel-card" href="haccourt.html">
-          <img src="assets/images/projet-04-haccourt-thumb.jpg" alt="Place bioclimatique de Haccourt — détail du plan d'avant-projet" loading="lazy">
-          <div class="carousel-tint" aria-hidden="true"></div>
-          <div class="carousel-overlay"></div>
-          <div class="carousel-caption">
-            <span class="carousel-index">04</span>
-            <h3>Place bioclimatique</h3>
-            <span class="carousel-cat">Projet en agence — Haccourt (Oupeye)</span>
-          </div>
-        </a>
-
+    <a class="feat" href="morpho.html" style="--card-accent: var(--accent-morpho)" data-reveal>
+      <span class="bignum feat-num" aria-hidden="true">02</span>
+      <div class="feat-media">
+        <img src="assets/images/projet-02-morpho-ambiance-lumiere.jpg" alt="Effet Morpho — rendu golden hour, parois dichroïques et cerisiers en fleurs" loading="lazy">
       </div>
+      <div class="feat-text">
+        <span class="pcard-cat">Biomimétisme &amp; concours — Arc-et-Senans</span>
+        <h2>Effet Morpho</h2>
+        <p>Un jardin qui change de couleur au pas du visiteur, comme l'aile du papillon dont il tire son nom.</p>
+        <span class="feat-link">Voir le projet →</span>
+      </div>
+    </a>
 
-      <button class="carousel-arrow prev" aria-label="Projet précédent">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
-      <button class="carousel-arrow next" aria-label="Projet suivant">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18l6-6-6-6"/></svg>
-      </button>
+    <a class="feat feat--reverse" href="haccourt.html" style="--card-accent: var(--accent-haccourt)" data-reveal>
+      <span class="bignum feat-num" aria-hidden="true">04</span>
+      <div class="feat-media">
+        <img src="assets/images/projet-04-haccourt-plan-avp001.jpg" alt="Place bioclimatique de Haccourt — plan d'avant-projet" loading="lazy">
+      </div>
+      <div class="feat-text">
+        <span class="pcard-cat">Projet en agence — Haccourt (Oupeye)</span>
+        <h2>Place bioclimatique</h2>
+        <p>Végétaliser et désimperméabiliser une place communale — plans d'avant-projet dessinés chez Atelier CUP.</p>
+        <span class="feat-link">Voir le projet →</span>
+      </div>
+    </a>
+
+    <div class="featured-all" data-reveal>
+      <a href="projets.html">Voir les quatre projets →</a>
     </div>
-
-    <!-- indicateur de progression "01 / 03" + points, générés et tenus à jour
-         par js/script.js (nombre de cartes lu dynamiquement dans le DOM) -->
-    <div class="carousel-progress" id="carouselProgress">
-      <span class="carousel-progress-count" id="carouselCount" aria-hidden="true"></span>
-      <div class="carousel-progress-dots" id="carouselDots"></div>
-    </div>
-
-    <!-- Région annoncée aux lecteurs d'écran à chaque changement de diapositive
-         (survol des flèches/points, glisser, ou flèches clavier ← → une fois le
-         carrousel focus) — voir js/script.js. Invisible à l'écran (.sr-only) :
-         ne duplique pas visuellement l'indicateur "01 / 03" ci-dessus. -->
-    <p class="sr-only" id="carouselAnnounce" aria-live="polite"></p>
   </section>
 
   <!-- ============================================================ -->
@@ -218,7 +178,7 @@
     </div>
     <nav class="footer-nav" aria-label="Navigation de pied de page">
       <span class="footer-col-label">Le site</span>
-      <a href="index.html#projets">Projets</a>
+      <a href="projets.html">Projets</a>
       <a href="approche.html">Approche</a>
       <a href="visites.html">Visites &amp; conférences</a>
       <a href="about.html">À propos</a>

@@ -493,193 +493,205 @@ h1 em, h2 em, h3 em,
 }
 
 /* ==========================================================================
-   CAROUSEL — index des projets (accueil), glissement horizontal
+   NUMÉROS EN TRÈS GRAND — la signature typographique du site
+   Le site est numéroté depuis le début (01/02/03…) mais en 0,7rem. Ici on
+   l'assume : un chiffre fantôme, très pâle, qui déborde sur l'image ou le
+   titre. En multiply, il reste lisible sur le fond crème et devient une
+   ombre discrète là où il croise une photo — jamais un aplat qui la cache.
+   Sur les pages projet, il prend la teinte du projet (voir .case-cover-num).
    ========================================================================== */
-.carousel-section { background: var(--bg); padding-bottom: clamp(3rem, 6vw, 5rem); }
-.carousel-section .section-head { max-width: var(--container-projects); }
-
-/* Planche d'exposition : la section #projets est contenue dans une largeur
-   maximale (--container-projects) plutôt qu'étalée bord à bord. */
-.carousel-viewport {
-  position: relative;
-  max-width: var(--container-projects);
-  margin: 0 auto;
-}
-
-.carousel-track {
-  display: flex;
-  align-items: flex-start; /* nécessaire pour laisser chaque carte garder sa propre hauteur (asymétrie) */
-  gap: clamp(1.75rem, 3.5vw, 3rem); /* gap important entre les vignettes */
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  padding: 0 var(--gutter) 1.5rem;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  cursor: grab;
-}
-.carousel-track.is-dragging { cursor: grabbing; scroll-behavior: auto; }
-.carousel-track::-webkit-scrollbar { display: none; }
-
-.carousel-card {
-  position: relative;
-  flex: 0 0 min(62vw, 440px);
-  aspect-ratio: 3 / 4.3; /* portrait par défaut (projets 1 et 3) */
-  max-height: 62vh;
-  scroll-snap-align: start;
-  overflow: hidden;
-  background: var(--bg-panel);
-  display: block;
-}
-/* Casse la grille : la carte du milieu est décalée vers le bas et prend un
-   format paysage plutôt que portrait — l'asymétrie plutôt que l'alignement
-   parfait des templates classiques. */
-.carousel-card:nth-child(2) {
-  flex-basis: min(80vw, 640px);
-  aspect-ratio: 4 / 3;
-  margin-top: clamp(2rem, 5vw, 4.5rem);
-}
-/* Signature couleur par carte : reprend les mêmes teintes que la page projet
-   correspondante (voir --accent-palimpseste/morpho/confluant dans :root),
-   pour que l'aperçu en page d'accueil annonce déjà l'identité de la page de
-   destination. --card-accent pilote à la fois le numéro "01/02/03" et un
-   léger lavis de couleur au survol (voir .carousel-tint plus bas). */
-.carousel-card:nth-child(1) { --card-accent: var(--accent-palimpseste); }
-.carousel-card:nth-child(2) { --card-accent: var(--accent-morpho); }
-.carousel-card:nth-child(3) { --card-accent: var(--accent-confluant); }
-.carousel-card:nth-child(4) { --card-accent: var(--accent-haccourt); }
-
-.carousel-card img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.bignum {
+  font-family: var(--font-head);
+  font-weight: 600;
+  line-height: 0.82;
+  letter-spacing: -0.05em;
+  color: #dad7cf;
+  mix-blend-mode: multiply;
   pointer-events: none;
-  /* couleur pleine au repos : les rendus et l'aquarelle sont l'atout du
-     portfolio, les cacher derrière un survol les rendait invisibles sur
-     mobile (où le survol n'existe pas). Le survol ne fait plus que zoomer. */
-  transition: transform .6s ease;
+  user-select: none;
 }
-.carousel-card:hover img,
-.carousel-card:focus-visible img { transform: scale(1.02); }
 
-/* Lavis de couleur commun à toutes les cartes (même mécanisme, même
-   intensité) mais teinté par la couleur propre à chaque projet : "cadre"
-   partagé qui signe le site sans effacer la spécificité de chaque visuel
-   (aquarelle / rendu / plan). Placé entre l'image et le dégradé sombre,
-   donc toujours sous la légende : jamais de risque de contraste réduit. */
-.carousel-tint {
+/* ==========================================================================
+   INDEX DES PROJETS — grille asymétrique (page projets.html)
+   Grille 12 colonnes : les quatre cartes n'ont ni la même largeur ni le même
+   format, et la deuxième est décalée vers le bas — c'est l'asymétrie qui
+   distingue une planche d'exposition d'un catalogue.
+   ========================================================================== */
+.projects-grid {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: clamp(1rem, 3vw, 2.5rem) var(--gutter) clamp(5rem, 9vw, 8rem);
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: clamp(1rem, 2.5vw, 2.5rem);
+  row-gap: clamp(3.5rem, 7vw, 6.5rem);
+}
+.pcard {
+  position: relative;
+  display: block;
+  color: inherit;
+}
+.pcard:nth-child(1) { grid-column: 1 / 8;  --pcard-ratio: 4 / 3; --card-accent: var(--accent-palimpseste); }
+.pcard:nth-child(2) { grid-column: 8 / 13; --pcard-ratio: 3 / 4; --card-accent: var(--accent-morpho);
+                      margin-top: clamp(4rem, 12vw, 11rem); }
+.pcard:nth-child(3) { grid-column: 2 / 7;  --pcard-ratio: 3 / 4; --card-accent: var(--accent-confluant); }
+.pcard:nth-child(4) { grid-column: 7 / 13; --pcard-ratio: 4 / 3; --card-accent: var(--accent-haccourt);
+                      margin-top: clamp(2rem, 6vw, 5.5rem); }
+
+.pcard-num {
   position: absolute;
-  inset: 0;
+  z-index: 2;
+  top: 0; left: 0;
+  transform: translate(-0.08em, -0.62em);
+  font-size: clamp(5rem, 11vw, 10rem);
+}
+.pcard-media {
+  position: relative;
+  aspect-ratio: var(--pcard-ratio, 4 / 3);
+  overflow: hidden;
+  background: var(--bg-alt);
+}
+.pcard-media img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .8s var(--ease);
+}
+.pcard:hover .pcard-media img,
+.pcard:focus-visible .pcard-media img { transform: scale(1.03); }
+/* le lavis à la couleur du projet, comme avant sur le carrousel */
+.pcard-media::after {
+  content: '';
+  position: absolute; inset: 0;
   background: var(--card-accent, var(--accent));
   mix-blend-mode: color;
   opacity: 0;
   transition: opacity .6s ease;
-  pointer-events: none;
 }
-.carousel-card:hover .carousel-tint,
-.carousel-card:focus-visible .carousel-tint { opacity: 0.28; }
+.pcard:hover .pcard-media::after,
+.pcard:focus-visible .pcard-media::after { opacity: 0.25; }
 
-.carousel-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(0deg, rgba(10,11,8,0.75) 0%, rgba(10,11,8,0.05) 45%, transparent 70%);
-  pointer-events: none;
-}
-
-.carousel-caption {
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  padding: clamp(1.25rem, 3vw, 2rem);
-  color: var(--hero-text);
-}
-.carousel-index {
+.pcard-text { padding-top: 1.1rem; }
+.pcard-cat {
   display: block;
   font-family: var(--font-head);
-  font-size: 0.78rem;
-  letter-spacing: 0.14em;
-  /* sur le dégradé sombre de la carte, les accents projet (bronze, vert
-     profond) tombent sous le seuil de lisibilité : le numéro reprend donc
-     le corten éclairci, et la couleur du projet s'exprime par le lavis au
-     survol et par le liseré de focus. */
-  color: var(--accent-on-dark);
-  margin-bottom: 0.6rem;
-}
-.carousel-caption h3 {
-  font-size: var(--fs-h3);
-  margin-bottom: 0.4rem;
-  transition: transform .4s var(--ease);
-}
-.carousel-card:hover h3 { transform: translateX(6px); }
-.carousel-cat {
-  display: block;
-  font-size: 0.72rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--hero-text-dim);
-}
-
-.carousel-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 5;
-  width: 48px; height: 48px;
-  border-radius: 50%;
-  border: 1px solid var(--line);
-  background: var(--bg-panel);
-  color: var(--text);
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: background .3s, color .3s, border-color .3s;
-}
-.carousel-arrow.prev { left: clamp(0.5rem, 2vw, 1.5rem); }
-.carousel-arrow.next { right: clamp(0.5rem, 2vw, 1.5rem); }
-
-/* Focus clavier — les cartes sont de vrais <a>, donc déjà atteignables au
-   Tab ; ceci rend ce focus visible, et les flèches gauche/droite (voir
-   js/script.js) permettent ensuite de naviguer sans quitter le carrousel. */
-.carousel-card:focus-visible {
-  outline: 2px solid var(--card-accent, var(--accent));
-  outline-offset: -2px;
-}
-.carousel-arrow:focus-visible,
-.carousel-dot:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-/* -------- indicateur de progression : "01 / 03" + points -------- */
-.carousel-progress {
-  max-width: var(--container-projects);
-  margin: 0 auto;
-  padding: 0 var(--gutter);
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-.carousel-progress-count {
-  font-family: var(--font-head);
-  font-size: 0.72rem;
+  font-size: var(--fs-xs);
   letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--text-faint);
-  min-width: 4.5em;
+  margin-bottom: 0.45rem;
 }
-.carousel-progress-dots { display: flex; gap: 0.5rem; }
-.carousel-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  padding: 0;
-  border: 1px solid var(--line);
-  background: transparent;
-  cursor: pointer;
-  transition: background 0.3s, border-color 0.3s, transform 0.3s;
+.pcard-text h2 {
+  font-size: var(--fs-h3);
+  margin-bottom: 0.5rem;
+  transition: color .3s;
 }
-.carousel-dot:hover { border-color: var(--accent); }
-.carousel-dot.is-active { background: var(--accent); border-color: var(--accent); transform: scale(1.2); }
-.carousel-arrow:hover { background: var(--text); color: var(--bg); border-color: var(--text); }
-.carousel-arrow svg { width: 18px; height: 18px; }
+.pcard:hover .pcard-text h2 { color: var(--card-accent, var(--accent)); }
+.pcard-text p {
+  font-family: var(--font-serif);
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+  max-width: 46ch;
+  line-height: 1.55;
+}
+.pcard:focus-visible { outline: 2px solid var(--card-accent, var(--accent)); outline-offset: 6px; }
+
+/* ==========================================================================
+   SÉLECTION (accueil) — deux projets en grand, puis un lien vers l'index
+   Remplace le carrousel : la home ne cherche plus à tout montrer, elle
+   donne envie d'aller voir l'index.
+   ========================================================================== */
+.featured { padding-bottom: clamp(3rem, 6vw, 5rem); }
+
+.feat {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: clamp(1rem, 2.5vw, 2.5rem);
+  align-items: end;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: clamp(2.5rem, 5vw, 4rem) var(--gutter);
+  color: inherit;
+}
+.feat + .feat { border-top: 1px solid var(--line); }
+.feat-media {
+  grid-column: 1 / 9;
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--bg-alt);
+}
+.feat--reverse .feat-media { grid-column: 5 / 13; }
+.feat-media img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .8s var(--ease);
+}
+.feat:hover .feat-media img,
+.feat:focus-visible .feat-media img { transform: scale(1.03); }
+.feat-media::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--card-accent, var(--accent));
+  mix-blend-mode: color;
+  opacity: 0;
+  transition: opacity .6s ease;
+}
+.feat:hover .feat-media::after { opacity: 0.25; }
+
+.feat-num {
+  position: absolute;
+  z-index: 2;
+  left: var(--gutter);
+  top: clamp(0.5rem, 1.5vw, 1.5rem);
+  font-size: clamp(6rem, 15vw, 14rem);
+}
+.feat--reverse .feat-num { left: auto; right: var(--gutter); }
+
+.feat-text {
+  grid-column: 9 / 13;
+  padding-bottom: 0.5rem;
+}
+.feat--reverse .feat-text { grid-column: 1 / 5; grid-row: 1; }
+.feat-text h2 { font-size: var(--fs-h2); margin: 0.5rem 0 0.9rem; transition: color .3s; }
+.feat:hover .feat-text h2 { color: var(--card-accent, var(--accent)); }
+.feat-text p {
+  font-family: var(--font-serif);
+  color: var(--text-dim);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  max-width: 34ch;
+  margin-bottom: 1.25rem;
+}
+.feat-link {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: var(--font-head);
+  font-size: var(--fs-sm);
+  letter-spacing: .04em;
+  color: var(--text);
+  border-bottom: 1px solid var(--text);
+  padding-bottom: .15rem;
+}
+.feat:focus-visible { outline: 2px solid var(--card-accent, var(--accent)); outline-offset: 4px; }
+
+.featured-all {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: clamp(2rem, 4vw, 3rem) var(--gutter) 0;
+  display: flex;
+  justify-content: flex-end;
+}
+.featured-all a {
+  font-family: var(--font-head);
+  font-size: var(--fs-lead);
+  color: var(--text);
+  border-bottom: 1px solid var(--text);
+  padding-bottom: .2rem;
+  transition: color .3s, border-color .3s;
+}
+.featured-all a:hover { color: var(--accent); border-color: var(--accent); }
 
 /* ==========================================================================
    ABOUT TEASER (accueil)
@@ -751,33 +763,90 @@ h1 em, h2 em, h3 em,
 /* ==========================================================================
    CASE STUDY — pages projet individuelles
    ========================================================================== */
-.case-hero {
+/* -------- couverture typographique --------
+   Chaque projet s'ouvre sur une page presque vide : le numéro en très grand
+   (teinté à la couleur du projet), le titre, une phrase — et beaucoup de
+   blanc. L'image n'arrive qu'au scroll suivant, en pleine largeur et en
+   pleine lumière, sans voile noir pour y poser du texte. Le rendu est
+   ainsi montré tel qu'il a été dessiné. */
+.case-cover {
   position: relative;
-  height: 92vh;
-  min-height: 480px;
-  overflow: hidden;
-  background: #14150f;
-}
-.case-hero img,
-.case-hero video {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-}
-.case-hero-overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(0deg, rgba(10,11,8,0.75) 0%, rgba(10,11,8,0.05) 40%, transparent 65%);
-}
-.case-hero-caption {
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  padding: clamp(1.5rem, 4vw, 3rem) var(--gutter);
+  min-height: 88svh;
   max-width: var(--container);
   margin: 0 auto;
-  color: var(--hero-text);
+  padding: clamp(9rem, 16vw, 13rem) var(--gutter) clamp(3rem, 6vw, 5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
 }
-.case-hero-caption .project-cat { color: var(--hero-text-dim); }
-.case-hero-caption h1 { font-size: var(--fs-h1); margin-top: 0.6rem; }
+.case-cover-num {
+  position: absolute;
+  right: calc(var(--gutter) - 0.05em);
+  top: clamp(4.5rem, 9vw, 7rem);
+  font-size: clamp(11rem, 32vw, 30rem);
+  /* teinte du projet, très diluée dans le fond ; le multiply hérité de
+     .bignum est neutralisé ici (pas d'image en dessous) */
+  color: #dad7cf;
+  color: color-mix(in srgb, var(--accent-project) 16%, var(--bg));
+  mix-blend-mode: normal;
+}
+.case-cover-inner { position: relative; z-index: 1; max-width: 46ch; }
+.case-cover .project-cat { margin-bottom: 1rem; max-width: 40ch; }
+.case-cover h1 {
+  font-size: var(--fs-display);
+  margin-bottom: 1.5rem;
+  max-width: 13ch; /* force un titre sur deux lignes, en colonne étroite */
+}
+.case-cover-lead {
+  font-family: var(--font-serif);
+  font-size: var(--fs-lead);
+  color: var(--text-dim);
+  line-height: 1.55;
+  max-width: 44ch;
+}
+
+/* -------- image de couverture : pleine largeur, pleine lumière --------
+   Enfant direct de <main> (qui occupe toute la largeur) : pas besoin du
+   "breakout" 100vw, qui déborde de la largeur de la barre de scroll. */
+.case-figure {
+  width: 100%;
+  position: relative;
+}
+.case-figure img { width: 100%; display: block; }
+/* couverture vidéo (Effet Morpho) : même gabarit que l'image, en 16/9 */
+.case-figure video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+  background: #000;
+}
+.case-figure figcaption {
+  max-width: var(--container);
+  margin: 0.85rem auto 0;
+  padding: 0 var(--gutter);
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+}
+/* variante : l'image reste dans le conteneur (planches presque carrées,
+   qui seraient trop hautes en pleine largeur) */
+.case-figure--contained {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+.case-figure--contained figcaption { padding: 0; }
+/* posée sur la grille d'une .case-section, la planche hérite déjà des
+   gouttières de la section : on ne les double pas */
+.case-section .case-figure--contained { padding: 0; margin: 0; width: 100%; max-width: none; }
+/* rythme vertical entre deux planches qui se suivent sans texte entre elles */
+.case-figure + .case-figure,
+.case-figure + .case-pair,
+.case-pair + .case-figure,
+.case-pair + .case-pair,
+.case-plan + .case-figure,
+.case-figure + .case-plan { margin-top: clamp(2rem, 4vw, 3rem); }
 
 /* -------- fiche technique du projet --------
    Le réflexe du portfolio d'architecture : avant le récit, les faits.
@@ -803,12 +872,71 @@ h1 em, h2 em, h3 em,
 }
 .case-facts dd { font-size: var(--fs-sm); color: var(--text); line-height: 1.45; }
 
+/* -------- corps de page : texte / image / citation en alternance --------
+   Un bloc de texte est posé sur la grille 12 colonnes, tantôt à gauche,
+   tantôt à droite (.case-section--right), pour que la page respire au lieu
+   d'empiler tout le texte puis toutes les images. */
+.case-section {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: clamp(3.5rem, 7vw, 6rem) var(--gutter);
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: clamp(1rem, 2.5vw, 2.5rem);
+}
+.case-section > * { grid-column: 2 / 9; }
+.case-section--right > * { grid-column: 5 / 12; }
+.case-section--wide > * { grid-column: 2 / 12; }
+.case-section .project-desc { font-size: var(--fs-body); }
+.case-section .project-desc:last-child { margin-bottom: 0; }
+.case-section .project-tags { margin-top: 0.5rem; }
+
+/* citation tirée du texte du projet, en gros, filet à la couleur du projet */
+.case-pull {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 4rem) var(--gutter);
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: clamp(1rem, 2.5vw, 2.5rem);
+}
+.case-pull p {
+  grid-column: 3 / 12;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.45rem, 3vw, 2.4rem);
+  line-height: 1.3;
+  color: var(--text);
+  padding-left: clamp(1.25rem, 2.5vw, 2rem);
+  border-left: 3px solid var(--accent-project);
+}
+
+/* deux planches côte à côte (coupes, trames, diagrammes) */
+.case-pair {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1rem, 2.5vw, 2.5rem);
+}
+.case-pair figure { margin: 0; }
+.case-pair img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  background: var(--bg-alt);
+  display: block;
+}
+.case-pair figcaption { margin-top: 0.6rem; font-size: var(--fs-xs); color: var(--text-faint); }
+
+/* ancienne colonne centrée, encore utilisée par la palette/le programme */
 .case-body {
   max-width: 900px;
   margin: 0 auto;
   padding: clamp(3.5rem, 7vw, 6rem) var(--gutter) clamp(2rem, 4vw, 3rem);
 }
-/* la largeur de lecture prime : on garde --measure meme dans la colonne large */
 .case-body .project-desc { font-size: var(--fs-body); }
 
 .case-nav {
@@ -924,18 +1052,14 @@ h1 em, h2 em, h3 em,
   .project-gallery { --gallery-cols: 1 !important; }
 }
 
-/* -------- plan de masse en vedette — déborde en pleine largeur d'écran -------- */
+/* -------- plan de masse en vedette — pleine largeur d'écran -------- */
 /* Un plan de masse détaillé (noue, calepinage des pavés...) a besoin de place :
-   on le laisse déborder de la colonne de texte pour occuper toute la largeur
-   du viewport, quitte à sortir du conteneur --container. Technique de
-   "full-bleed breakout" : sans cette astuce, .body { overflow-x:hidden }
-   n'est pas nécessaire, mais elle protège quand même d'un débordement lié à
-   la barre de scroll verticale. */
+   il occupe toute la largeur du viewport, hors du conteneur --container.
+   Comme .case-figure, c'est un enfant direct de <main> : largeur 100%
+   suffit, sans breakout 100vw (qui déborderait de la barre de scroll). */
 .case-plan {
-  width: 100vw;
+  width: 100%;
   position: relative;
-  left: 50%;
-  margin-left: -50vw;
   margin-bottom: clamp(2rem, 4vw, 3rem);
 }
 .case-plan img {
@@ -976,6 +1100,10 @@ h1 em, h2 em, h3 em,
 
 /* -------- plant palette (text list, see comment in confluant.html re: copyright) -------- */
 .palette-vegetale { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+/* dans une .case-section, la palette est seule sur sa rangée : le filet
+   suffit, pas besoin de l'espace au-dessus */
+.case-section .palette-vegetale { margin-top: 0; }
+.case-section .project-video { margin-top: 0; }
 .palette-label {
   display: block;
   font-size: 0.72rem;
@@ -1584,6 +1712,12 @@ h1 em, h2 em, h3 em,
    ========================================================================== */
 @media (max-width: 1024px) {
   .about-grid, .contact { grid-template-columns: 1fr; }
+  .case-section > *, .case-section--right > *, .case-section--wide > * { grid-column: 1 / 13; }
+  .case-pull p { grid-column: 1 / 13; }
+  .feat-media, .feat--reverse .feat-media { grid-column: 1 / 13; }
+  .feat-text, .feat--reverse .feat-text { grid-column: 1 / 13; grid-row: auto; padding-top: 1.25rem; }
+  .feat--reverse .feat-num { right: auto; left: var(--gutter); }
+  .pcard:nth-child(n) { grid-column: 1 / 13; margin-top: 0; }
   .about-media { position: static; max-width: 340px; }
   .teaser-grid { grid-template-columns: 1fr; }
   .teaser-media { max-width: 320px; }
@@ -1618,11 +1752,10 @@ h1 em, h2 em, h3 em,
 
   .about-meta { grid-template-columns: 1fr; gap: 1.25rem; }
   .footer-inner { grid-template-columns: 1fr; }
+  .case-pair { grid-template-columns: 1fr; }
+  .case-cover { min-height: 70svh; }
+  .case-cover-num { font-size: clamp(8rem, 40vw, 14rem); top: clamp(4rem, 12vw, 6rem); }
   .hero-footer { flex-direction: column; align-items: flex-start; }
-  /* mobile : on garde l'asymétrie des formats mais on annule le décalage vertical,
-     qui n'a plus de sens sur une seule carte visible à la fois */
-  .carousel-card,
-  .carousel-card:nth-child(2) { flex-basis: 82vw; margin-top: 0; }
   .case-nav { flex-direction: column; align-items: flex-start; }
   .case-nav-link.next { align-items: flex-start; text-align: left; }
 }
@@ -1630,6 +1763,4 @@ h1 em, h2 em, h3 em,
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   [data-reveal] { opacity: 1; transform: none; }
-  /* .carousel-track déclare son propre scroll-behavior (non hérité de html) */
-  .carousel-track { scroll-behavior: auto; }
 }

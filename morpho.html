@@ -33,7 +33,7 @@
       <span class="logo-sub">Architecture&nbsp;du&nbsp;Paysage</span>
     </a>
     <nav class="main-nav" id="mainNav">
-      <a href="index.html#projets" class="nav-link"><span>01</span>Projets</a>
+      <a href="projets.html" class="nav-link"><span>01</span>Projets</a>
       <a href="approche.html" class="nav-link"><span>02</span>Approche</a>
       <a href="visites.html" class="nav-link"><span>03</span>Visites</a>
       <a href="about.html" class="nav-link"><span>04</span>À propos</a>
@@ -48,23 +48,17 @@
 <main id="top">
 
   <!-- ============================================================ -->
-  <!-- HERO DU PROJET — vidéo plein cadre (muette, boucle) -->
+  <!-- COUVERTURE TYPOGRAPHIQUE — numéro, titre, une phrase, du blanc. -->
   <!-- ============================================================ -->
-  <section class="case-hero">
-    <!--
-      Vidéo silencieuse en boucle — extrait de la vidéo 3D fournie
-      (effet morpho.mp4), recadré pour ne plus montrer le carton de titre
-      "EFFET MORPHO" ni son filigrane résiduel (visible entre ~6s et ~14s
-      dans le fichier d'origine). Le fichier complet, avec le son et ce
-      carton de titre, est proposé plus bas dans "Vidéo complète du projet".
-    -->
-    <video autoplay muted loop playsinline poster="assets/images/projet-02-morpho-ambiance-lumiere.jpg">
-      <source src="assets/video/hero-loop-morpho.mp4" type="video/mp4">
-    </video>
-    <div class="case-hero-overlay"></div>
-    <div class="case-hero-caption">
-      <span class="project-cat">Biomimétisme &amp; Concours — Festival des Jardins, Arc-et-Senans</span>
-      <h1>Effet Morpho</h1>
+  <section class="case-cover">
+    <span class="bignum case-cover-num" aria-hidden="true">02</span>
+    <div class="case-cover-inner">
+      <span class="project-cat" data-reveal>Biomimétisme &amp; Concours — Festival des Jardins, Arc-et-Senans</span>
+      <h1 data-reveal>Effet Morpho</h1>
+      <p class="case-cover-lead" data-reveal>
+        Comment un papillon tropical peut-il réinventer un site classé au patrimoine
+        mondial&nbsp;?
+      </p>
     </div>
   </section>
 
@@ -91,14 +85,26 @@
   </dl>
 
   <!-- ============================================================ -->
-  <!-- TEXTE DU PROJET -->
+  <!-- VIDÉO DE COUVERTURE — pleine largeur, muette, en boucle.
+       Extrait de la vidéo 3D fournie (effet morpho.mp4), recadré pour ne
+       plus montrer le carton de titre "EFFET MORPHO" ni son filigrane
+       résiduel (visible entre ~6s et ~14s dans le fichier d'origine). Le
+       fichier complet, avec le son, est proposé plus bas. -->
   <!-- ============================================================ -->
-  <div class="case-body">
-    <span class="project-index" data-reveal>02</span>
+  <figure class="case-figure">
+    <video autoplay muted loop playsinline poster="assets/images/projet-02-morpho-ambiance-lumiere.jpg">
+      <source src="assets/video/hero-loop-morpho.mp4" type="video/mp4">
+    </video>
+    <figcaption>Extrait de la vidéo 3D du projet — boucle muette (version complète avec le son plus bas)</figcaption>
+  </figure>
+
+  <!-- ============================================================ -->
+  <!-- RÉCIT — texte, citation, image, texte, planches, en alternance -->
+  <!-- ============================================================ -->
+  <section class="case-section">
     <p class="project-desc" data-reveal>
-      Comment un papillon tropical peut-il réinventer un site classé au patrimoine mondial&nbsp;?
-      Conçu pour le Festival des jardins de la Saline Royale d'Arc-et-Senans — œuvre maîtresse de
-      Claude-Nicolas Ledoux — ce projet de concours s'inspire du papillon Morpho, dont
+      Conçu pour le Festival des jardins de la Saline Royale d'Arc-et-Senans — œuvre maîtresse
+      de Claude-Nicolas Ledoux — ce projet de concours s'inspire du papillon Morpho, dont
       l'irisation bleue ne provient d'aucun pigment mais de la diffraction de la lumière à
       travers une architecture nanométrique.
     </p>
@@ -107,9 +113,20 @@
       change selon qui le traverse, selon l'heure, selon la saison. Des strates végétales
       superposées filtrent et colorent la lumière rasante, des cheminements orientés révèlent des
       vues changeantes, une palette chromatique irisée — reflets bleu-vert, nuances dorées, ombres
-      profondes — dialogue avec la pierre ocre de Ledoux. Comme l'aile du Morpho, le site ne
-      montre jamais le même visage.
+      profondes — dialogue avec la pierre ocre de Ledoux.
     </p>
+  </section>
+
+  <div class="case-pull">
+    <p data-reveal>Comme l'aile du Morpho, le site ne montre jamais le même visage.</p>
+  </div>
+
+  <figure class="case-figure">
+    <img src="assets/images/projet-02-morpho-ambiance-lumiere.jpg" alt="Effet Morpho — rendu golden hour, parois dichroïques et cerisiers en fleurs" loading="lazy">
+    <figcaption>Ambiance — lumière rasante à travers les parois dichroïques</figcaption>
+  </figure>
+
+  <section class="case-section case-section--right">
     <p class="project-desc" data-reveal>
       Des parois en plexiglas recouvertes d'un film dichroïque tamisent la lumière solaire et
       projettent des reflets changeants et irisés sur les parcours, ornés d'une mosaïque de
@@ -124,27 +141,9 @@
       <li>Matérialité optique</li>
       <li>Concours international</li>
     </ul>
+  </section>
 
-    <!-- Vidéo complète du projet — le fichier fourni (effet morpho.mp4), avec le son
-         et sa narration ; lue au clic plutôt qu'en boucle muette. -->
-    <div class="project-video" data-reveal>
-      <span class="project-video-label">Vidéo complète du projet (avec le son)</span>
-      <div class="video-embed">
-        <video controls preload="none" poster="assets/images/projet-02-morpho-plan-masse.jpg">
-          <source src="assets/video/projet-02-morpho-full.mp4" type="video/mp4">
-        </video>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- PLANCHES TECHNIQUES -->
-  <!-- ============================================================ -->
-  <div class="project-gallery">
-    <figure>
-      <img src="assets/images/projet-02-morpho-plan-masse.jpg" alt="Plan de masse du jardin Effet Morpho — cheminement sinueux, mare teintée de bleu, mosaïque de carreaux récupérés" loading="lazy">
-      <figcaption>Plan de masse</figcaption>
-    </figure>
+  <div class="case-pair" data-reveal>
     <figure>
       <img src="assets/images/projet-02-morpho-coupe-zone1.jpg" alt="Coupe 1 — vue sur la zone 1, parois dichroïques et claustra en osier" loading="lazy">
       <figcaption>Coupe 1 — vue sur zone 1</figcaption>
@@ -153,11 +152,32 @@
       <img src="assets/images/projet-02-morpho-coupe-zone2.jpg" alt="Coupe 2 — vue sur la zone 2, piquets bicolores bleu et brun" loading="lazy">
       <figcaption>Coupe 2 — vue sur zone 2</figcaption>
     </figure>
-    <figure>
-      <img src="assets/images/projet-02-morpho-ambiance-nocturne.jpg" alt="Rendu d'ambiance — ponton et mare irisée, mosaïque de carreaux récupérés, Effet Morpho" loading="lazy">
-      <figcaption>Ambiance — ponton et mare irisée</figcaption>
-    </figure>
   </div>
+
+  <section class="case-section case-section--wide">
+    <figure class="case-figure case-figure--contained" data-reveal>
+      <img src="assets/images/projet-02-morpho-plan-masse.jpg" alt="Plan de masse du jardin Effet Morpho — cheminement sinueux, mare teintée de bleu, mosaïque de carreaux récupérés" loading="lazy">
+      <figcaption>Plan de masse</figcaption>
+    </figure>
+  </section>
+
+  <figure class="case-figure">
+    <img src="assets/images/projet-02-morpho-ambiance-nocturne.jpg" alt="Rendu d'ambiance — ponton et mare irisée, mosaïque de carreaux récupérés, Effet Morpho" loading="lazy">
+    <figcaption>Ambiance — ponton et mare irisée</figcaption>
+  </figure>
+
+  <!-- Vidéo complète du projet — le fichier fourni (effet morpho.mp4), avec le son
+       et sa narration ; lue au clic plutôt qu'en boucle muette. -->
+  <section class="case-section case-section--wide">
+    <div class="project-video" data-reveal>
+      <span class="project-video-label">Vidéo complète du projet (avec le son)</span>
+      <div class="video-embed">
+        <video controls preload="none" poster="assets/images/projet-02-morpho-plan-masse.jpg">
+          <source src="assets/video/projet-02-morpho-full.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </section>
 
   <!-- ============================================================ -->
   <!-- NAVIGATION VERS LE PROJET SUIVANT -->
@@ -167,7 +187,7 @@
       <span class="case-nav-label">← Projet précédent</span>
       <span class="case-nav-title">Le Jardin du Palimpseste</span>
     </a>
-    <a href="index.html#projets" class="case-nav-all">Tous les projets</a>
+    <a href="projets.html" class="case-nav-all">Tous les projets</a>
     <a href="confluant.html" class="case-nav-link next">
       <span class="case-nav-label">Projet suivant</span>
       <span class="case-nav-title">Confluant →</span>
@@ -184,7 +204,7 @@
     </div>
     <nav class="footer-nav" aria-label="Navigation de pied de page">
       <span class="footer-col-label">Le site</span>
-      <a href="index.html#projets">Projets</a>
+      <a href="projets.html">Projets</a>
       <a href="approche.html">Approche</a>
       <a href="visites.html">Visites &amp; conférences</a>
       <a href="about.html">À propos</a>

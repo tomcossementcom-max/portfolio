@@ -56,9 +56,11 @@ document.addEventListener('DOMContentLoaded', () => {
   /* CURRENT-PAGE NAV HIGHLIGHT                                    */
   /* ------------------------------------------------------------ */
   const currentPath = location.pathname.split('/').pop() || 'index.html';
+  // les pages projet (body.page-xxx) relèvent de l'entrée "Projets"
+  const isProjectPage = /(^|\s)page-\w+(\s|$)/.test(document.body.className);
   document.querySelectorAll('.nav-link').forEach(link => {
     const linkPath = link.getAttribute('href').split('#')[0] || 'index.html';
-    if (linkPath === currentPath) link.classList.add('is-current');
+    if (linkPath === currentPath || (isProjectPage && linkPath === 'projets.html')) link.classList.add('is-current');
   });
 
   /* ------------------------------------------------------------ */
@@ -75,111 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
         navToggle.setAttribute('aria-expanded', 'false');
       });
     });
-  }
-
-  /* ------------------------------------------------------------ */
-  /* CAROUSEL — index des projets (accueil) : flèches + glisser    */
-  /* + indicateur "01 / 03" et points de progression, tenus à jour  */
-  /* selon la carte la plus proche du bord gauche du carrousel.     */
-  /* Le scroll par flèche/point respecte prefers-reduced-motion :   */
-  /* saut instantané plutôt qu'animé quand la préférence est active.*/
-  /* ------------------------------------------------------------ */
-  const track = document.querySelector('.carousel-track');
-  if (track) {
-    const cards = [...track.querySelectorAll('.carousel-card')];
-    const prevBtn = document.querySelector('.carousel-arrow.prev');
-    const nextBtn = document.querySelector('.carousel-arrow.next');
-    const scrollBehavior = reduceMotion ? 'auto' : 'smooth';
-
-    const scrollByCard = dir => {
-      const card = track.querySelector('.carousel-card');
-      const gap = parseFloat(getComputedStyle(track).columnGap || 0);
-      const distance = card ? card.offsetWidth + gap : track.clientWidth * 0.8;
-      track.scrollBy({ left: dir * distance, behavior: scrollBehavior });
-    };
-    if (prevBtn) prevBtn.addEventListener('click', () => scrollByCard(-1));
-    if (nextBtn) nextBtn.addEventListener('click', () => scrollByCard(1));
-
-    // pointer drag-to-slide for desktop mouse users (le scroll tactile natif
-    // sur mobile continue de fonctionner indépendamment de ce code : on ne
-    // fait qu'ajouter la capacité de glisser à la souris, sans preventDefault)
-    let isDown = false, startX = 0, startScroll = 0, moved = false;
-    track.addEventListener('pointerdown', e => {
-      isDown = true; moved = false;
-      startX = e.clientX;
-      startScroll = track.scrollLeft;
-      track.classList.add('is-dragging');
-    });
-    window.addEventListener('pointermove', e => {
-      if (!isDown) return;
-      const dx = e.clientX - startX;
-      if (Math.abs(dx) > 4) moved = true;
-      track.scrollLeft = startScroll - dx;
-    });
-    window.addEventListener('pointerup', () => {
-      isDown = false;
-      track.classList.remove('is-dragging');
-    });
-    // prevent the click-through to a card link right after a drag
-    track.addEventListener('click', e => {
-      if (moved) { e.preventDefault(); e.stopPropagation(); }
-    }, true);
-
-    // Navigation clavier : quand une carte du carrousel a le focus (les cartes
-    // sont de vrais <a>, donc déjà atteignables au Tab), les flèches gauche/
-    // droite déplacent à la fois le scroll et le focus vers la carte
-    // voisine — pas besoin de sortir du carrousel pour le parcourir au clavier.
-    const scrollToCard = index => {
-      const target = cards[Math.max(0, Math.min(cards.length - 1, index))];
-      track.scrollTo({ left: target.offsetLeft - track.offsetLeft, behavior: scrollBehavior });
-      return target;
-    };
-    track.addEventListener('keydown', e => {
-      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
-      e.preventDefault();
-      const dir = e.key === 'ArrowRight' ? 1 : -1;
-      const fromIndex = Math.max(0, cards.indexOf(document.activeElement));
-      scrollToCard(fromIndex + dir).focus();
-    });
-
-    // indicateur de progression "01 / 03" + points + annonce aux lecteurs
-    // d'écran (aria-live) à chaque changement de diapositive.
-    const countEl = document.getElementById('carouselCount');
-    const dotsEl = document.getElementById('carouselDots');
-    const announceEl = document.getElementById('carouselAnnounce');
-    if (countEl && dotsEl && cards.length) {
-      const pad = n => String(n).padStart(2, '0');
-      const dots = cards.map((card, i) => {
-        const dot = document.createElement('button');
-        dot.className = 'carousel-dot';
-        dot.type = 'button';
-        dot.setAttribute('aria-label', `Aller au projet ${i + 1} sur ${cards.length}`);
-        dot.addEventListener('click', () => scrollToCard(i));
-        dotsEl.appendChild(dot);
-        return dot;
-      });
-
-      let activeIndex = -1;
-      const updateActive = () => {
-        let closest = 0, closestDist = Infinity;
-        cards.forEach((card, i) => {
-          const dist = Math.abs(card.offsetLeft - track.offsetLeft - track.scrollLeft);
-          if (dist < closestDist) { closestDist = dist; closest = i; }
-        });
-        if (closest === activeIndex) return;
-        activeIndex = closest;
-        dots.forEach((d, i) => d.classList.toggle('is-active', i === activeIndex));
-        countEl.textContent = `${pad(activeIndex + 1)} / ${pad(cards.length)}`;
-        if (announceEl) {
-          const title = cards[activeIndex].querySelector('h3');
-          announceEl.textContent = `Projet ${activeIndex + 1} sur ${cards.length} : ${title ? title.textContent : ''}`;
-        }
-      };
-
-      track.addEventListener('scroll', updateActive, { passive: true });
-      window.addEventListener('resize', updateActive);
-      updateActive();
-    }
   }
 
   /* ------------------------------------------------------------ */
@@ -214,8 +111,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
 
-      /* Staggered reveal for grouped items (tags, carousel cards) */
-      gsap.utils.toArray('.project-tags, .carousel-track').forEach(list => {
+      /* Staggered reveal for grouped items (tags) — pas les cartes de la
+         grille de projets : elles ont chacune leur data-reveal, et deux
+         tweens "from" sur le même élément se disputent l'opacité. */
+      gsap.utils.toArray('.project-tags').forEach(list => {
         gsap.from(list.children, {
           opacity: 0,
           y: 16,
