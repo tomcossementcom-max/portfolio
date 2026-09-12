@@ -1594,6 +1594,11 @@ h1 em, h2 em, h3 em,
     position: fixed;
     inset: 0;
     top: 0;
+    /* le backdrop-filter du header en fait le bloc conteneur de ce menu
+       fixe : sans hauteur explicite, le menu ferait 60px de haut (la
+       hauteur du header) et ses liens déborderaient sous le bandeau. */
+    height: 100vh;
+    height: 100svh;
     background: var(--bg);
     flex-direction: column;
     justify-content: center;
