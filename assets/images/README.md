@@ -1,9 +1,27 @@
 # Images
 
+## Formats et variantes — comment ça marche
+
+Chaque image existe en JPG (l'original, servi en repli) **et** en AVIF + WebP,
+en quatre largeurs : 800, 1200, 1600 px et pleine taille. Le navigateur choisit
+la plus petite qui suffit à l'écran (`srcset` + `sizes`) : un téléphone charge
+~50 Ko par image au lieu de 500–1100 Ko.
+
+Pour ajouter une image :
+
+1. dépose le JPG (2000 px de large ou plus) dans ce dossier ;
+2. lance `python tools/optimise-images.py` — il génère les variantes manquantes ;
+3. dans le HTML, copie un bloc `<picture>` existant (deux `<source>` avif/webp,
+   puis `<img src="…jpg" width height>`), en adaptant les noms et le `sizes`.
+
+Ne dépose pas de variante à la main : le script les nomme `nom-800.avif`, etc.
+
 ## Déjà en place (récupérées depuis ton dossier source `Dossier Portfolio Vertical v2/Links`)
 
 | Fichier | Usage | Source |
 |---|---|---|
+| `portrait-thomas-cossement.jpg` | À propos + teaser de l'accueil — la photo fournie par Thomas | — |
+| `projet-04-haccourt-plan-avp001.jpg`, `-avp002.jpg` | Haccourt — planches AVP, recadrées sans cartouche (voir haccourt.html) | PDF Atelier CUP |
 | `projet-01-palimpseste-aquarelle.jpg` | Palimpseste — média principal | `Perspective 1.png` |
 | `projet-02-morpho-ambiance-lumiere.jpg` | Effet Morpho — média principal | `Image(11)_upscale01.png` |
 | `projet-02-morpho-plan-masse.jpg` | Effet Morpho — planche plan | `Sans titre-5.1.png` |
@@ -24,8 +42,6 @@
 
 | Fichier attendu | Usage | Format conseillé |
 |---|---|---|
-| `hero-poster.jpg` | image de secours si tu remplaces la vidéo hero par une balise `<video>` | 2400px+, 16:9 |
-| `portrait-thomas-cossement.jpg` | Section À propos | 1600px+, 4:5 — **un candidat existe déjà dans ce dossier** (voir note ci-dessous) mais n'est pas branché dans `index.html` |
 | Vue aérienne + coupes techniques de gestion des eaux | Palimpseste — planches secondaires (optionnel) | pas de fichier autonome retrouvé, à exporter depuis Vectorworks/InDesign si tu veux les ajouter |
 | `projet-03-confluant-3d.mp4` (ou lien YouTube) | Confluant — vidéo 3D (un QR code y renvoyait dans le PDF original, lien non retrouvé) | — |
 | `approche-script-parametrique.jpg`, `approche-plan-technique.jpg`, `approche-ambiance-materiaux.jpg` | Page Approche — étapes 2, 3, 4 de la timeline | voir `approche.html`, ratio 4:3, 2000px+ |
@@ -34,22 +50,3 @@ Ton dossier OneDrive `Waremme/rendu final/fin fin/Thomas Cossement` contient aus
 `schéma d'intention.pdf` (diagramme de trame territoriale, basse résolution native ~490×535pt)
 et plusieurs planches jury complètes en PDF — pas encore utilisés, dis-le-moi si tu veux que je
 les exploite pour l'une des étapes de la page Approche.
-
-## ⚠️ Portrait — à confirmer avant usage
-
-`portrait-thomas-cossement.jpg` dans ce dossier a été généré depuis
-`Gemini_Generated_Image_lzn9gclzn9gclzn9.png` de ton dossier source : un portrait noir & blanc,
-mais qui porte un filigrane "généré par Gemini" en bas à droite — donc probablement une photo
-retouchée/stylisée par IA plutôt qu'un cliché brut. Il n'est **pas encore utilisé** dans
-`index.html` (le placeholder y est resté volontairement) : regarde le fichier, et si c'est bien
-toi et que le style te plaît, remplace le `<div class="media-placeholder...">` de la section
-"À propos" par `<img src="assets/images/portrait-thomas-cossement.jpg" alt="Thomas Cossement">`.
-Sinon, dépose directement la photo de ton choix sous ce même nom.
-
-## Palette végétale (Confluant)
-
-Les 24 espèces de la planche originale sont affichées en texte (noms latins) plutôt qu'en photos :
-les images de référence de ton dossier source sont des photos de pépinière portant une mention
-"copyright" dans leur nom de fichier — à ne pas republier telles quelles sur un site public.
-Si tu as les droits ou tes propres photos, tu peux les ajouter dans `.palette-vegetale`
-(section Confluant de `index.html`).
