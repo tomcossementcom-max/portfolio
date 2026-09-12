@@ -137,6 +137,37 @@ main { position: relative; }
 .fil-eau circle { fill: var(--water); opacity: 0; transition: opacity .6s ease; }
 .fil-eau.is-complete circle { opacity: 1; }
 
+/* ==========================================================================
+   TRANSITIONS ENTRE PAGES — View Transitions API (entre documents)
+   Chrome/Edge 126+, Safari 18.2+ : quand on clique une carte de l'index (ou
+   de la sélection de l'accueil), son numéro et son titre GRANDISSENT jusqu'à
+   devenir le numéro géant et le titre de la couverture du projet — et
+   l'inverse au retour. Le reste de la page fond ; le header ne bouge pas.
+   Les navigateurs sans support gardent le fondu JS de script.js.
+   Désactivé sous prefers-reduced-motion (le fondu JS l'est aussi).
+   ========================================================================== */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+}
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: .4s; }
+::view-transition-group(*) {
+  animation-duration: .6s;
+  animation-timing-function: var(--ease);
+}
+.site-header { view-transition-name: site-header; }
+::view-transition-old(site-header),
+::view-transition-new(site-header) { animation: none; }
+/* paires carte <-> couverture : mêmes noms, sur des pages différentes */
+.pcard:nth-child(1) .pcard-num, .page-palimpseste .case-cover-num { view-transition-name: num-01; }
+.pcard:nth-child(2) .pcard-num, .feat:not(.feat--reverse) .feat-num, .page-morpho .case-cover-num { view-transition-name: num-02; }
+.pcard:nth-child(3) .pcard-num, .page-confluant .case-cover-num { view-transition-name: num-03; }
+.pcard:nth-child(4) .pcard-num, .feat--reverse .feat-num, .page-haccourt .case-cover-num { view-transition-name: num-04; }
+.pcard:nth-child(1) h2, .page-palimpseste .case-cover h1 { view-transition-name: title-01; }
+.pcard:nth-child(2) h2, .feat:not(.feat--reverse) .feat-text h2, .page-morpho .case-cover h1 { view-transition-name: title-02; }
+.pcard:nth-child(3) h2, .page-confluant .case-cover h1 { view-transition-name: title-03; }
+.pcard:nth-child(4) h2, .feat--reverse .feat-text h2, .page-haccourt .case-cover h1 { view-transition-name: title-04; }
+
 /* Transition douce entre pages (voir js/script.js) : la page reste visible
    par défaut (jamais d'état "invisible en attendant le JS" — si le script
    est bloqué, lent, ou échoue, la page reste normalement visible et

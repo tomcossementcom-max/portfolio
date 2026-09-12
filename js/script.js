@@ -17,9 +17,12 @@ document.addEventListener('DOMContentLoaded', () => {
   /* vers un lien interne, pour un parcours plus continu. La page   */
   /* reste visible par défaut (voir commentaire CSS) : aucun risque */
   /* d'écran vide si ce script est lent ou ne s'exécute pas.        */
-  /* Se désactive complètement sous prefers-reduced-motion.         */
+  /* Se désactive sous prefers-reduced-motion, et là où le           */
+  /* navigateur anime lui-même la navigation (View Transitions API, */
+  /* voir le CSS) : le fondu JS viderait la page avant la capture.  */
   /* ------------------------------------------------------------ */
-  if (!reduceMotion) {
+  const nativeTransitions = 'onpageswap' in window;
+  if (!reduceMotion && !nativeTransitions) {
     const FADE_MS = 350;
     document.addEventListener('click', e => {
       if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
@@ -96,6 +99,36 @@ document.addEventListener('DOMContentLoaded', () => {
           stagger: 0.08,
           ease: 'power2.out',
           scrollTrigger: { trigger: list, start: 'top 88%' }
+        });
+      });
+
+      /* Le grand numéro de couverture dérive plus lentement que le scroll
+         et se dissout quand l'image arrive : un peu de profondeur, et la
+         couverture cède la place au projet lui-même. */
+      const coverNum = document.querySelector('.case-cover-num');
+      if (coverNum) {
+        gsap.to(coverNum, {
+          yPercent: 28,
+          opacity: 0,
+          ease: 'none',
+          scrollTrigger: { trigger: '.case-cover', start: 'top top', end: 'bottom top', scrub: 0.4 }
+        });
+      }
+
+      /* Les planches se révèlent par balayage, de haut en bas (comme le
+         fil d'eau), avec un très léger recul de l'image — plutôt que le
+         même fondu que le texte. Cartes de l'index et de la sélection :
+         balayage seul, leur zoom au survol est géré en CSS. */
+      gsap.utils.toArray('main .case-figure, main .case-plan, main .case-pair figure').forEach(fig => {
+        const media = fig.querySelector('img, video');
+        const tl = gsap.timeline({ scrollTrigger: { trigger: fig, start: 'top 88%' } });
+        tl.fromTo(fig, { clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)', duration: 1.1, ease: 'power3.out' }, 0);
+        if (media) tl.fromTo(media, { scale: 1.05 }, { scale: 1, duration: 1.5, ease: 'power2.out', clearProps: 'transform' }, 0);
+      });
+      gsap.utils.toArray('main .pcard-media, main .feat-media').forEach(fig => {
+        gsap.fromTo(fig, { clipPath: 'inset(0 0 100% 0)' }, {
+          clipPath: 'inset(0 0 0% 0)', duration: 1.1, ease: 'power3.out',
+          scrollTrigger: { trigger: fig, start: 'top 88%' }
         });
       });
     } else {
