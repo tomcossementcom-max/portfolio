@@ -26,7 +26,7 @@
 
   /* Corten décliné en deux valeurs : la même couleur de marque, mais
      lisible des deux côtés. --accent sur fond clair (4,76:1),
-     --accent-on-dark sur le hero et les légendes de cartes (5,37:1).
+     --accent-on-dark sur les fonds sombres (5,37:1).
      Sans ce dédoublement, une seule valeur échoue toujours d'un côté. */
   --accent: #a85a26;         /* acier corten — alternative "lichen" : #4F5E3C */
   --accent-on-dark: #c0723c; /* même corten, éclairci pour les fonds sombres */
@@ -35,25 +35,19 @@
   /* Accents "par projet" — source unique de vérité pour les 3 teintes,
      réutilisées à la fois sur les pages projet (via --accent-project,
      piloté par la classe .page-xxx sur <body> — voir plus bas) ET sur les
-     vignettes du carrousel en page d'accueil (via --card-accent, voir la
-     section CAROUSEL) : les deux endroits restent ainsi cohérents entre
-     eux sans dupliquer les valeurs. */
+     cartes de l'index et de la sélection (via --card-accent) : les deux
+     endroits restent ainsi cohérents entre eux sans dupliquer les valeurs. */
   --accent-palimpseste: #8a6a45; /* bronze/mousse, écho aux totems corten et à la friche */
   --accent-morpho: #3a7d7a;      /* bleu-vert irisé, écho au papillon Morpho */
   --accent-confluant: #3f5c3a;   /* vert profond, écho à la trame bleue et verte */
   --accent-haccourt: #4a6b7c;    /* bleu ardoise, écho à l'eau infiltrée et au grès */
-  --water: #4d84a6;              /* le fil d'eau — signature transversale (voir .fil-eau) */
+  --water: #3f7ca8;              /* le fil d'eau — signature transversale (voir .fil-eau) */
 
   /* Le corten reste la couleur de marque générale du site (nav, boutons,
-     hero...) ; --accent-project n'est redéfini que sur le <body> de chaque
+     numéros de section) ; --accent-project n'est redéfini que sur le <body> de chaque
      page projet et n'est utilisé qu'à quelques endroits ciblés : numéro
      "01/02/03", titre au survol dans la nav précédent/suivant, tag actif. */
   --accent-project: var(--accent);
-
-  /* Hero (vidéo sombre) — toujours du texte clair, indépendant du thème clair du reste du site */
-  --hero-text: #f7f5ee;
-  --hero-text-dim: #cfccbf;
-  --hero-line: rgba(247, 245, 238, 0.28);
 
   /* ====================================================================
      TYPOGRAPHIE HYBRIDE
@@ -126,8 +120,8 @@ main { position: relative; }
   position: absolute;
   top: 0;
   /* au milieu de la gouttière du conteneur, quelle que soit la largeur */
-  left: calc(max(0px, 50% - var(--container) / 2) + var(--gutter) / 2 - 8px);
-  width: 16px;
+  left: calc(max(0px, 50% - var(--container) / 2) + var(--gutter) / 2 - 12px);
+  width: 24px;
   z-index: -1;
   pointer-events: none;
   overflow: visible;
@@ -135,7 +129,7 @@ main { position: relative; }
 .fil-eau path {
   fill: none;
   stroke: var(--water);
-  stroke-width: 1.25;
+  stroke-width: 2;
   stroke-linecap: round;
   transition: stroke-dashoffset .25s ease-out; /* légère traîne, comme un filet d'eau */
 }
@@ -172,7 +166,6 @@ em { font-style: italic; color: var(--accent); }
    l'italique véritable de Lora — ce qui crée en prime un contraste
    sans/serif volontaire. */
 h1 em, h2 em, h3 em,
-.hero-subtitle em,
 .manifesto-title em {
   font-family: var(--font-serif);
   font-weight: 500;
@@ -245,10 +238,7 @@ h1 em, h2 em, h3 em,
 }
 
 /* ==========================================================================
-   HEADER
-   Par défaut : fond clair, texte sombre (utilisé sur toutes les pages).
-   Sur la page d'accueil uniquement, la classe .on-hero (ajoutée en JS tant
-   que le hero vidéo est visible) le rend transparent avec du texte clair.
+   HEADER — fond clair, texte sombre, sur toutes les pages
    ========================================================================== */
 .site-header {
   position: fixed;
@@ -260,22 +250,6 @@ h1 em, h2 em, h3 em,
   border-bottom: 1px solid var(--line);
   transition: background .5s var(--ease), padding .5s var(--ease), border-color .5s var(--ease), color .4s;
 }
-
-.site-header.on-hero {
-  background: transparent;
-  backdrop-filter: none;
-  border-color: transparent;
-  padding-block: clamp(1.25rem, 3vw, 2rem);
-  color: var(--hero-text);
-}
-.site-header.on-hero .logo-sub,
-.site-header.on-hero .nav-link { color: var(--hero-text-dim); }
-.site-header.on-hero .nav-link:hover,
-.site-header.on-hero .logo-name { color: var(--hero-text); }
-.site-header.on-hero .nav-toggle span { background: var(--hero-text); }
-/* au-dessus de la vidéo, le corten foncé devient illisible : les numéros de
-   nav passent sur la déclinaison éclaircie */
-.site-header.on-hero .nav-link span { color: var(--accent-on-dark); }
 
 .header-inner {
   max-width: var(--container);
@@ -345,160 +319,43 @@ h1 em, h2 em, h3 em,
 .nav-toggle[aria-expanded="true"] span:last-child { transform: translateY(-3.5px) rotate(-45deg); }
 
 /* ==========================================================================
-   HERO (accueil uniquement) — vidéo plein cadre, texte toujours clair
+   COUVERTURE DE L'ACCUEIL — même gabarit que les couvertures de projet
+   (.case-cover), un peu plus basse pour que la vidéo pointe dès le premier
+   écran et donne envie de descendre.
    ========================================================================== */
-.hero {
-  position: relative;
-  height: 100svh;
-  min-height: 560px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  background: #14150f;
-}
-
-.hero-media {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-.hero-media video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  background:
-    /* voile allégé en haut : la vidéo était noyée sous un gris épais et on ne
-       comprenait plus ce qu'on regardait. Le bas reste sombre, uniquement
-       pour porter le texte. */
-    linear-gradient(180deg, rgba(10,11,8,0.18) 0%, rgba(10,11,8,0.04) 32%, rgba(10,11,8,0.46) 72%, rgba(10,11,8,0.88) 100%);
-}
-
-.hero-content {
-  position: relative;
-  z-index: 2;
-  padding: 0 var(--gutter) clamp(3rem, 8vw, 5.5rem);
-  max-width: var(--container);
-  margin: 0 auto;
-  width: 100%;
-}
-
-.hero-eyebrow {
-  font-size: 0.8rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--hero-text-dim);
-  margin-bottom: 1.25rem;
-}
-
-.hero-title {
-  font-size: var(--fs-display);
-  color: var(--hero-text);
-  margin-bottom: 1.25rem;
-}
-.hero-title .line { display: block; overflow: hidden; }
-
-.hero-subtitle {
-  font-family: var(--font-head);
-  font-weight: 400;
-  font-size: clamp(1.05rem, 2.2vw, 1.5rem);
-  color: var(--hero-text-dim);
-  max-width: 34ch;
-  line-height: 1.35;
-  margin-bottom: clamp(2rem, 5vw, 3rem);
-}
-
-.hero-footer {
+.home-cover { min-height: 72svh; }
+.home-cover-inner { max-width: none; }
+.home-cover h1 { max-width: 9ch; } /* "Thomas / Cossement" sur deux lignes */
+.home-cover-foot {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 1.5rem;
-  border-top: 1px solid var(--hero-line);
+  gap: 1rem 2rem;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
   padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
 }
-
-.hero-name {
+.home-cover-meta {
   font-family: var(--font-head);
-  font-size: 0.85rem;
-  letter-spacing: 0.06em;
-  color: var(--hero-text-dim);
-}
-
-.cta-scroll {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 0.85rem;
+  font-size: var(--fs-sm);
   letter-spacing: 0.04em;
-  color: var(--hero-text);
+  color: var(--text-faint);
 }
-.cta-line {
-  width: 100%;
-  height: 1px;
-  background: var(--hero-line);
-  position: relative;
-  overflow: hidden;
-}
-.cta-line::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--accent-on-dark);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform .5s var(--ease);
-}
-.cta-scroll:hover .cta-line::after { transform: scaleX(1); }
-
-.scroll-indicator {
-  position: absolute;
-  bottom: clamp(1.5rem, 4vw, 2.5rem);
-  right: var(--gutter);
-  z-index: 2;
-  width: 1px;
-  height: 60px;
-  background: var(--hero-line);
-  overflow: hidden;
-}
-.scroll-indicator span {
-  position: absolute;
-  top: -60px; left: 0;
-  width: 100%; height: 100%;
-  background: var(--accent-on-dark);
-  animation: scrollLine 2.2s ease-in-out infinite;
-}
-@keyframes scrollLine {
-  0% { top: -60px; }
-  60%, 100% { top: 60px; }
-}
-
-/* ==========================================================================
-   PULLQUOTE
-   ========================================================================== */
-.pullquote {
-  padding: clamp(5rem, 14vw, 9rem) var(--gutter);
-  text-align: center;
-  background: var(--bg-alt);
-  border-bottom: 1px solid var(--line);
-}
-.pullquote p {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 500;
-  font-size: clamp(1.6rem, 4.4vw, 3.2rem);
-  max-width: 20ch;
-  margin: 0 auto;
-  line-height: 1.3;
+.home-cover-link {
+  font-family: var(--font-head);
+  font-size: var(--fs-sm);
+  letter-spacing: 0.04em;
   color: var(--text);
+  border-bottom: 1px solid var(--text);
+  padding-bottom: .2rem;
+  transition: color .3s, border-color .3s;
 }
+.home-cover-link:hover { color: var(--accent); border-color: var(--accent); }
+/* la vidéo de l'accueil : jamais plus haute qu'un écran */
+.home-video video { max-height: 85svh; }
+.home-video figcaption a { color: var(--text-dim); border-bottom: 1px solid var(--line); transition: color .3s, border-color .3s; }
+.home-video figcaption a:hover { color: var(--accent); border-color: var(--accent); }
 
 /* ==========================================================================
    NUMÉROS EN TRÈS GRAND — la signature typographique du site
@@ -1754,7 +1611,6 @@ h1 em, h2 em, h3 em,
   .main-nav.is-open { transform: translateY(0); }
   .main-nav .nav-link { font-size: 1.5rem; color: var(--text); }
   .nav-toggle { display: flex; z-index: 200; }
-  .site-header.on-hero .nav-toggle span { background: var(--hero-text); }
   .main-nav.is-open ~ .nav-toggle span,
   .nav-toggle[aria-expanded="true"] span { background: var(--text) !important; }
 
@@ -1763,7 +1619,6 @@ h1 em, h2 em, h3 em,
   .case-pair { grid-template-columns: 1fr; }
   .case-cover { min-height: 70svh; }
   .case-cover-num { font-size: clamp(8rem, 40vw, 14rem); top: clamp(4rem, 12vw, 6rem); }
-  .hero-footer { flex-direction: column; align-items: flex-start; }
   .case-nav { flex-direction: column; align-items: flex-start; }
   .case-nav-link.next { align-items: flex-start; text-align: left; }
 }

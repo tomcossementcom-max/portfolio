@@ -5,11 +5,9 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  const header    = document.getElementById('siteHeader');
   const navToggle = document.getElementById('navToggle');
   const mainNav   = document.getElementById('mainNav');
   const yearEl    = document.getElementById('year');
-  const hero      = document.querySelector('.hero');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (yearEl) yearEl.textContent = new Date().getFullYear();
@@ -36,20 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.classList.add('is-leaving');
       setTimeout(() => { location.href = link.href; }, FADE_MS);
     });
-  }
-
-  /* ------------------------------------------------------------ */
-  /* HEADER — transparent/light text while over the hero video     */
-  /* (accueil uniquement) ; solid + dark text everywhere else       */
-  /* ------------------------------------------------------------ */
-  const toggleHeaderState = () => {
-    if (!hero) return; // pages without a hero keep the default solid header
-    const heroHeight = hero.offsetHeight;
-    header.classList.toggle('on-hero', window.scrollY < heroHeight - 80);
-  };
-  if (hero) {
-    toggleHeaderState();
-    window.addEventListener('scroll', toggleHeaderState, { passive: true });
   }
 
   /* ------------------------------------------------------------ */
@@ -86,18 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
     gsap.registerPlugin(ScrollTrigger);
 
     if (!reduceMotion) {
-      /* Hero intro — fade + rise, staggered lines (only on pages with a hero) */
-      if (hero) {
-        gsap.timeline({ defaults: { ease: 'power3.out' } })
-          .from('.hero-eyebrow', { opacity: 0, y: 24, duration: 0.9, delay: 0.3 })
-          .from('.hero-title .line', { opacity: 0, y: 40, duration: 1, stagger: 0.12 }, '-=0.5')
-          .from('.hero-subtitle', { opacity: 0, y: 24, duration: 0.9 }, '-=0.5')
-          .from('.hero-footer', { opacity: 0, y: 24, duration: 0.9 }, '-=0.4');
-      }
-
-      /* Generic fade-in-up reveal for every [data-reveal] element below the fold */
+      /* Generic fade-in-up reveal for every [data-reveal] element */
       document.querySelectorAll('main [data-reveal]').forEach(el => {
-        if (el.closest('.hero')) return; // hero handled by the intro timeline above
         gsap.from(el, {
           opacity: 0,
           y: 36,
@@ -150,11 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const dot  = document.createElementNS(NS, 'circle');
     svg.setAttribute('class', 'fil-eau');
     svg.setAttribute('aria-hidden', 'true');
-    dot.setAttribute('r', '2.5');
+    dot.setAttribute('r', '3.5');
     svg.append(path, dot);
     main.prepend(svg);
 
-    const W = 16, CX = W / 2;
+    const W = 24, CX = W / 2;
     let length = 0, height = 0;
 
     const draw = () => {
@@ -182,8 +156,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const build = () => {
       height = main.offsetHeight;
       if (!height) return;
-      const amp  = window.innerWidth < 720 ? 3.5 : 5.5;
-      const half = 260; // demi-longueur d'onde (px)
+      const amp  = window.innerWidth < 720 ? 5 : 9;
+      const half = 300; // demi-longueur d'onde (px)
       let d = `M ${CX} 0`, x = CX, y = 0, side = 1;
       while (y < height) {
         const y2 = Math.min(y + half, height);
@@ -197,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
       svg.setAttribute('height', height);
       path.setAttribute('d', d);
       dot.setAttribute('cx', CX);
-      dot.setAttribute('cy', height - 3);
+      dot.setAttribute('cy', height - 4);
       length = path.getTotalLength();
       path.style.strokeDasharray = `${length}`;
       draw();

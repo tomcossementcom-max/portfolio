@@ -53,54 +53,42 @@
 <main id="top">
 
   <!-- ============================================================ -->
-  <!-- HERO IMMERSIF — vidéo plein cadre -->
+  <!-- COUVERTURE — typographique, sur fond crème, comme les pages projet.
+       Le nom en très grand, la phrase-manifeste, et beaucoup de blanc ;
+       la vidéo n'arrive qu'en dessous, en pleine largeur et en pleine
+       lumière, sans voile sombre ni texte par-dessus. -->
   <!-- ============================================================ -->
-  <section class="hero" id="hero">
-
-    <div class="hero-media">
-      <!--
-        Vidéo silencieuse en boucle — extrait (13-38s, sans le carton de titre
-        "EFFET MORPHO" ni le filigrane résiduel) de la vidéo 3D fournie
-        (effet morpho.mp4), réencodée pour le web.
-        Pour changer cette vidéo : remplace assets/video/hero-loop-morpho.mp4
-        (16:9 ou proche, ~20-30s, muette, 8-12 Mo conseillés).
-      -->
-      <video autoplay muted loop playsinline poster="assets/images/projet-02-morpho-ambiance-lumiere.jpg">
-        <source src="assets/video/hero-loop-morpho.mp4" type="video/mp4">
-      </video>
-      <div class="hero-overlay"></div>
-    </div>
-
-    <div class="hero-content">
-      <p class="hero-eyebrow" data-reveal>Portfolio — Bachelier en architecture du paysage</p>
-      <h1 class="hero-title">
-        <span class="line" data-reveal>Thomas Cossement</span>
-      </h1>
-      <p class="hero-subtitle" data-reveal>
-        Construire avec le vivant : vers un urbanisme guidé par le <em>paysage</em>.
+  <section class="case-cover home-cover">
+    <div class="case-cover-inner home-cover-inner">
+      <span class="project-cat" data-reveal>Portfolio — Bachelier en architecture des jardins et du paysage</span>
+      <h1 data-reveal>Thomas Cossement</h1>
+      <p class="case-cover-lead" data-reveal>
+        Construire avec le vivant&nbsp;: vers un urbanisme guidé par le paysage.
       </p>
-      <div class="hero-footer" data-reveal>
-        <span class="hero-name">Quatre projets — de la friche industrielle à la place communale</span>
-        <a href="#projets" class="cta-scroll" id="ctaScroll">
-          <span class="cta-label">Découvrir les projets</span>
-          <span class="cta-line"></span>
-        </a>
-      </div>
     </div>
-
-    <div class="scroll-indicator" aria-hidden="true">
-      <span></span>
+    <div class="home-cover-foot" data-reveal>
+      <span class="home-cover-meta">Quatre projets — de la friche industrielle à la place communale</span>
+      <a href="projets.html" class="home-cover-link">Découvrir les projets →</a>
     </div>
   </section>
 
   <!-- ============================================================ -->
-  <!-- PULL-QUOTE DE TRANSITION -->
+  <!-- VIDÉO — pleine largeur, pleine lumière.
+       Extrait (13-38s, sans le carton de titre "EFFET MORPHO" ni le
+       filigrane résiduel) de la vidéo 3D fournie (effet morpho.mp4),
+       réencodée pour le web. Pour la changer : remplace
+       assets/video/hero-loop-morpho.mp4 (16:9, ~20-30s, muette) et
+       l'image poster ci-dessous. -->
   <!-- ============================================================ -->
-  <section class="pullquote">
-    <p data-reveal>
-      « Pas des espaces décoratifs, mais des espaces&nbsp;<em>qui comptent</em>. »
-    </p>
-  </section>
+  <figure class="case-figure home-video">
+    <video autoplay muted loop playsinline poster="assets/images/projet-02-morpho-ambiance-lumiere.jpg">
+      <source src="assets/video/hero-loop-morpho.mp4" type="video/mp4">
+    </video>
+    <figcaption>
+      Effet Morpho — extrait de la vidéo 3D du projet de concours pour la Saline Royale
+      d'Arc-et-Senans · <a href="morpho.html">voir le projet</a>
+    </figcaption>
+  </figure>
 
   <!-- ============================================================ -->
   <!-- SÉLECTION — deux projets en grand, puis renvoi vers l'index complet
