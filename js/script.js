@@ -78,21 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ------------------------------------------------------------ */
-  /* CUSTOM CURSOR (desktop only)                                  */
-  /* ------------------------------------------------------------ */
-  const cursor = document.querySelector('.cursor-dot');
-  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && cursor) {
-    window.addEventListener('mousemove', e => {
-      cursor.style.left = e.clientX + 'px';
-      cursor.style.top = e.clientY + 'px';
-    });
-    document.querySelectorAll('a, button, .carousel-card, .media-placeholder').forEach(el => {
-      el.addEventListener('mouseenter', () => cursor.classList.add('is-active'));
-      el.addEventListener('mouseleave', () => cursor.classList.remove('is-active'));
-    });
-  }
-
-  /* ------------------------------------------------------------ */
   /* CAROUSEL — index des projets (accueil) : flèches + glisser    */
   /* + indicateur "01 / 03" et points de progression, tenus à jour  */
   /* selon la carte la plus proche du bord gauche du carrousel.     */

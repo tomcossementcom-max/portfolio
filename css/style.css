@@ -18,11 +18,19 @@
   --bg-alt: #f1efe9;      /* variante légèrement plus mate, pour les bandes de rythme */
   --bg-panel: #ffffff;
   --line: rgba(44, 45, 42, 0.12);
+  /* Échelle de gris : 13:1 / 7:1 / 4,9:1 sur le fond crème — trois niveaux
+     de hiérarchie bien distincts, tous conformes AA même en petit corps. */
   --text: #2c2d2a;        /* graphite profond — jamais de noir pur */
   --text-dim: #55564e;
-  --text-faint: #8f8d80;
-  --accent: #b2622c;      /* acier corten — alternative "lichen" : #5C6E4A */
-  --accent-soft: #5f6b4a; /* lichen / mousse — alternative corten douce : #a8703f */
+  --text-faint: #726d5e;
+
+  /* Corten décliné en deux valeurs : la même couleur de marque, mais
+     lisible des deux côtés. --accent sur fond clair (4,76:1),
+     --accent-on-dark sur le hero et les légendes de cartes (5,37:1).
+     Sans ce dédoublement, une seule valeur échoue toujours d'un côté. */
+  --accent: #a85a26;         /* acier corten — alternative "lichen" : #4F5E3C */
+  --accent-on-dark: #c0723c; /* même corten, éclairci pour les fonds sombres */
+  --accent-soft: #5f6b4a;    /* lichen / mousse */
 
   /* Accents "par projet" — source unique de vérité pour les 3 teintes,
      réutilisées à la fois sur les pages projet (via --accent-project,
@@ -58,6 +66,26 @@
   --font-head: 'Space Grotesk', 'Inter', sans-serif;
   --font-body: 'Inter', sans-serif;
   --font-serif: 'Lora', 'Playfair Display', Georgia, serif;
+
+  /* ====================================================================
+     ÉCHELLE TYPOGRAPHIQUE — six tailles, réutilisées partout.
+     Avant, chaque composant inventait son propre clamp() : le site
+     « marchait » mais ne sonnait pas juste. Une seule échelle partagée,
+     c'est ce qui fait qu'un ensemble paraît dessiné plutôt qu'assemblé.
+     Pour rendre le site plus ou moins spectaculaire, ne touche qu'à
+     --fs-display et --fs-h1.
+     ==================================================================== */
+  --fs-display: clamp(2.6rem, 8vw, 7rem);    /* nom en hero, manifesto */
+  --fs-h1: clamp(2.3rem, 5.2vw, 4.4rem);     /* titre de page / de projet */
+  --fs-h2: clamp(1.9rem, 3.6vw, 3rem);       /* titre de section */
+  --fs-h3: clamp(1.2rem, 1.9vw, 1.55rem);    /* titre de bloc */
+  --fs-lead: clamp(1.08rem, 1.3vw, 1.22rem); /* chapô, intro */
+  --fs-body: 1.05rem;
+  --fs-sm: 0.85rem;
+  --fs-xs: 0.72rem;                          /* labels, méta, légendes */
+
+  /* Largeur de lecture confortable pour le corps de texte (~68 signes) */
+  --measure: 68ch;
 
   --container: 1440px;
   --container-projects: 1200px; /* largeur "planche d'exposition" de la section #projets */
@@ -130,6 +158,17 @@ h1, h2, h3, h4 {
 }
 
 em { font-style: italic; color: var(--accent); }
+/* Space Grotesk ne possède pas d'italique dessiné : dans les titres, le
+   navigateur fabriquait une oblique synthétique (lettres simplement
+   penchées), très visible en gros corps. On bascule ces mots sur
+   l'italique véritable de Lora — ce qui crée en prime un contraste
+   sans/serif volontaire. */
+h1 em, h2 em, h3 em,
+.hero-subtitle em,
+.manifesto-title em {
+  font-family: var(--font-serif);
+  font-weight: 500;
+}
 
 .section-num {
   display: block;
@@ -147,7 +186,7 @@ em { font-style: italic; color: var(--accent); }
 }
 
 .section-head h2 {
-  font-size: clamp(2.4rem, 6vw, 4.5rem);
+  font-size: var(--fs-h2);
   margin-bottom: 1.25rem;
 }
 
@@ -155,7 +194,7 @@ em { font-style: italic; color: var(--accent); }
   max-width: 46ch;
   color: var(--text-dim);
   font-family: var(--font-serif);
-  font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+  font-size: var(--fs-lead);
   line-height: 1.6;
 }
 
@@ -165,27 +204,6 @@ em { font-style: italic; color: var(--accent); }
    CDN fails to load). js/script.js only applies the hidden starting state
    via gsap.set() once GSAP has actually loaded, then animates it in.
    ========================================================================== */
-
-/* ==========================================================================
-   CURSOR
-   ========================================================================== */
-.cursor-dot {
-  position: fixed;
-  top: 0; left: 0;
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  background: var(--accent);
-  pointer-events: none;
-  z-index: 10000;
-  transform: translate(-50%, -50%);
-  mix-blend-mode: difference;
-  transition: width .25s var(--ease), height .25s var(--ease), opacity .25s;
-  opacity: 0;
-}
-@media (hover: hover) and (pointer: fine) {
-  .cursor-dot { opacity: 1; }
-}
-.cursor-dot.is-active { width: 46px; height: 46px; }
 
 /* ==========================================================================
    UTILITAIRES ACCESSIBILITÉ
@@ -247,6 +265,9 @@ em { font-style: italic; color: var(--accent); }
 .site-header.on-hero .nav-link:hover,
 .site-header.on-hero .logo-name { color: var(--hero-text); }
 .site-header.on-hero .nav-toggle span { background: var(--hero-text); }
+/* au-dessus de la vidéo, le corten foncé devient illisible : les numéros de
+   nav passent sur la déclinaison éclaircie */
+.site-header.on-hero .nav-link span { color: var(--accent-on-dark); }
 
 .header-inner {
   max-width: var(--container);
@@ -346,7 +367,10 @@ em { font-style: italic; color: var(--accent); }
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, rgba(10,11,8,0.35) 0%, rgba(10,11,8,0.12) 35%, rgba(10,11,8,0.5) 75%, rgba(10,11,8,0.88) 100%);
+    /* voile allégé en haut : la vidéo était noyée sous un gris épais et on ne
+       comprenait plus ce qu'on regardait. Le bas reste sombre, uniquement
+       pour porter le texte. */
+    linear-gradient(180deg, rgba(10,11,8,0.18) 0%, rgba(10,11,8,0.04) 32%, rgba(10,11,8,0.46) 72%, rgba(10,11,8,0.88) 100%);
 }
 
 .hero-content {
@@ -367,7 +391,7 @@ em { font-style: italic; color: var(--accent); }
 }
 
 .hero-title {
-  font-size: clamp(3.2rem, 9vw, 8.5rem);
+  font-size: var(--fs-display);
   color: var(--hero-text);
   margin-bottom: 1.25rem;
 }
@@ -376,7 +400,7 @@ em { font-style: italic; color: var(--accent); }
 .hero-subtitle {
   font-family: var(--font-head);
   font-weight: 400;
-  font-size: clamp(1.05rem, 2.2vw, 1.6rem);
+  font-size: clamp(1.05rem, 2.2vw, 1.5rem);
   color: var(--hero-text-dim);
   max-width: 34ch;
   line-height: 1.35;
@@ -419,7 +443,7 @@ em { font-style: italic; color: var(--accent); }
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--accent);
+  background: var(--accent-on-dark);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform .5s var(--ease);
@@ -440,7 +464,7 @@ em { font-style: italic; color: var(--accent); }
   position: absolute;
   top: -60px; left: 0;
   width: 100%; height: 100%;
-  background: var(--accent);
+  background: var(--accent-on-dark);
   animation: scrollLine 2.2s ease-in-out infinite;
 }
 @keyframes scrollLine {
@@ -532,12 +556,13 @@ em { font-style: italic; color: var(--accent); }
   height: 100%;
   object-fit: cover;
   pointer-events: none;
-  /* désaturé au repos, retrouve sa couleur + un zoom très léger au survol */
-  filter: grayscale(80%) saturate(85%);
-  transition: transform .6s ease, filter .6s ease;
+  /* couleur pleine au repos : les rendus et l'aquarelle sont l'atout du
+     portfolio, les cacher derrière un survol les rendait invisibles sur
+     mobile (où le survol n'existe pas). Le survol ne fait plus que zoomer. */
+  transition: transform .6s ease;
 }
 .carousel-card:hover img,
-.carousel-card:focus-visible img { transform: scale(1.02); filter: grayscale(0%) saturate(100%); }
+.carousel-card:focus-visible img { transform: scale(1.02); }
 
 /* Lavis de couleur commun à toutes les cartes (même mécanisme, même
    intensité) mais teinté par la couleur propre à chaque projet : "cadre"
@@ -574,11 +599,15 @@ em { font-style: italic; color: var(--accent); }
   font-family: var(--font-head);
   font-size: 0.78rem;
   letter-spacing: 0.14em;
-  color: var(--card-accent, var(--accent));
+  /* sur le dégradé sombre de la carte, les accents projet (bronze, vert
+     profond) tombent sous le seuil de lisibilité : le numéro reprend donc
+     le corten éclairci, et la couleur du projet s'exprime par le lavis au
+     survol et par le liseré de focus. */
+  color: var(--accent-on-dark);
   margin-bottom: 0.6rem;
 }
 .carousel-caption h3 {
-  font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+  font-size: var(--fs-h3);
   margin-bottom: 0.4rem;
   transition: transform .4s var(--ease);
 }
@@ -675,17 +704,16 @@ em { font-style: italic; color: var(--accent); }
 }
 .teaser-media img {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-  filter: grayscale(80%) saturate(85%);
-  transition: transform .6s ease, filter .6s ease;
+  transition: transform .6s ease;
 }
-.teaser-media:hover img { transform: scale(1.02); filter: grayscale(0%) saturate(100%); }
-.teaser-text h2 { font-size: clamp(2rem, 4.5vw, 3.2rem); margin-bottom: 1.25rem; }
+.teaser-media:hover img { transform: scale(1.02); }
+.teaser-text h2 { font-size: var(--fs-h2); margin-bottom: 1.25rem; }
 .teaser-text p {
   color: var(--text-dim);
   max-width: 56ch;
   margin-bottom: 1.75rem;
   font-family: var(--font-serif);
-  font-size: 1.1rem;
+  font-size: var(--fs-body);
   line-height: 1.6;
 }
 .teaser-link {
@@ -711,12 +739,12 @@ em { font-style: italic; color: var(--accent); }
   margin: 0 auto;
   border-bottom: 1px solid var(--line);
 }
-.page-hero h1 { font-size: clamp(2.6rem, 7vw, 5rem); margin-bottom: 1.25rem; }
+.page-hero h1 { font-size: var(--fs-h1); margin-bottom: 1.25rem; }
 .page-hero p {
   max-width: 52ch;
   color: var(--text-dim);
   font-family: var(--font-serif);
-  font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+  font-size: var(--fs-lead);
   line-height: 1.6;
 }
 
@@ -749,14 +777,39 @@ em { font-style: italic; color: var(--accent); }
   color: var(--hero-text);
 }
 .case-hero-caption .project-cat { color: var(--hero-text-dim); }
-.case-hero-caption h1 { font-size: clamp(2.4rem, 6vw, 5rem); margin-top: 0.6rem; }
+.case-hero-caption h1 { font-size: var(--fs-h1); margin-top: 0.6rem; }
+
+/* -------- fiche technique du projet --------
+   Le réflexe du portfolio d'architecture : avant le récit, les faits.
+   Elle casse aussi le bloc de texte qui suivait immédiatement le hero.
+   Le filet supérieur reprend la couleur du projet (--accent-project). */
+.case-facts {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: clamp(2rem, 4vw, 3rem) var(--gutter);
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+}
+.case-facts > div { border-top: 2px solid var(--accent-project); padding-top: 0.85rem; }
+.case-facts dt {
+  font-family: var(--font-head);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 0.4rem;
+}
+.case-facts dd { font-size: var(--fs-sm); color: var(--text); line-height: 1.45; }
 
 .case-body {
   max-width: 900px;
   margin: 0 auto;
   padding: clamp(3.5rem, 7vw, 6rem) var(--gutter) clamp(2rem, 4vw, 3rem);
 }
-.case-body .project-desc { font-size: clamp(1rem, 1.2vw, 1.1rem); max-width: none; }
+/* la largeur de lecture prime : on garde --measure meme dans la colonne large */
+.case-body .project-desc { font-size: var(--fs-body); }
 
 .case-nav {
   display: flex;
@@ -784,7 +837,7 @@ em { font-style: italic; color: var(--accent); }
 }
 .case-nav-title {
   font-family: var(--font-head);
-  font-size: clamp(1.1rem, 2vw, 1.6rem);
+  font-size: var(--fs-h3);
   transition: color .3s;
 }
 .case-nav-link:hover .case-nav-title { color: var(--accent-project); }
@@ -814,15 +867,15 @@ em { font-style: italic; color: var(--accent); }
   color: var(--text-faint);
 }
 .project-title {
-  font-size: clamp(2rem, 4vw, 3.4rem);
+  font-size: var(--fs-h1);
   margin-bottom: 1.5rem;
 }
 .project-desc {
   color: var(--text-dim);
-  max-width: 62ch;
+  max-width: var(--measure);
   margin-bottom: 1.3rem;
   font-family: var(--font-serif);
-  font-size: clamp(1.05rem, 1.2vw, 1.15rem);
+  font-size: var(--fs-body);
   line-height: 1.6;
 }
 .project-tags {
@@ -836,7 +889,6 @@ em { font-style: italic; color: var(--accent); }
   letter-spacing: 0.03em;
   padding: 0.5em 1em;
   border: 1px solid var(--line);
-  border-radius: 999px;
   color: var(--text-dim);
 }
 
@@ -889,10 +941,7 @@ em { font-style: italic; color: var(--accent); }
 .case-plan img {
   width: 100%;
   display: block;
-  filter: grayscale(20%);
-  transition: filter 0.6s ease;
 }
-.case-plan:hover img { filter: grayscale(0%); }
 .case-plan figcaption {
   max-width: var(--container);
   margin: 0.85rem auto 0;
@@ -912,11 +961,9 @@ em { font-style: italic; color: var(--accent); }
   object-fit: contain;
   background: var(--bg-alt);
   display: block;
-  /* désaturé au repos ; le survol restitue la couleur pleine + un zoom fluide */
-  filter: grayscale(80%) saturate(85%);
-  transition: transform .6s ease, filter .6s ease;
+  transition: transform .6s ease;
 }
-.project-gallery figure:hover img { transform: scale(1.02); filter: grayscale(0%) saturate(100%); }
+.project-gallery figure:hover img { transform: scale(1.02); }
 .project-gallery figcaption {
   position: absolute;
   left: 0; right: 0; bottom: 0;
@@ -950,7 +997,6 @@ em { font-style: italic; color: var(--accent); }
   font-style: italic;
   padding: 0.35em 0.75em;
   border: 1px solid var(--line);
-  border-radius: 999px;
   color: var(--text-faint);
 }
 
@@ -1058,7 +1104,7 @@ em { font-style: italic; color: var(--accent); }
 .manifesto-title {
   font-family: var(--font-head);
   font-weight: 600;
-  font-size: clamp(2.6rem, 8.4vw, 7.2rem);
+  font-size: var(--fs-display);
   line-height: 1.04;
   letter-spacing: -0.02em;
   max-width: 20ch;
@@ -1111,10 +1157,10 @@ em { font-style: italic; color: var(--accent); }
   margin: 0 auto;
   padding: clamp(4rem, 8vw, 7rem) var(--gutter) clamp(2rem, 4vw, 3rem);
 }
-.timeline-head h2 { font-size: clamp(2.2rem, 5vw, 3.8rem); margin: 0.75rem 0 1.25rem; }
+.timeline-head h2 { font-size: var(--fs-h2); margin: 0.75rem 0 1.25rem; }
 .timeline-head p {
   font-family: var(--font-serif);
-  font-size: clamp(1.05rem, 1.3vw, 1.2rem);
+  font-size: var(--fs-lead);
   color: var(--text-dim);
   max-width: 60ch;
   line-height: 1.6;
@@ -1199,14 +1245,14 @@ em { font-style: italic; color: var(--accent); }
 }
 
 .timeline-text h3 {
-  font-size: clamp(1.35rem, 2.3vw, 1.85rem);
+  font-size: var(--fs-h3);
   margin-bottom: 1rem;
 }
 .timeline-text p {
   font-family: var(--font-serif);
   color: var(--text-dim);
   line-height: 1.6;
-  font-size: 1.03rem;
+  font-size: var(--fs-body);
   margin-bottom: 1.4rem;
 }
 
@@ -1249,10 +1295,9 @@ em { font-style: italic; color: var(--accent); }
 .timeline-media-inner img {
   width: 100%; height: 100%;
   object-fit: cover;
-  filter: grayscale(65%) saturate(90%);
-  transition: filter 0.6s ease, transform 0.6s ease;
+  transition: transform 0.6s ease;
 }
-.timeline-media:hover .timeline-media-inner img { filter: grayscale(0%) saturate(100%); transform: scale(1.03); }
+.timeline-media:hover .timeline-media-inner img { transform: scale(1.03); }
 
 .timeline-media--placeholder .timeline-media-inner {
   top: 0;
@@ -1307,12 +1352,12 @@ em { font-style: italic; color: var(--accent); }
 .visit-section--perso { background: transparent; }
 
 .visit-head { margin-bottom: clamp(2rem, 4vw, 3rem); }
-.visit-head h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); margin: 0.6rem 0 1rem; }
+.visit-head h2 { font-size: var(--fs-h2); margin: 0.6rem 0 1rem; }
 .visit-head p {
   font-family: var(--font-serif);
   color: var(--text-dim);
-  max-width: 62ch;
-  font-size: clamp(1.02rem, 1.2vw, 1.12rem);
+  max-width: var(--measure);
+  font-size: var(--fs-lead);
   line-height: 1.6;
 }
 
@@ -1331,11 +1376,11 @@ em { font-style: italic; color: var(--accent); }
   color: var(--accent);
   margin-bottom: 0.7rem;
 }
-.visit-item h3 { font-size: clamp(1.1rem, 1.9vw, 1.4rem); margin-bottom: 0.75rem; }
+.visit-item h3 { font-size: var(--fs-h3); margin-bottom: 0.75rem; }
 .visit-item p {
   font-family: var(--font-serif);
   color: var(--text-dim);
-  font-size: 1rem;
+  font-size: var(--fs-body);
   line-height: 1.6;
 }
 
@@ -1358,10 +1403,10 @@ em { font-style: italic; color: var(--accent); }
 
 .about-bio {
   color: var(--text-dim);
-  max-width: 62ch;
+  max-width: var(--measure);
   margin-bottom: 1.3rem;
   font-family: var(--font-serif);
-  font-size: clamp(1.05rem, 1.15vw, 1.15rem);
+  font-size: var(--fs-body);
   line-height: 1.6;
 }
 
@@ -1406,8 +1451,8 @@ em { font-style: italic; color: var(--accent); }
   border-top: 1px solid var(--line);
 }
 
-.contact-info h2 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 1.5rem; }
-.contact-line { margin-bottom: 0.7rem; color: var(--text-dim); font-family: var(--font-serif); font-size: 1.05rem; }
+.contact-info h2 { font-size: var(--fs-h2); margin-bottom: 1.5rem; }
+.contact-line { margin-bottom: 0.7rem; color: var(--text-dim); font-family: var(--font-serif); font-size: var(--fs-body); }
 .contact-line a { border-bottom: 1px solid transparent; transition: border-color .3s, color .3s; }
 .contact-line a:hover { color: var(--accent); border-color: var(--accent); }
 
@@ -1474,15 +1519,62 @@ em { font-style: italic; color: var(--accent); }
    FOOTER
    ========================================================================== */
 .site-footer {
+  border-top: 1px solid var(--line);
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+}
+.footer-inner {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: clamp(2.5rem, 5vw, 4rem) var(--gutter) clamp(1.5rem, 3vw, 2rem);
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: start;
+}
+.footer-name {
+  display: block;
+  font-family: var(--font-head);
+  font-size: var(--fs-h3);
+  color: var(--text);
+  margin-bottom: 0.45rem;
+}
+.footer-role {
+  display: block;
+  max-width: 30ch;
+  color: var(--text-faint);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.03em;
+}
+.footer-col-label {
+  display: block;
+  font-family: var(--font-head);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 0.85rem;
+}
+.footer-nav, .footer-contact { display: flex; flex-direction: column; gap: 0.55rem; }
+.footer-nav a, .footer-contact a {
+  color: var(--text-dim);
+  width: fit-content;
+  border-bottom: 1px solid transparent;
+  transition: color .3s, border-color .3s;
+}
+.footer-nav a:hover, .footer-contact a:hover { color: var(--accent); border-color: var(--accent); }
+
+.footer-base {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 1.25rem var(--gutter) 2.25rem;
+  border-top: 1px solid var(--line);
   display: flex;
-  align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 1rem;
-  padding: 2rem var(--gutter);
-  border-top: 1px solid var(--line);
+  font-size: var(--fs-xs);
   color: var(--text-faint);
-  font-size: 0.8rem;
 }
 .back-top { transition: color .3s; }
 .back-top:hover { color: var(--accent); }
@@ -1520,6 +1612,7 @@ em { font-style: italic; color: var(--accent); }
   .nav-toggle[aria-expanded="true"] span { background: var(--text) !important; }
 
   .about-meta { grid-template-columns: 1fr; gap: 1.25rem; }
+  .footer-inner { grid-template-columns: 1fr; }
   .hero-footer { flex-direction: column; align-items: flex-start; }
   /* mobile : on garde l'asymétrie des formats mais on annule le décalage vertical,
      qui n'a plus de sens sur une seule carte visible à la fois */
