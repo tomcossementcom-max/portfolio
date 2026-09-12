@@ -104,24 +104,19 @@ body {
 }
 
 /* ==========================================================================
-   FIL D'EAU — la signature transversale (couche C)
-   Trois des quatre projets parlent d'eau (noue, trame bleue, infiltration).
-   Plutôt qu'un motif de fond (l'ancien filigrane topographique à 3 %, qui
-   ne signait rien), un seul trait fin, bleu, qui descend la marge gauche de
-   chaque page en méandre et se dessine au rythme du scroll, sa pointe
-   toujours un peu en avance sur la lecture (voir js/script.js). Il passe
-   sous les images et les bandes de fond (z-index négatif) et ne recouvre
-   jamais rien. Injecté par JS : sans script, il n'existe pas (décoratif).
-   La page Approche, qui a déjà sa propre ligne de scroll (la timeline),
-   le désactive avec <body data-fil="off">.
+   FIL D'EAU — la signature vivante du site (voir js/fil-eau.js)
+   Un seul trait bleu descend chaque page : dans la marge par défaut, entre
+   les blocs quand le HTML pose des ancres data-fil, dessiné au rythme du
+   scroll, et il réagit — au scroll rapide, au curseur, aux gouttes. Il
+   passe sous les images et les bandes de fond (z-index négatif) et ne
+   recouvre jamais rien. Injecté par JS : sans script, il n'existe pas.
+   La page Approche (qui a sa timeline) le désactive : <body data-fil="off">.
    ========================================================================== */
 main { position: relative; }
 .fil-eau {
   position: absolute;
-  top: 0;
-  /* au milieu de la gouttière du conteneur, quelle que soit la largeur */
-  left: calc(max(0px, 50% - var(--container) / 2) + var(--gutter) / 2 - 12px);
-  width: 24px;
+  top: 0; left: 0;
+  width: 100%;
   z-index: -1;
   pointer-events: none;
   overflow: visible;
@@ -131,11 +126,25 @@ main { position: relative; }
   stroke: var(--water);
   stroke-width: 2;
   stroke-linecap: round;
-  transition: stroke-dashoffset .25s ease-out; /* légère traîne, comme un filet d'eau */
+  stroke-linejoin: round;
 }
 /* le point d'arrivée : l'eau s'infiltre en bas de page */
-.fil-eau circle { fill: var(--water); opacity: 0; transition: opacity .6s ease; }
-.fil-eau.is-complete circle { opacity: 1; }
+.fil-eau-end { fill: var(--water); opacity: 0; transition: opacity .6s ease; }
+.fil-eau.is-complete .fil-eau-end { opacity: 1; }
+/* la goutte qui descend le long du trait, et l'onde à l'arrivée */
+.fil-eau-drop { fill: var(--water); }
+.fil-eau-ripple {
+  fill: none;
+  stroke: var(--water);
+  stroke-width: 1.5;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: fil-ripple .9s ease-out forwards;
+}
+@keyframes fil-ripple {
+  from { transform: scale(0.15); opacity: 0.9; }
+  to   { transform: scale(1);    opacity: 0; }
+}
 
 /* ==========================================================================
    TRANSITIONS ENTRE PAGES — View Transitions API (entre documents)
@@ -677,16 +686,39 @@ h1 em, h2 em, h3 em,
   overflow: hidden;
 }
 .case-cover-num {
+  /* un SVG : le numéro et ses courbes de niveau (voir le HTML des pages projet).
+     --num est l'ancienne taille de police ; le viewBox 200x120 place le glyphe
+     (corps 100) contre son bord droit, à 12 unités du bord. */
+  --num: clamp(11rem, 32vw, 30rem);
+  --ink: var(--accent-project);
   position: absolute;
-  right: calc(var(--gutter) - 0.05em);
-  top: clamp(4.5rem, 9vw, 7rem);
-  font-size: clamp(11rem, 32vw, 30rem);
-  /* teinte du projet, très diluée dans le fond ; le multiply hérité de
-     .bignum est neutralisé ici (pas d'image en dessous) */
-  color: #dad7cf;
-  color: color-mix(in srgb, var(--accent-project) 16%, var(--bg));
+  width: calc(var(--num) * 2);
+  height: auto;
+  /* +48px : les courbes de niveau débordent du glyphe de 48 px ; c'est la
+     courbe la plus large qui s'aligne sur la gouttière, pas le chiffre */
+  right: calc(var(--gutter) + 48px - var(--num) * 0.12);
+  top: calc(clamp(4.5rem, 9vw, 7rem) + 48px - var(--num) * 0.28);
+  overflow: visible;
   mix-blend-mode: normal;
 }
+.case-cover-num text {
+  font-family: var(--font-head);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+}
+.case-cover-num .core { fill: color-mix(in srgb, var(--ink) 16%, var(--bg)); }
+.case-cover-num .ring { fill: none; stroke-linejoin: round; stroke-linecap: round; }
+.case-cover-num .ring--1 { stroke: color-mix(in srgb, var(--ink) 30%, var(--bg)); stroke-width: 24px; }
+.case-cover-num .ring--2 { stroke: color-mix(in srgb, var(--ink) 23%, var(--bg)); stroke-width: 48px; }
+.case-cover-num .ring--3 { stroke: color-mix(in srgb, var(--ink) 17%, var(--bg)); stroke-width: 72px; }
+.case-cover-num .ring--4 { stroke: color-mix(in srgb, var(--ink) 12%, var(--bg)); stroke-width: 96px; }
+/* l'« effaceur » : même contour, 3 px plus fin, à la couleur du fond — ne
+   laisse du contour coloré qu'une ligne de 1,5 px de chaque côté */
+.case-cover-num .ring--erase { stroke: var(--bg); }
+.case-cover-num .ring--1.ring--erase { stroke-width: 21px; }
+.case-cover-num .ring--2.ring--erase { stroke-width: 45px; }
+.case-cover-num .ring--3.ring--erase { stroke-width: 69px; }
+.case-cover-num .ring--4.ring--erase { stroke-width: 93px; }
 .case-cover-inner { position: relative; z-index: 1; max-width: 46ch; }
 .case-cover .project-cat { margin-bottom: 1rem; max-width: 40ch; }
 .case-cover h1 {
@@ -1649,7 +1681,12 @@ h1 em, h2 em, h3 em,
   .footer-inner { grid-template-columns: 1fr; }
   .case-pair { grid-template-columns: 1fr; }
   .case-cover { min-height: 70svh; }
-  .case-cover-num { font-size: clamp(8rem, 40vw, 14rem); top: clamp(4rem, 12vw, 6rem); }
+  .case-cover-num {
+    --num: clamp(8rem, 40vw, 14rem);
+    right: calc(var(--gutter) + 24px - var(--num) * 0.12);
+    top: calc(clamp(4rem, 12vw, 6rem) + 24px - var(--num) * 0.28);
+  }
+  .case-cover-num .ring--3, .case-cover-num .ring--4 { display: none; } /* deux courbes suffisent en petit */
   .case-nav { flex-direction: column; align-items: flex-start; }
   .case-nav-link.next { align-items: flex-start; text-align: left; }
 }
@@ -1658,6 +1695,99 @@ h1 em, h2 em, h3 em,
   html { scroll-behavior: auto; }
   [data-reveal] { opacity: 1; transform: none; }
 }
+
+/* ==========================================================================
+   PLANCHES — visionneuse plein écran + planche contact (voir js/lightbox.js)
+   ========================================================================== */
+.lb-trigger { cursor: zoom-in; }
+.lb-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+body.lb-open { overflow: hidden; }
+.lb {
+  border: 0; padding: 0; margin: 0;
+  width: 100vw; height: 100vh; max-width: 100vw; max-height: 100vh;
+  background: rgba(20, 21, 15, 0.985);
+  color: #f7f5ee;
+}
+.lb::backdrop { background: rgba(20, 21, 15, 0.6); }
+.lb-stage {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  padding: 3.5rem var(--gutter) 4.5rem;
+}
+.lb-stage picture { display: contents; }
+.lb-stage img {
+  max-width: calc(100vw - 2 * var(--gutter));
+  max-height: calc(100vh - 8rem);
+  width: auto; height: auto;
+  object-fit: contain;
+  cursor: zoom-in;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+}
+/* zoom : taille réelle, le cadre devient défilant */
+.lb.is-zoomed .lb-stage { display: block; overflow: auto; padding: 0; cursor: zoom-out; }
+.lb.is-zoomed .lb-stage img { max-width: none; max-height: none; width: auto; cursor: zoom-out; box-shadow: none; }
+.lb-btn {
+  position: absolute; z-index: 2;
+  width: 3rem; height: 3rem;
+  border: 1px solid rgba(247, 245, 238, 0.35);
+  border-radius: 50%;
+  background: rgba(20, 21, 15, 0.6);
+  color: #f7f5ee;
+  font-family: var(--font-head); font-size: 1.25rem; line-height: 1;
+  cursor: pointer;
+  transition: background .3s, border-color .3s;
+}
+.lb-btn:hover, .lb-btn:focus-visible { background: rgba(247, 245, 238, 0.14); border-color: #f7f5ee; }
+.lb-close { top: 1rem; right: 1rem; }
+.lb-prev  { left: 1rem;  top: 50%; transform: translateY(-50%); }
+.lb-next  { right: 1rem; top: 50%; transform: translateY(-50%); }
+.lb-bar {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  display: flex; justify-content: space-between; align-items: baseline; gap: 2rem;
+  padding: 1rem var(--gutter) 1.25rem;
+  font-size: var(--fs-sm); color: #cfccbf;
+  pointer-events: none;
+}
+.lb-count { font-family: var(--font-head); letter-spacing: 0.08em; flex-shrink: 0; }
+
+.case-sheet {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: clamp(3rem, 6vw, 5rem) var(--gutter) clamp(3rem, 6vw, 4.5rem);
+  border-top: 1px solid var(--line);
+}
+.case-sheet-head {
+  display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: .5rem 2rem;
+  margin-bottom: clamp(1.25rem, 3vw, 2rem);
+}
+.case-sheet-head h2 { font-size: var(--fs-h3); }
+.case-sheet-head span { font-size: var(--fs-xs); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); }
+.case-sheet-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(.75rem, 1.5vw, 1.25rem);
+}
+.sheet-item {
+  position: relative;
+  border: 0; padding: 0; margin: 0;
+  background: var(--bg-alt);
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  cursor: zoom-in;
+}
+.sheet-item picture, .sheet-item img { width: 100%; height: 100%; }
+.sheet-item img { object-fit: cover; transition: transform .6s var(--ease), filter .4s; }
+.sheet-item:hover img, .sheet-item:focus-visible img { transform: scale(1.04); }
+.sheet-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.sheet-num {
+  position: absolute; left: .6rem; bottom: .5rem;
+  font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: 0.1em;
+  color: #f7f5ee; text-shadow: 0 1px 6px rgba(0,0,0,.5);
+}
+@media (max-width: 1024px) { .case-sheet-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 720px)  { .case-sheet-grid { grid-template-columns: repeat(2, 1fr); } .lb-prev, .lb-next { top: auto; bottom: 4.5rem; transform: none; } }
+@media print { .case-sheet, .lb { display: none !important; } }
 
 /* ==========================================================================
    REGARD — grille de photographies (regard.html)
@@ -1710,10 +1840,9 @@ h1 em, h2 em, h3 em,
     opacity: 1 !important; transform: none !important; clip-path: none !important;
   }
   .case-cover { min-height: 0; padding: 0 0 8mm; display: block; overflow: visible; }
-  .case-cover-num {
-    position: static; display: block; font-size: 30pt; line-height: 1;
-    color: #888 !important; mix-blend-mode: normal; margin-bottom: 4mm;
-  }
+  .case-cover-num { position: static; display: block; width: 40mm; margin-bottom: 4mm; }
+  .case-cover-num .ring { display: none; }
+  .case-cover-num .core { fill: #888; }
   .case-cover h1, .page-hero h1 { font-size: 26pt; max-width: none; margin-bottom: 4mm; }
   .case-cover-lead { font-size: 13pt; color: #333; max-width: none; }
   .case-facts { padding: 4mm 0; border-color: #ccc; gap: 4mm 8mm; }

@@ -75,7 +75,17 @@
   <!-- COUVERTURE TYPOGRAPHIQUE — numéro, titre, une phrase, du blanc. -->
   <!-- ============================================================ -->
   <section class="case-cover">
-    <span class="bignum case-cover-num" aria-hidden="true">04</span>
+    <svg class="bignum case-cover-num" viewBox="0 0 200 120" aria-hidden="true">
+      <!-- le numéro et ses courbes de niveau : le même glyphe repris en <use>,
+           contour épais coloré puis contour un peu plus fin à la couleur du fond,
+           quatre fois — il ne reste que les lignes d'offset, comme un relevé -->
+      <defs><text id="cover-num" x="188" y="100" text-anchor="end" font-size="100" vector-effect="non-scaling-stroke">04</text></defs>
+      <use href="#cover-num" class="ring ring--4"/><use href="#cover-num" class="ring ring--4 ring--erase"/>
+      <use href="#cover-num" class="ring ring--3"/><use href="#cover-num" class="ring ring--3 ring--erase"/>
+      <use href="#cover-num" class="ring ring--2"/><use href="#cover-num" class="ring ring--2 ring--erase"/>
+      <use href="#cover-num" class="ring ring--1"/><use href="#cover-num" class="ring ring--1 ring--erase"/>
+      <use href="#cover-num" class="core"/>
+    </svg>
     <div class="case-cover-inner">
       <span class="project-cat" data-reveal>Espace public &amp; désimperméabilisation — Haccourt (Oupeye)</span>
       <h1>Place bioclimatique</h1>
@@ -160,13 +170,13 @@
   </section>
 
   <div class="case-pull">
-    <p data-reveal>
+    <p data-reveal data-fil="left">
       Il s'agit moins d'ajouter du végétal décoratif que de transformer le sol lui-même.
     </p>
   </div>
 
   <section class="case-section case-section--right">
-    <p class="project-desc" data-reveal>
+    <p class="project-desc" data-fil="left" data-reveal>
       Les arbres existants sont relevés et conservés&nbsp;; de nouveaux sujets — haute-tige et
       multi-troncs — complètent le couvert pour porter de l'ombre sur les zones de séjour. Massifs
       mixtes d'arbustes et de vivaces, enrochements de grès et ganivelles dessinent les limites
@@ -290,5 +300,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="js/script.js"></script>
+<script src="js/fil-eau.js"></script>
+<script src="js/lightbox.js"></script>
 </body>
 </html>

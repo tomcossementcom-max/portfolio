@@ -75,7 +75,17 @@
   <!-- COUVERTURE TYPOGRAPHIQUE — numéro, titre, une phrase, du blanc. -->
   <!-- ============================================================ -->
   <section class="case-cover">
-    <span class="bignum case-cover-num" aria-hidden="true">02</span>
+    <svg class="bignum case-cover-num" viewBox="0 0 200 120" aria-hidden="true">
+      <!-- le numéro et ses courbes de niveau : le même glyphe repris en <use>,
+           contour épais coloré puis contour un peu plus fin à la couleur du fond,
+           quatre fois — il ne reste que les lignes d'offset, comme un relevé -->
+      <defs><text id="cover-num" x="188" y="100" text-anchor="end" font-size="100" vector-effect="non-scaling-stroke">02</text></defs>
+      <use href="#cover-num" class="ring ring--4"/><use href="#cover-num" class="ring ring--4 ring--erase"/>
+      <use href="#cover-num" class="ring ring--3"/><use href="#cover-num" class="ring ring--3 ring--erase"/>
+      <use href="#cover-num" class="ring ring--2"/><use href="#cover-num" class="ring ring--2 ring--erase"/>
+      <use href="#cover-num" class="ring ring--1"/><use href="#cover-num" class="ring ring--1 ring--erase"/>
+      <use href="#cover-num" class="core"/>
+    </svg>
     <div class="case-cover-inner">
       <span class="project-cat" data-reveal>Biomimétisme &amp; Concours — Festival des Jardins, Arc-et-Senans</span>
       <h1>Effet Morpho</h1>
@@ -142,7 +152,7 @@
   </section>
 
   <div class="case-pull">
-    <p data-reveal>Comme l'aile du Morpho, le site ne montre jamais le même visage.</p>
+    <p data-reveal data-fil="left">Comme l'aile du Morpho, le site ne montre jamais le même visage.</p>
   </div>
 
   <figure class="case-figure">
@@ -155,7 +165,7 @@
   </figure>
 
   <section class="case-section case-section--right">
-    <p class="project-desc" data-reveal>
+    <p class="project-desc" data-fil="left" data-reveal>
       Des parois en plexiglas recouvertes d'un film dichroïque tamisent la lumière solaire et
       projettent des reflets changeants et irisés sur les parcours, ornés d'une mosaïque de
       carreaux récupérés. Une mare légèrement teintée de bleu est bordée d'une série de piquets
@@ -268,5 +278,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="js/script.js"></script>
+<script src="js/fil-eau.js"></script>
+<script src="js/lightbox.js"></script>
 </body>
 </html>
