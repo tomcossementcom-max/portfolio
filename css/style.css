@@ -33,6 +33,7 @@
   --accent-palimpseste: #8a6a45; /* bronze/mousse, écho aux totems corten et à la friche */
   --accent-morpho: #3a7d7a;      /* bleu-vert irisé, écho au papillon Morpho */
   --accent-confluant: #3f5c3a;   /* vert profond, écho à la trame bleue et verte */
+  --accent-haccourt: #4a6b7c;    /* bleu ardoise, écho à l'eau infiltrée et au grès */
 
   /* Le corten reste la couleur de marque générale du site (nav, boutons,
      hero...) ; --accent-project n'est redéfini que sur le <body> de chaque
@@ -522,6 +523,7 @@ em { font-style: italic; color: var(--accent); }
 .carousel-card:nth-child(1) { --card-accent: var(--accent-palimpseste); }
 .carousel-card:nth-child(2) { --card-accent: var(--accent-morpho); }
 .carousel-card:nth-child(3) { --card-accent: var(--accent-confluant); }
+.carousel-card:nth-child(4) { --card-accent: var(--accent-haccourt); }
 
 .carousel-card img {
   position: absolute;
@@ -856,6 +858,7 @@ em { font-style: italic; color: var(--accent); }
 .page-morpho      { --accent-project: var(--accent-morpho); }
 .page-confluant   { --accent-project: var(--accent-confluant); }
 .page-palimpseste { --accent-project: var(--accent-palimpseste); }
+.page-haccourt    { --accent-project: var(--accent-haccourt); }
 
 .project-tags li:hover,
 .project-tags li:focus-visible {
@@ -1290,6 +1293,53 @@ em { font-style: italic; color: var(--accent); }
 }
 
 /* ==========================================================================
+   PAGE VISITES & CONFÉRENCES
+   Deux blocs : « dans le cadre des cours » et « dans la vie perso ».
+   Chaque entrée est une fiche sobre (filet + intitulé + texte), pour que la
+   page se lise comme un carnet plutôt que comme une galerie.
+   ========================================================================== */
+.visit-section {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: clamp(3rem, 6vw, 5rem) var(--gutter);
+}
+.visit-section + .visit-section { border-top: 1px solid var(--line); }
+.visit-section--perso { background: transparent; }
+
+.visit-head { margin-bottom: clamp(2rem, 4vw, 3rem); }
+.visit-head h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); margin: 0.6rem 0 1rem; }
+.visit-head p {
+  font-family: var(--font-serif);
+  color: var(--text-dim);
+  max-width: 62ch;
+  font-size: clamp(1.02rem, 1.2vw, 1.12rem);
+  line-height: 1.6;
+}
+
+.visit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: clamp(1.75rem, 3.5vw, 3rem);
+}
+.visit-item { border-top: 1px solid var(--line); padding-top: 1.25rem; }
+.visit-meta {
+  display: block;
+  font-family: var(--font-head);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.7rem;
+}
+.visit-item h3 { font-size: clamp(1.1rem, 1.9vw, 1.4rem); margin-bottom: 0.75rem; }
+.visit-item p {
+  font-family: var(--font-serif);
+  color: var(--text-dim);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* ==========================================================================
    ABOUT (page À propos)
    ========================================================================== */
 .about { background: var(--bg); }
@@ -1443,8 +1493,6 @@ em { font-style: italic; color: var(--accent); }
 @media (max-width: 1024px) {
   .about-grid, .contact { grid-template-columns: 1fr; }
   .about-media { position: static; max-width: 340px; }
-  .tools-grid { grid-template-columns: 1fr 1fr; }
-  .process-grid { grid-template-columns: 1fr 1fr; }
   .teaser-grid { grid-template-columns: 1fr; }
   .teaser-media { max-width: 320px; }
 }
@@ -1471,8 +1519,6 @@ em { font-style: italic; color: var(--accent); }
   .main-nav.is-open ~ .nav-toggle span,
   .nav-toggle[aria-expanded="true"] span { background: var(--text) !important; }
 
-  .tools-grid { grid-template-columns: 1fr; }
-  .process-grid { grid-template-columns: 1fr; }
   .about-meta { grid-template-columns: 1fr; gap: 1.25rem; }
   .hero-footer { flex-direction: column; align-items: flex-start; }
   /* mobile : on garde l'asymétrie des formats mais on annule le décalage vertical,
