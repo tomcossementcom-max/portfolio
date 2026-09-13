@@ -50,17 +50,22 @@
   --accent-project: var(--accent);
 
   /* ====================================================================
-     TYPOGRAPHIE HYBRIDE
-     - --font-head : sans géométrique/technique pour titres, UI, labels.
-       Pour passer à Syne, remplace 'Space Grotesk' par 'Syne' ici ET dans
-       le <link> Google Fonts de chaque page HTML (family=Syne:wght@...).
-     - --font-serif : serif éditoriale pour le corps de texte et les
-       descriptions de projet (esprit revue d'architecture). Alternative :
-       'Playfair Display' (plus contrastée, plus "titre") à la place de Lora.
+     TYPOGRAPHIE — deux familles, quatre rôles
+     - --font-display : Fraunces en grand corps (titres, couvertures,
+       noms sur la carte, manifeste). Serif souple à axe optique : les
+       mêmes lettres se dessinent autrement selon la taille.
+     - --font-serif : Fraunces en petit corps, pour le texte courant des
+       projets (chapôs, descriptions).
+     - --font-head : Instrument Sans pour tout ce qui est interface —
+       nav, labels en capitales, numéros, fiches, légendes.
+     - --font-body : Instrument Sans, texte courant hors projets.
+     Pour changer : ces quatre lignes, et le <link> Google Fonts de chaque
+     page HTML.
      ==================================================================== */
-  --font-head: 'Space Grotesk', 'Inter', sans-serif;
-  --font-body: 'Inter', sans-serif;
-  --font-serif: 'Lora', 'Playfair Display', Georgia, serif;
+  --font-display: 'Fraunces', 'Georgia', serif;
+  --font-serif: 'Fraunces', 'Georgia', serif;
+  --font-head: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
 
   /* ====================================================================
      ÉCHELLE TYPOGRAPHIQUE — six tailles, réutilisées partout.
@@ -74,8 +79,8 @@
   --fs-h1: clamp(2.3rem, 5.2vw, 4.4rem);     /* titre de page / de projet */
   --fs-h2: clamp(1.9rem, 3.6vw, 3rem);       /* titre de section */
   --fs-h3: clamp(1.2rem, 1.9vw, 1.55rem);    /* titre de bloc */
-  --fs-lead: clamp(1.08rem, 1.3vw, 1.22rem); /* chapô, intro */
-  --fs-body: 1.05rem;
+  --fs-lead: clamp(1.05rem, 1.25vw, 1.18rem); /* chapô, intro */
+  --fs-body: 1.02rem;
   --fs-sm: 0.85rem;
   --fs-xs: 0.72rem;                          /* labels, méta, légendes */
 
@@ -97,7 +102,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -182,11 +187,11 @@ main { position: relative; }
 ::view-transition-old(site-header),
 ::view-transition-new(site-header) { animation: none; }
 /* paires carte <-> couverture : mêmes noms, sur des pages différentes
-   (les marqueurs de la carte de l'accueil portent les mêmes, voir .map-site) */
-.map-site--01 .map-num { view-transition-name: num-01; } .map-site--01 .map-label b { view-transition-name: title-01; }
-.map-site--02 .map-num { view-transition-name: num-02; } .map-site--02 .map-label b { view-transition-name: title-02; }
-.map-site--03 .map-num { view-transition-name: num-03; } .map-site--03 .map-label b { view-transition-name: title-03; }
-.map-site--04 .map-num { view-transition-name: num-04; } .map-site--04 .map-label b { view-transition-name: title-04; }
+   (les pastilles de la carte de l'accueil portent les mêmes, voir .site) */
+.site--01 .site-dot b { view-transition-name: num-01; } .site--01 .site-label em { view-transition-name: title-01; }
+.site--02 .site-dot b { view-transition-name: num-02; } .site--02 .site-label em { view-transition-name: title-02; }
+.site--03 .site-dot b { view-transition-name: num-03; } .site--03 .site-label em { view-transition-name: title-03; }
+.site--04 .site-dot b { view-transition-name: num-04; } .site--04 .site-label em { view-transition-name: title-04; }
 .pcard:nth-child(1) .pcard-num, .page-palimpseste .case-cover-num { view-transition-name: num-01; }
 .pcard:nth-child(2) .pcard-num, .page-morpho .case-cover-num { view-transition-name: num-02; }
 .pcard:nth-child(3) .pcard-num, .page-confluant .case-cover-num { view-transition-name: num-03; }
@@ -212,23 +217,17 @@ ul { list-style: none; }
 img { max-width: 100%; height: auto; display: block; } /* height:auto : les attributs width/height des <img> ne fixent que le ratio, jamais la hauteur */
 
 h1, h2, h3, h4 {
-  font-family: var(--font-head);
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.015em;
   line-height: 1.05;
+  font-optical-sizing: auto;
 }
+h3, h4 { font-weight: 500; }
 
 em { font-style: italic; color: var(--accent); }
-/* Space Grotesk ne possède pas d'italique dessiné : dans les titres, le
-   navigateur fabriquait une oblique synthétique (lettres simplement
-   penchées), très visible en gros corps. On bascule ces mots sur
-   l'italique véritable de Lora — ce qui crée en prime un contraste
-   sans/serif volontaire. */
 h1 em, h2 em, h3 em,
-.manifesto-title em {
-  font-family: var(--font-serif);
-  font-weight: 500;
-}
+.manifesto-title em { font-weight: 400; }
 
 .section-num {
   display: block;
@@ -378,148 +377,133 @@ h1 em, h2 em, h3 em,
 .nav-toggle[aria-expanded="true"] span:last-child { transform: translateY(-3.5px) rotate(-45deg); }
 
 /* ==========================================================================
-   LA CARTE — l'accueil est un plan de situation (index.html)
-   Le cartouche en haut à gauche (comme sur un plan), la carte qui remplit
-   l'écran : rivières dessinées avec les mêmes lavis que la rivière des
-   autres pages, villes-repères, nord, échelle, encart. Les quatre projets
-   sont des liens HTML posés en % sur la carte (.map-site), avec le numéro
-   en courbes de niveau — le même qui devient géant sur la couverture du
-   projet (View Transitions).
+   LA CARTE — l'accueil est une affiche topographique (index.html)
+   Plein écran, rien autour : le relief en courbes de niveau (calculé par
+   js/carte.js), les rivières en rubans, les quatre projets à leur place.
+   La section fait plusieurs écrans ; la scène (.carte-stage) reste collée
+   pendant qu'on descend et se découvre au fil du scroll. Les marqueurs
+   sont des liens HTML posés en pixels sur la carte.
    ========================================================================== */
-.carte {
-  position: relative;
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: clamp(5.5rem, 9vw, 7rem) var(--gutter) clamp(2rem, 4vw, 3rem);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+.carte { position: relative; height: 100svh; }
+@media (prefers-reduced-motion: no-preference) { .carte { height: 340svh; } }
+.carte-stage {
+  position: sticky; top: 0;
+  height: 100svh; min-height: 560px;
+  overflow: hidden;
+  background: var(--bg);
 }
-.carte-cartouche {
-  position: absolute;
-  z-index: 2;
-  top: clamp(5.5rem, 9vw, 7rem);
-  left: var(--gutter);
-  max-width: 34rem;
-  padding-right: 1rem;
-}
-.carte-cartouche .project-cat { margin-bottom: 0.75rem; }
-.carte-cartouche h1 { font-size: var(--fs-h1); margin: 0 0 1rem; max-width: 9ch; }
-.carte-cartouche .case-cover-lead { font-size: var(--fs-lead); max-width: 34ch; }
-.carte-meta {
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--line);
-  display: grid;
-  gap: 0.35rem;
-  font-size: var(--fs-xs);
-}
-.carte-meta div { display: grid; grid-template-columns: 4.5rem 1fr; gap: 0.75rem; }
-.carte-meta dt { font-family: var(--font-head); letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); }
-.carte-meta dd { color: var(--text-dim); }
+.carte-zoom { position: absolute; inset: 0; transform-origin: var(--zx, 50%) var(--zy, 50%); }
+.carte-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
-/* la carte garde son format (1400 x 1000) et tient dans l'écran : sa largeur
-   est bornée par la hauteur disponible, pour que le cadre HTML (où sont posés
-   les marqueurs en %) coïncide exactement avec le dessin. Calée à droite,
-   comme le dessin sur un plan dont le cartouche occupe la gauche. */
-.carte-map {
-  position: relative;
-  width: min(100%, calc((100svh - clamp(7.5rem, 13vw, 10rem)) * 1.4));
-  aspect-ratio: 1400 / 1000;
-  margin: 0 0 0 auto;
-}
-.carte-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+/* le relief : lignes très fines, les multiples de 50 m un peu plus marquées */
+.carte-contours path { fill: none; stroke: var(--text); stroke-width: .7px; vector-effect: non-scaling-stroke; opacity: .16; }
+.carte-contours path.index { opacity: .32; stroke-width: .9px; }
+/* les rivières : un ruban plein et un halo */
+.river { fill: none; stroke: var(--water); stroke-linecap: round; stroke-linejoin: round; }
+.river-halo { opacity: .12; }
+.river-main { opacity: .9; }
+.carte-city circle { fill: var(--text); }
+.carte-city text { font-family: var(--font-head); font-size: 15px; letter-spacing: .14em; text-transform: uppercase; fill: var(--text-dim); }
 
-/* rivières : mêmes lavis que la rivière des pages (.fil-*) */
-.rv { fill: none; stroke: var(--water); stroke-linecap: round; stroke-linejoin: round; }
-.rv-bed   { opacity: 0.045; }
-.rv-water { opacity: 0.14; }
-.rv-deep  { opacity: 0.10; }
-.carte-svg .fil-current { stroke-width: 1.5; stroke-dasharray: 16 26; opacity: 0.36; }
-.carte-svg .fil-current--2 { stroke-dasharray: 9 20; opacity: 0.28; }
-.carte-hydro text, .carte-inset textPath {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 22px;
-  fill: var(--water);
-  opacity: 0.75;
-  letter-spacing: 0.06em;
-}
-.carte-hydro textPath { dominant-baseline: middle; }
-.carte-places circle { fill: none; stroke: var(--text-dim); stroke-width: 1.5; }
-.carte-places text, .carte-inset text { font-family: var(--font-head); fill: var(--text-dim); }
-.pl-name { font-size: 20px; font-weight: 500; }
-.pl-sub  { font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; fill: var(--text-faint); }
-.carte-north path, .carte-scale path { fill: none; stroke: var(--text-dim); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-.carte-north text, .carte-scale text { font-family: var(--font-head); font-size: 14px; letter-spacing: 0.1em; fill: var(--text-dim); }
-.carte-inset rect { fill: var(--bg); stroke: var(--line); stroke-width: 1.5; }
-.carte-inset text { font-family: var(--font-head); }
-.carte-inset .pl-sub { fill: var(--text-faint); }
-
-/* les quatre sites */
-.map-site {
+/* les sites : une pastille numérotée sur le lieu, le nom à côté */
+.site {
   position: absolute;
   left: var(--x); top: var(--y);
   transform: translate(-50%, -50%);
-  display: flex; align-items: center; gap: 0.35rem;
+  display: flex; align-items: center; gap: .9rem;
   color: var(--text);
-  text-decoration: none;
   z-index: 3;
 }
-.map-site--left { flex-direction: row-reverse; transform: translate(-50%, -50%); }
-/* le numéro reste centré sur le lieu : on décale l'étiquette, pas le numéro */
-.map-site .map-num { flex: none; width: clamp(3.4rem, 6.2vw, 5.6rem); height: auto; overflow: visible; }
-.map-site:not(.map-site--left) { transform: translate(calc(-1 * clamp(1.7rem, 3.1vw, 2.8rem)), -50%); }
-.map-site--left { transform: translate(calc(-100% + clamp(1.7rem, 3.1vw, 2.8rem)), -50%); }
-.map-num text { font-family: var(--font-head); font-weight: 600; letter-spacing: -0.04em; }
-.map-num .core { fill: color-mix(in srgb, var(--ink) 34%, var(--bg)); transition: fill .3s; }
-.map-num .ring { fill: none; stroke-linejoin: round; stroke-linecap: round; transition: stroke .3s; }
-.map-num .ring--1 { stroke: color-mix(in srgb, var(--ink) 40%, var(--bg)); stroke-width: 12px; }
-.map-num .ring--2 { stroke: color-mix(in srgb, var(--ink) 22%, var(--bg)); stroke-width: 24px; }
-.map-num .ring--erase { stroke: var(--bg); }
-.map-num .ring--1.ring--erase { stroke-width: 9.5px; }
-.map-num .ring--2.ring--erase { stroke-width: 21.5px; }
-.map-label {
-  display: flex; flex-direction: column; gap: 0.1rem;
-  font-family: var(--font-head);
-  line-height: 1.2;
-  white-space: nowrap;
+.site--left { flex-direction: row-reverse; }
+.site-dot {
+  flex: none;
+  width: clamp(2.6rem, 3.6vw, 3.4rem); height: clamp(2.6rem, 3.6vw, 3.4rem);
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1.5px solid var(--text);
+  display: grid; place-items: center;
+  font-family: var(--font-head); font-weight: 500; font-size: clamp(.8rem, 1vw, .95rem); letter-spacing: .08em;
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--bg) 70%, transparent);
+  transition: background .3s, border-color .3s, color .3s;
 }
-.map-site--left .map-label { text-align: right; align-items: flex-end; }
-.map-label b { font-weight: 600; font-size: clamp(0.85rem, 1.1vw, 1.05rem); transition: color .3s; }
-.map-label span { font-size: var(--fs-xs); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); }
-.map-site:hover .map-label b, .map-site:focus-visible .map-label b { color: var(--ink); }
-.map-site:hover .map-num .core { fill: color-mix(in srgb, var(--ink) 55%, var(--bg)); }
-.map-site:hover .map-num .ring--1 { stroke: color-mix(in srgb, var(--ink) 65%, var(--bg)); }
-.map-site:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; }
+.site-dot b { font-weight: 500; }
+.site-label { display: flex; flex-direction: column; gap: .15rem; line-height: 1.15; white-space: nowrap; }
+.site--left .site-label { align-items: flex-end; text-align: right; }
+.site-label em {
+  font-family: var(--font-display); font-style: italic; font-weight: 400;
+  font-size: clamp(1.25rem, 1.9vw, 1.85rem); color: var(--text);
+  transition: color .3s;
+}
+.site-label span { font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .14em; text-transform: uppercase; color: var(--text-faint); }
+.site-label sup { font-size: .6em; vertical-align: super; }
+.site:hover .site-dot, .site:focus-visible .site-dot { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.site:hover .site-label em { color: var(--ink); }
+.site:focus-visible { outline: none; }
+.site:focus-visible .site-dot { box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--ink); }
+/* pour que « translate(-50%, -50%) » centre la pastille (et non tout le lien) sur le lieu */
+.site { transform: translate(calc(-1 * var(--half)), -50%); --half: clamp(1.3rem, 1.8vw, 1.7rem); }
+.site--left { transform: translate(calc(-100% + var(--half)), -50%); }
 
-/* apparition : les rivières se dessinent, puis les sites arrivent un à un */
-@media (prefers-reduced-motion: no-preference) {
-  .carte-rivers .rv-bed, .carte-rivers .rv-water, .carte-rivers .rv-deep, .carte-inset .rv-bed, .carte-inset .rv-water, .carte-inset .rv-deep {
-    stroke-dasharray: 2400;
-    stroke-dashoffset: 2400;
-    animation: carte-draw 2.4s var(--ease) forwards;
-  }
-  .carte-rivers .fil-current, .carte-inset .fil-current, .carte-hydro, .carte-places, .carte-north, .carte-scale, .carte-inset text {
-    opacity: 0;
-    animation: carte-fade .8s ease-out 1.6s forwards;
-  }
-  .carte-inset .fil-current { opacity: 0; }
-  .map-site { opacity: 0; animation: carte-pop .7s var(--ease) both; }
-  .map-site--01 { animation-delay: 1.4s; }
-  .map-site--02 { animation-delay: 1.7s; }
-  .map-site--03 { animation-delay: 2.0s; }
-  .map-site--04 { animation-delay: 2.3s; }
+/* textes de la scène */
+.carte-title {
+  position: absolute; left: var(--gutter); bottom: clamp(2rem, 6vw, 4.5rem);
+  max-width: 34rem; z-index: 4;
 }
-@keyframes carte-draw { to { stroke-dashoffset: 0; } }
-@keyframes carte-fade { to { opacity: 1; } }
-@keyframes carte-pop {
-  from { opacity: 0; transform: translate(var(--tx, -50%), calc(-50% + 12px)); }
-  to   { opacity: 1; transform: translate(var(--tx, -50%), -50%); }
+.carte-title h1 { font-size: var(--fs-display); line-height: .98; margin-bottom: 1rem; }
+.carte-title p { font-family: var(--font-head); font-size: var(--fs-sm); letter-spacing: .06em; color: var(--text-dim); max-width: 40ch; }
+.carte-foot {
+  position: absolute; left: var(--gutter); right: var(--gutter); bottom: clamp(1.5rem, 4vw, 3rem);
+  display: flex; justify-content: space-between; align-items: flex-end; gap: 2rem; z-index: 4;
+  pointer-events: none;
 }
-.map-site:not(.map-site--left) { --tx: calc(-1 * clamp(1.7rem, 3.1vw, 2.8rem)); }
-.map-site--left { --tx: calc(-100% + clamp(1.7rem, 3.1vw, 2.8rem)); }
+.carte-foot > * { pointer-events: auto; }
+.carte-manifesto { font-family: var(--font-display); font-style: italic; font-size: clamp(1.15rem, 1.8vw, 1.6rem); line-height: 1.3; max-width: 26ch; text-wrap: balance; }
+.carte-more { font-family: var(--font-head); font-size: var(--fs-sm); letter-spacing: .06em; color: var(--text); border-bottom: 1px solid var(--text); padding-bottom: .2rem; white-space: nowrap; transition: color .3s, border-color .3s; }
+.carte-more:hover { color: var(--accent); border-color: var(--accent); }
+.carte-hint {
+  position: absolute; left: 50%; bottom: 1.4rem; transform: translateX(-50%);
+  font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .16em; text-transform: uppercase; color: var(--text-faint);
+  z-index: 4;
+}
+
+/* le zoom au clic : la carte plonge vers le site, les autres s'effacent */
+.carte-stage.is-zooming .carte-zoom { transform: scale(2.6); transition: transform .65s cubic-bezier(.7, 0, .3, 1); }
+.carte-stage.is-zooming .site:not(.is-target), .carte-stage.is-zooming .carte-foot, .carte-stage.is-zooming .carte-title, .carte-stage.is-zooming .carte-hint { opacity: 0 !important; transition: opacity .3s; }
+.carte-stage.is-zooming .site.is-target .site-label { opacity: 0; transition: opacity .3s; }
+
+/* header minimal sur l'accueil : le logo, et le menu derrière un bouton,
+   la carte remonte jusqu'en haut */
+body.home .site-header { background: transparent; backdrop-filter: none; border-color: transparent; }
+body.home .main-nav {
+  position: fixed; inset: 0; top: 0;
+  background: var(--bg);
+  display: flex; flex-direction: column; justify-content: center; gap: 1.6rem;
+  padding: 0 var(--gutter);
+  transform: translateY(-100%);
+  transition: transform .5s var(--ease);
+  z-index: 100;
+  height: 100svh;
+}
+body.home .main-nav.is-open { transform: translateY(0); }
+body.home .main-nav .nav-link { font-size: clamp(1.5rem, 3.4vw, 2.4rem); color: var(--text); }
+body.home .nav-toggle { display: flex; z-index: 200; }
+body.home .main-nav.is-open ~ .nav-toggle span,
+body.home .nav-toggle[aria-expanded="true"] span { background: var(--text) !important; }
+
+@media (max-width: 1024px) {
+  .site-label em { font-size: 1.2rem; }
+}
+@media (max-width: 720px) {
+  .carte-stage { min-height: 100svh; }
+  .site-dot { width: 2.2rem; height: 2.2rem; font-size: .72rem; box-shadow: none; }
+  .site { --half: 1.1rem; }
+  .site-label { display: none; } /* sur mobile, la liste sous la carte fait le travail */
+  .carte-city text { display: none; }
+  .carte-title { bottom: 6rem; max-width: 80vw; }
+  .carte-foot { flex-direction: column; align-items: flex-start; gap: 1rem; bottom: 1.5rem; }
+  .carte-manifesto { max-width: 22ch; }
+  .carte-hint { display: none; }
+}
 
 /* la légende : les quatre projets en ligne */
 .legende {
@@ -530,6 +514,7 @@ h1 em, h2 em, h3 em,
 }
 .legende-head { margin-bottom: clamp(2rem, 4vw, 3rem); }
 .legende-head h2 { font-size: var(--fs-h2); margin-bottom: 1rem; }
+.legende { border-top: 0; }
 .legende-head .section-intro a { color: var(--text); border-bottom: 1px solid var(--text); transition: color .3s, border-color .3s; }
 .legende-head .section-intro a:hover { color: var(--accent); border-color: var(--accent); }
 .legende-grid {
@@ -555,18 +540,8 @@ h1 em, h2 em, h3 em,
 
 @media (max-width: 1024px) {
   .legende-grid { grid-template-columns: repeat(2, 1fr); }
-  .map-label b { font-size: 0.8rem; }
 }
 @media (max-width: 720px) {
-  .carte { min-height: 0; padding-top: 5.5rem; }
-  .carte-cartouche { position: static; max-width: none; margin-bottom: 1.5rem; }
-  .carte-map { max-height: none; }
-  .map-site .map-num { width: 2.4rem; }
-  .map-site:not(.map-site--left) { transform: translate(-1.2rem, -50%); --tx: -1.2rem; }
-  .map-site--left { transform: translate(calc(-100% + 1.2rem), -50%); --tx: calc(-100% + 1.2rem); }
-  .map-label { display: none; } /* sur mobile, la légende sous la carte fait le travail */
-  /* et les petits textes de la carte (illisibles à cette taille) s'effacent : restent les rivières et les numéros */
-  .carte-hydro, .carte-places text, .carte-inset text, .carte-scale, .carte-north { display: none; }
   .legende-grid { grid-template-columns: 1fr; }
 }
 
@@ -579,8 +554,8 @@ h1 em, h2 em, h3 em,
    Sur les pages projet, il prend la teinte du projet (voir .case-cover-num).
    ========================================================================== */
 .bignum {
-  font-family: var(--font-head);
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-weight: 400;
   line-height: 0.82;
   letter-spacing: -0.05em;
   color: #dad7cf;
@@ -778,9 +753,9 @@ h1 em, h2 em, h3 em,
   mix-blend-mode: normal;
 }
 .case-cover-num text {
-  font-family: var(--font-head);
-  font-weight: 600;
-  letter-spacing: -0.05em;
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.04em;
 }
 .case-cover-num .core { fill: color-mix(in srgb, var(--ink) 16%, var(--bg)); }
 .case-cover-num .ring { fill: none; stroke-linejoin: round; stroke-linecap: round; }
@@ -1234,8 +1209,8 @@ h1 em, h2 em, h3 em,
   animation: manifestoIn 0.9s var(--ease) 0.1s forwards;
 }
 .manifesto-title {
-  font-family: var(--font-head);
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-weight: 400;
   font-size: var(--fs-display);
   line-height: 1.04;
   letter-spacing: -0.02em;
