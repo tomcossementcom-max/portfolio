@@ -333,36 +333,114 @@ h1 em, h2 em, h3 em,
   color: var(--text-faint);
 }
 
-.main-nav { display: flex; gap: clamp(1.5rem, 3vw, 3rem); }
+/* Le menu, sur toutes les pages : un bouton dans le header, et un écran
+   entier qui s'ouvre — les pages à gauche, la carte du territoire à droite
+   avec ses quatre projets (dessinée par js/script.js + js/relief.js à la
+   première ouverture). On n'est jamais à plus d'un clic de la carte. */
+.main-nav {
+  position: fixed; inset: 0; top: 0;
+  height: 100svh;
+  background: var(--bg);
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  grid-template-rows: repeat(6, auto);
+  align-content: center;
+  column-gap: clamp(2rem, 6vw, 6rem);
+  row-gap: clamp(.6rem, 1.4vh, 1.1rem);
+  padding: clamp(5rem, 10vh, 7rem) var(--gutter) clamp(3rem, 6vh, 5rem);
+  transform: translateY(-100%);
+  transition: transform .55s var(--ease);
+  z-index: 100;
+  visibility: hidden;
+}
+.main-nav.is-open { transform: translateY(0); visibility: visible; }
 .nav-link {
-  font-size: 0.8rem;
-  letter-spacing: 0.04em;
-  color: var(--text-dim);
+  grid-column: 1;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3.6vw, 2.6rem);
+  line-height: 1.1;
+  color: var(--text);
   display: flex;
-  align-items: center;
-  gap: 0.5em;
+  align-items: baseline;
+  gap: 0.6em;
   position: relative;
+  width: fit-content;
   transition: color .3s;
 }
 .nav-link span {
   font-family: var(--font-head);
-  font-size: 0.65rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
   color: var(--accent);
 }
-.nav-link:hover { color: var(--text); }
+.nav-link:hover { color: var(--accent); }
 .nav-link::after {
   content: '';
   position: absolute;
-  left: 0; bottom: -4px;
+  left: 0; bottom: -2px;
   width: 0%; height: 1px;
   background: var(--accent);
   transition: width .35s var(--ease);
 }
-.nav-link:hover::after { width: 100%; }
-.nav-link.is-current::after { width: 100%; }
+.nav-link:hover::after, .nav-link.is-current::after { width: 100%; }
+/* le menu s'ouvre : les liens arrivent un à un */
+@media (prefers-reduced-motion: no-preference) {
+  .main-nav .nav-link { opacity: 0; transform: translateY(10px); transition: opacity .5s ease, transform .5s var(--ease), color .3s; }
+  .main-nav.is-open .nav-link { opacity: 1; transform: none; }
+  .main-nav.is-open .nav-link:nth-child(2) { transition-delay: .06s; }
+  .main-nav.is-open .nav-link:nth-child(3) { transition-delay: .12s; }
+  .main-nav.is-open .nav-link:nth-child(4) { transition-delay: .18s; }
+  .main-nav.is-open .nav-link:nth-child(5) { transition-delay: .24s; }
+  .main-nav.is-open .nav-link:nth-child(6) { transition-delay: .30s; }
+}
+
+/* la carte dans le menu */
+.nav-carte {
+  grid-column: 2; grid-row: 1 / span 6;
+  align-self: center;
+  display: flex; flex-direction: column; gap: .9rem;
+}
+.nav-carte-map {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1400 / 1000;
+  max-height: 62vh;
+  margin: 0 auto;
+  overflow: hidden;
+}
+.nav-carte-map .relief { animation: none; }
+.nav-carte-map .relief-contours path { opacity: .12; }
+.nav-carte-map .relief-contours path.index { opacity: .22; }
+.menu-site {
+  position: absolute;
+  left: var(--x); top: var(--y);
+  transform: translate(-50%, -50%);
+  width: 2.3rem; height: 2.3rem;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1.5px solid var(--text);
+  display: grid; place-items: center;
+  font-family: var(--font-head); font-size: .7rem; font-weight: 500; letter-spacing: .08em;
+  color: var(--text);
+  transition: background .3s, color .3s, border-color .3s;
+  z-index: 2;
+}
+.menu-site:hover, .menu-site:focus-visible { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.menu-site::after {
+  content: attr(data-title);
+  position: absolute; left: calc(100% + .6rem); top: 50%; transform: translateY(-50%);
+  font-family: var(--font-display); font-style: italic; font-size: 1rem; letter-spacing: 0; color: var(--text);
+  white-space: nowrap; opacity: 0; transition: opacity .3s; pointer-events: none;
+}
+.menu-site--left::after { left: auto; right: calc(100% + .6rem); }
+.menu-site:hover::after, .menu-site:focus-visible::after { opacity: 1; }
+.nav-carte-foot { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .12em; text-transform: uppercase; color: var(--text-faint); }
+.nav-carte-foot a { color: var(--text); border-bottom: 1px solid var(--text); padding-bottom: .15rem; text-transform: none; letter-spacing: .04em; font-size: var(--fs-sm); }
+.nav-carte-foot a:hover { color: var(--accent); border-color: var(--accent); }
 
 .nav-toggle {
-  display: none;
+  display: flex;
+  z-index: 200;
   flex-direction: column;
   gap: 6px;
   background: none;
@@ -377,6 +455,15 @@ h1 em, h2 em, h3 em,
 }
 .nav-toggle[aria-expanded="true"] span:first-child { transform: translateY(3.5px) rotate(45deg); }
 .nav-toggle[aria-expanded="true"] span:last-child { transform: translateY(-3.5px) rotate(-45deg); }
+.nav-toggle[aria-expanded="true"] span { background: var(--text) !important; }
+/* le mot « Menu » à côté du bouton */
+.nav-toggle::before {
+  content: 'Menu';
+  position: absolute; right: calc(100% + .4rem); top: 50%; transform: translateY(-50%);
+  font-family: var(--font-head); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--text-dim);
+}
+.nav-toggle { position: relative; }
+.nav-toggle[aria-expanded="true"]::before { content: 'Fermer'; }
 
 /* ==========================================================================
    LE RELIEF — le motif qui unit les pages (voir js/relief.js)
@@ -386,10 +473,11 @@ h1 em, h2 em, h3 em,
    ========================================================================== */
 /* le conteneur isole son empilement : le relief passe en z-index négatif, donc
    au-dessus de son fond mais sous tout son contenu, positionné ou non */
-[data-relief] { position: relative; isolation: isolate; }
+[data-relief] { position: relative; isolation: isolate; overflow: hidden; }
 .relief {
   position: absolute; inset: 0; z-index: -1;
   width: 100%; height: 100%;
+  overflow: hidden;
   pointer-events: none;
   animation: relief-in 1.2s ease-out both;
 }
@@ -523,24 +611,11 @@ h1 em, h2 em, h3 em,
 .carte-stage.is-zooming .site:not(.is-target), .carte-stage.is-zooming .carte-foot, .carte-stage.is-zooming .carte-title, .carte-stage.is-zooming .carte-hint { opacity: 0 !important; transition: opacity .3s; }
 .carte-stage.is-zooming .site.is-target .site-label { opacity: 0; transition: opacity .3s; }
 
-/* header minimal sur l'accueil : le logo, et le menu derrière un bouton,
-   la carte remonte jusqu'en haut */
+/* sur l'accueil, le header est transparent : la carte remonte jusqu'en haut */
 body.home .site-header { background: transparent; backdrop-filter: none; border-color: transparent; }
-body.home .main-nav {
-  position: fixed; inset: 0; top: 0;
-  background: var(--bg);
-  display: flex; flex-direction: column; justify-content: center; gap: 1.6rem;
-  padding: 0 var(--gutter);
-  transform: translateY(-100%);
-  transition: transform .5s var(--ease);
-  z-index: 100;
-  height: 100svh;
-}
-body.home .main-nav.is-open { transform: translateY(0); }
-body.home .main-nav .nav-link { font-size: clamp(1.5rem, 3.4vw, 2.4rem); color: var(--text); }
-body.home .nav-toggle { display: flex; z-index: 200; }
-body.home .main-nav.is-open ~ .nav-toggle span,
-body.home .nav-toggle[aria-expanded="true"] span { background: var(--text) !important; }
+body.menu-open { overflow: hidden; }
+/* menu ouvert : le header ne floute plus rien (sinon il devient le bloc conteneur du menu fixe) */
+body.menu-open .site-header { background: transparent; backdrop-filter: none; border-color: transparent; }
 
 @media (max-width: 1024px) {
   .site-label em { font-size: 1.2rem; }
@@ -595,6 +670,83 @@ body.home .nav-toggle[aria-expanded="true"] span { background: var(--text) !impo
 }
 @media (max-width: 720px) {
   .legende-grid { grid-template-columns: 1fr; }
+}
+
+/* ==========================================================================
+   LA CARTE DES VISITES (visites.html) — de Bruxelles à Cologne, sur le même
+   relief que la carte des projets, les lieux des conférences, salons et
+   voyages. Une bande large ; sur mobile, elle se fait défiler latéralement.
+   ========================================================================== */
+.visites-carte {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--gutter) clamp(2rem, 4vw, 3rem);
+}
+.visites-carte-scroll { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
+.visites-carte-map {
+  position: relative;
+  width: 100%;
+  min-width: 760px;
+  aspect-ratio: 1744 / 536;
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.visites-carte-map .relief-contours path { opacity: .13; }
+.visites-carte-map .relief-contours path.index { opacity: .24; }
+.lieu {
+  position: absolute;
+  left: var(--x); top: var(--y);
+  transform: translate(-50%, -50%);
+  display: flex; align-items: center; gap: .6rem;
+  color: var(--text);
+  z-index: 2;
+}
+.lieu--left { flex-direction: row-reverse; }
+.lieu i {
+  flex: none;
+  width: .8rem; height: .8rem;
+  border-radius: 50%;
+  background: var(--text);
+  box-shadow: 0 0 0 4px var(--bg);
+  transition: background .3s, transform .3s var(--ease);
+}
+.lieu span { display: flex; flex-direction: column; line-height: 1.15; white-space: nowrap; }
+.lieu--left span { align-items: flex-end; text-align: right; }
+.lieu em { font-family: var(--font-display); font-style: italic; font-size: clamp(1.05rem, 1.5vw, 1.35rem); transition: color .3s; }
+.lieu small { font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .1em; text-transform: uppercase; color: var(--text-faint); }
+/* la pastille centre le point, pas l'étiquette */
+.lieu { --half: .4rem; transform: translate(calc(-1 * var(--half)), -50%); }
+.lieu--left { transform: translate(calc(-100% + var(--half)), -50%); }
+.lieu:hover i, .lieu.is-lit i, .lieu:focus-visible i { background: var(--accent); transform: scale(1.25); }
+.lieu:hover em, .lieu.is-lit em { color: var(--accent); }
+.lieu:focus-visible { outline: none; }
+/* les sites des projets, pour situer : de petits cercles vides */
+.lieu--projet {
+  position: absolute; left: var(--x); top: var(--y);
+  width: .7rem; height: .7rem; border-radius: 50%;
+  border: 1.5px solid var(--text-dim); background: var(--bg);
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+.lieu--projet::after {
+  content: attr(data-title);
+  position: absolute; left: calc(100% + .4rem); top: 50%; transform: translateY(-50%);
+  font-family: var(--font-head); font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: var(--text-faint);
+  white-space: nowrap; opacity: 0; transition: opacity .3s;
+}
+.lieu--projet:hover::after { opacity: 1; }
+.visites-carte-note {
+  max-width: var(--container);
+  margin: .9rem auto 0;
+  font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .1em; text-transform: uppercase; color: var(--text-faint);
+  display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+}
+.visit-item { transition: background .3s, box-shadow .3s; }
+.visit-item.is-lit { background: color-mix(in srgb, var(--water) 8%, var(--bg)); box-shadow: 0 0 0 .9rem color-mix(in srgb, var(--water) 8%, var(--bg)); }
+@media (max-width: 720px) {
+  .lieu em { font-size: 1rem; }
+  .lieu small { display: none; }
 }
 
 /* ==========================================================================
@@ -874,6 +1026,9 @@ body.home .nav-toggle[aria-expanded="true"] span { background: var(--text) !impo
 /* posée sur la grille d'une .case-section, la planche hérite déjà des
    gouttières de la section : on ne les double pas */
 .case-section .case-figure--contained { padding: 0; margin: 0; width: 100%; max-width: none; }
+/* pendant le balayage (js/script.js), l'image est légèrement agrandie : on la
+   contient, pour ne jamais créer de débordement horizontal */
+.case-figure, .case-plan, .case-pair figure { overflow: hidden; }
 /* rythme vertical entre deux planches qui se suivent sans texte entre elles */
 .case-figure + .case-figure,
 .case-figure + .case-pair,
@@ -1758,29 +1913,17 @@ body.home .nav-toggle[aria-expanded="true"] span { background: var(--text) !impo
 
 @media (max-width: 720px) {
   .main-nav {
-    position: fixed;
-    inset: 0;
-    top: 0;
-    /* le backdrop-filter du header en fait le bloc conteneur de ce menu
-       fixe : sans hauteur explicite, le menu ferait 60px de haut (la
-       hauteur du header) et ses liens déborderaient sous le bandeau. */
-    height: 100vh;
-    height: 100svh;
-    background: var(--bg);
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 2rem;
-    padding: 0 var(--gutter);
-    transform: translateY(-100%);
-    transition: transform .5s var(--ease);
-    z-index: 100;
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    row-gap: .5rem;
+    padding: 5.5rem var(--gutter) 2rem;
+    overflow-y: auto;
   }
-  .main-nav.is-open { transform: translateY(0); }
-  .main-nav .nav-link { font-size: 1.5rem; color: var(--text); }
-  .nav-toggle { display: flex; z-index: 200; }
-  .main-nav.is-open ~ .nav-toggle span,
-  .nav-toggle[aria-expanded="true"] span { background: var(--text) !important; }
+  .nav-link { font-size: 1.7rem; }
+  .nav-carte { grid-column: 1; grid-row: auto; margin-top: 1.5rem; }
+  .nav-carte-map { max-height: 34vh; }
+  .menu-site { width: 1.8rem; height: 1.8rem; font-size: .6rem; }
+  .menu-site::after { display: none; }
 
   .about-meta { grid-template-columns: 1fr; gap: 1.25rem; }
   .footer-inner { grid-template-columns: 1fr; }

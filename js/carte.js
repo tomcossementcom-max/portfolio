@@ -24,6 +24,10 @@
   const NS = 'http://www.w3.org/2000/svg';
 
   /* ---------- 1. le relief (voir js/relief.js) ---------- */
+  // les rivières réelles (OpenStreetMap), si les données sont là
+  if (window.ReliefData && ReliefData.rivers) ReliefData.rivers.forEach(r => {
+    const p = svg.querySelector('#r-' + r.id); if (p) p.setAttribute('d', r.d);
+  });
   if (window.Relief) {
     const { paths } = Relief.contours({ x: 0, y: 0, w: 1400, h: 1000, cell: 8 });
     Relief.fill(svg.querySelector('.carte-contours'), paths);

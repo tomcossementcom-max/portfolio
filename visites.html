@@ -60,6 +60,29 @@
   </div>
 
   <!-- ============================================================ -->
+  <!-- LA CARTE DES VISITES — de Bruxelles à Cologne, sur le même relief
+       que la carte des projets (repère « Euregio », 1 km = 8 unités, voir
+       tools/relief-data.py). Les lieux sont ceux des visites, conférences
+       et voyages cités plus bas ; les petits cercles vides situent les
+       projets. Positions en % du cadre (viewBox 1744 x 536). -->
+  <!-- ============================================================ -->
+  <section class="visites-carte" aria-label="Carte des visites">
+    <div class="visites-carte-scroll">
+      <div class="visites-carte-map" data-relief="3000,0,1744,536" data-relief-class="relief--visites">
+        <a class="lieu" href="#visite-civa" data-place="bruxelles" style="--x: 8.1%; --y: 42.1%"><i></i><span><em>Bruxelles</em><small>CIVA · Salon de l'Espace Public</small></span></a>
+        <a class="lieu" href="#visite-cajp" data-place="liege" style="--x: 47.8%; --y: 77.7%"><i></i><span><em>Liège</em><small>Haute École Charlemagne · CAJP · Atelier CUP</small></span></a>
+        <a class="lieu lieu--left" href="#visite-citytrip" data-place="maastricht" style="--x: 51.3%; --y: 41.3%"><i></i><span><em>Maastricht</em><small>City trip</small></span></a>
+        <a class="lieu" href="#visite-citytrip" data-place="aix" style="--x: 64.0%; --y: 53.9%"><i></i><span><em>Aix-la-Chapelle</em><small>City trip</small></span></a>
+        <a class="lieu lieu--left" href="#visite-citytrip" data-place="cologne" style="--x: 92.3%; --y: 27.0%"><i></i><span><em>Cologne</em><small>City trip</small></span></a>
+        <span class="lieu--projet" data-title="01 — Herstal" style="--x: 49.4%; --y: 72.4%"></span>
+        <span class="lieu--projet" data-title="03 — Waremme" style="--x: 37.3%; --y: 66.9%"></span>
+        <span class="lieu--projet" data-title="04 — Haccourt" style="--x: 50.9%; --y: 61.0%"></span>
+      </div>
+    </div>
+    <p class="visites-carte-note"><span>De Bruxelles à Cologne — les lieux des visites, conférences et voyages</span><span>Petits cercles : les sites des projets</span></p>
+  </section>
+
+  <!-- ============================================================ -->
   <!-- 1. DANS LE CADRE DES COURS -->
   <!-- Contenu repris de la section « Visites et conférences » de ton
        portfolio PDF — ce sont donc bien tes propres notes. -->
@@ -101,8 +124,8 @@
         </p>
       </article>
 
-      <article class="visit-item" data-reveal>
-        <span class="visit-meta">Cycle Common Ground — CIVA</span>
+      <article class="visit-item" data-reveal id="visite-civa" data-place="bruxelles">
+        <span class="visit-meta">Cycle Common Ground — CIVA · Bruxelles</span>
         <h3>Landinzicht — Bjorn Gielen</h3>
         <p>
           Dans le cadre du cycle Common Ground, coorganisé par le CIVA et la Faculté
@@ -113,7 +136,7 @@
         </p>
       </article>
 
-      <article class="visit-item" data-reveal>
+      <article class="visit-item" data-reveal data-place="bruxelles">
         <span class="visit-meta">Salon professionnel — Bruxelles</span>
         <h3>Le Salon de l'Espace Public</h3>
         <p>
@@ -167,7 +190,7 @@
         </p>
       </article>
 
-      <article class="visit-item" data-reveal>
+      <article class="visit-item" data-reveal id="visite-citytrip" data-place="cologne aix maastricht">
         <span class="visit-meta">City trip</span>
         <h3>Cologne, Aix-la-Chapelle &amp; Maastricht</h3>
         <p>
@@ -189,8 +212,8 @@
         </p>
       </article>
 
-      <article class="visit-item" data-reveal>
-        <span class="visit-meta">Engagement associatif</span>
+      <article class="visit-item" data-reveal id="visite-cajp" data-place="liege">
+        <span class="visit-meta">Engagement associatif — Liège</span>
         <h3>CAJP — Cercle des Architectes des Jardins et du Paysage</h3>
         <p>
           Co-fondateur et président du cercle étudiant&nbsp;: valoriser la formation, créer une
@@ -232,6 +255,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="js/relief-data.js"></script>
 <script src="js/relief.js"></script>
 <script src="js/script.js"></script>
 <script src="js/fil-eau.js"></script>

@@ -5,11 +5,10 @@
    partout ailleurs — un fenêtrage serré autour du site de chaque projet
    derrière sa couverture, un fragment derrière les titres des autres
    pages, la carte entière, très pâle, sous le pied de page.
-   Le relief est plausible, pas relevé : un plateau (Hesbaye ~170 m au NW,
-   Herve/Ardenne ~280 m au SE, Limbourg ~100 m au NE) creusé par les
-   vallées de la Meuse, de l'Ourthe et du Geer, plus un léger bruit ;
-   isolignes tous les 10 m (marching squares), les multiples de 50 m un
-   peu plus marquées. Les coordonnées sont celles de la carte (viewBox
+   Le relief est le vrai (Copernicus DEM, 30 m) et les rivières celles
+   d'OpenStreetMap quand js/relief-data.js est chargé — sinon un relief
+   plausible (plateau creusé par les vallées) prend le relais. Isolignes
+   tous les 10 m (marching squares), les multiples de 50 m plus marquées. Les coordonnées sont celles de la carte (viewBox
    1400 x 1000 ; 1 km ≈ 25 unités).
    Usage : Relief.mount(element, { x, y, w, h }) dessine le fragment
    [x, y, w, h] de la carte dans un <svg> plein cadre inséré en premier
@@ -27,6 +26,32 @@ window.Relief = (() => {
   // même repère, loin au sud — x 1900-2300, y 1600-1900
   const LOUE = { id: 'loue', depth: 110, width: 80, d: 'M 1880 1830 C 1960 1800, 2010 1740, 2080 1735 C 2150 1730, 2200 1690, 2240 1640 C 2270 1600, 2300 1580, 2340 1560' };
 
+  /* ---------- le vrai relief, s'il est là (js/relief-data.js) ----------
+     Altitudes Copernicus DEM (30 m) échantillonnées tous les 5 unités, en
+     deux grilles (le bassin de la Meuse ; Arc-et-Senans, loin au sud),
+     et les rivières d'OpenStreetMap. Sans ce fichier : le relief plausible
+     ci-dessous. */
+  const DATA = window.ReliefData || null;
+  const grids = DATA ? ['main', 'sud', 'eu'].map(k => {
+    const g = DATA[k]; if (!g) return null;
+    const bin = atob(g.b64), v = new Float32Array(bin.length);
+    for (let i = 0; i < bin.length; i++) v[i] = g.emin + bin.charCodeAt(i) * g.scale;
+    return { ...g, v, x1: g.x0 + (g.nx - 1) * g.step, y1: g.y0 + (g.ny - 1) * g.step };
+  }).filter(Boolean) : [];
+  const gridAt = (x, y) => grids.find(g => x >= g.x0 && x <= g.x1 && y >= g.y0 && y <= g.y1);
+  const sampled = (g, x, y) => {
+    const fx = (x - g.x0) / g.step, fy = (y - g.y0) / g.step;
+    const i = Math.min(g.nx - 2, Math.floor(fx)), j = Math.min(g.ny - 2, Math.floor(fy));
+    const tx = fx - i, ty = fy - j, v = g.v, n = g.nx;
+    const a = v[j * n + i], b = v[j * n + i + 1], c = v[(j + 1) * n + i], d = v[(j + 1) * n + i + 1];
+    return (a * (1 - tx) + b * tx) * (1 - ty) + (c * (1 - tx) + d * tx) * ty;
+  };
+  const EXTRA = []; // rivières présentes dans les données mais pas dans le repli (ex. le Rhin)
+  if (DATA && DATA.rivers) DATA.rivers.forEach(r => {
+    const known = [...RIVERS, LOUE].find(k => k.id === r.id);
+    if (known) known.d = r.d; else EXTRA.push({ id: r.id, depth: 0, width: 1, d: r.d });
+  });
+
   let cache = null;
   // échantillonne les rivières en points (tous les 8 unités), une seule fois
   const samples = () => {
@@ -35,7 +60,7 @@ window.Relief = (() => {
     hidden.setAttribute('width', 0); hidden.setAttribute('height', 0);
     hidden.style.position = 'absolute';
     document.body.append(hidden);
-    cache = [...RIVERS, LOUE].map(r => {
+    cache = [...RIVERS, LOUE, ...EXTRA].map(r => {
       const p = document.createElementNS(NS, 'path');
       p.setAttribute('d', r.d);
       hidden.append(p);
@@ -48,6 +73,8 @@ window.Relief = (() => {
   };
 
   const elevation = (x, y, rivers) => {
+    const g = gridAt(x, y);
+    if (g) return sampled(g, x, y);
     const u = Math.min(1, Math.max(0, x / 1400)), v = Math.min(1, Math.max(0, y / 1000));
     let e = 170 * (1 - u) * (1 - v) + 100 * u * (1 - v) + 200 * (1 - u) * v + 280 * u * v
           + 12 * Math.sin(x / 140) * Math.cos(y / 110) + 8 * Math.sin(x / 70 + y / 90) + 5 * Math.cos(x / 45 - y / 60);
@@ -71,10 +98,17 @@ window.Relief = (() => {
     });
     const nx = Math.floor(w / cell) + 2, ny = Math.floor(h / cell) + 2;
     const E = new Float32Array(nx * ny);
-    for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) E[j * nx + i] = elevation(x + i * cell, y + j * cell, rivers);
+    let lo = Infinity, hi = -Infinity;
+    for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
+      const e = elevation(x + i * cell, y + j * cell, rivers);
+      E[j * nx + i] = e; if (e < lo) lo = e; if (e > hi) hi = e;
+    }
     const lerp = (a, b, va, vb, L) => a + (b - a) * ((L - va) / (vb - va || 1));
     const paths = [];
-    for (let L = 50; L <= 300; L += 10) {
+    // équidistance 10 m ; 20 m quand le fragment est très accidenté (Jura)
+    const stepL = hi - lo > 320 ? 20 : 10;
+    const L0 = Math.ceil(lo / stepL) * stepL, L1 = Math.floor(hi / stepL) * stepL;
+    for (let L = L0; L <= L1; L += stepL) {
       let d = '';
       for (let j = 0; j < ny - 1; j++) for (let i = 0; i < nx - 1; i++) {
         const a = E[j * nx + i], b = E[j * nx + i + 1], c = E[(j + 1) * nx + i + 1], dd = E[(j + 1) * nx + i];
@@ -95,7 +129,7 @@ window.Relief = (() => {
           case 10: seg(top, right); seg(left, bottom); break;
         }
       }
-      if (d) paths.push({ d, index: L % 50 === 0 });
+      if (d) paths.push({ d, index: L % (stepL * 5) === 0 });
     }
     return { paths, rivers };
   };
@@ -113,7 +147,7 @@ window.Relief = (() => {
   };
 
   /* insère dans `el` un fragment de carte : courbes + rivières en rubans */
-  const mount = (el, { x, y, w, h, cell, rivers: withRivers = true, cls = '' }) => {
+  const mount = (el, { x, y, w, h, cell, rivers: withRivers = true, cls = '', riverScale = 1 }) => {
     if (!el) return null;
     cell = cell || Math.max(1.5, w / 160);
     const svg = document.createElementNS(NS, 'svg');
@@ -130,7 +164,7 @@ window.Relief = (() => {
       const gr = document.createElementNS(NS, 'g');
       gr.setAttribute('class', 'relief-rivers');
       rivers.forEach(r => {
-        const width = { meuse: 22, ourthe: 12, geer: 9, loue: 14 }[r.id] || 10;
+        const width = ({ meuse: 22, ourthe: 12, geer: 9, loue: 14, 'meuse-eu': 9, rhein: 12 }[r.id] || 10) * riverScale;
         for (const [k, c] of [[2.4, 'river river-halo'], [1, 'river river-main']]) {
           const p = document.createElementNS(NS, 'path');
           p.setAttribute('d', r.d);
@@ -159,7 +193,7 @@ window.Relief = (() => {
   const els = [...document.querySelectorAll('[data-relief]')];
   const mountEl = el => {
     const [x, y, w, h] = el.dataset.relief.split(',').map(Number);
-    Relief.mount(el, { x, y, w, h, rivers: el.dataset.reliefRivers !== 'off', cls: el.dataset.reliefClass || '' });
+    Relief.mount(el, { x, y, w, h, rivers: el.dataset.reliefRivers !== 'off', cls: el.dataset.reliefClass || '', riverScale: +(el.dataset.reliefRiverScale || 1) });
   };
   const later = [];
   els.forEach(el => { if (el.getBoundingClientRect().top < window.innerHeight) mountEl(el); else later.push(el); });

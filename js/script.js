@@ -49,6 +49,26 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* ------------------------------------------------------------ */
+  /* CARTE DES VISITES — survoler un lieu éclaire les fiches qui    */
+  /* s'y rapportent (et inversement), via data-place.               */
+  /* ------------------------------------------------------------ */
+  const lieux = [...document.querySelectorAll('.lieu[data-place]')];
+  const fiches = [...document.querySelectorAll('.visit-item[data-place]')];
+  if (lieux.length && fiches.length) {
+    const places = el => el.dataset.place.split(/\s+/);
+    const light = (keys, on) => {
+      lieux.forEach(l => l.classList.toggle('is-lit', on && places(l).some(k => keys.includes(k))));
+      fiches.forEach(f => f.classList.toggle('is-lit', on && places(f).some(k => keys.includes(k))));
+    };
+    [...lieux, ...fiches].forEach(el => {
+      el.addEventListener('mouseenter', () => light(places(el), true));
+      el.addEventListener('mouseleave', () => light([], false));
+      el.addEventListener('focusin', () => light(places(el), true));
+      el.addEventListener('focusout', () => light([], false));
+    });
+  }
+
+  /* ------------------------------------------------------------ */
   /* CURRENT-PAGE NAV HIGHLIGHT                                    */
   /* ------------------------------------------------------------ */
   const currentPath = location.pathname.split('/').pop() || 'index.html';
@@ -62,10 +82,52 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ------------------------------------------------------------ */
   /* MOBILE NAV                                                    */
   /* ------------------------------------------------------------ */
+  /* la carte du territoire dans le menu, dessinée à la première ouverture
+     (relief + rivières par js/relief.js, les quatre projets en pastilles) */
+  const SITES = [
+    ['01', 'palimpseste.html', 1026, 655, 'Le Jardin du Palimpseste', 'palimpseste', true],
+    ['02', 'morpho.html', 1235, 845, 'Effet Morpho — Arc-et-Senans, hors carte', 'morpho', true],
+    ['03', 'confluant.html', 361, 563, 'Confluant', 'confluant', false],
+    ['04', 'haccourt.html', 1107, 463, 'Place bioclimatique', 'haccourt', true],
+  ];
+  const buildNavCarte = () => {
+    if (!mainNav || mainNav.querySelector('.nav-carte') || !window.Relief) return;
+    const base = document.body.dataset.root || '';
+    const wrap = document.createElement('div');
+    wrap.className = 'nav-carte';
+    const map = document.createElement('div');
+    map.className = 'nav-carte-map';
+    wrap.append(map);
+    Relief.mount(map, { x: 0, y: 0, w: 1400, h: 1000, cell: 10, riverScale: 0.5 });
+    SITES.forEach(([num, href, x, y, title, ink, left]) => {
+      const a = document.createElement('a');
+      a.className = 'menu-site' + (left ? ' menu-site--left' : '');
+      a.href = base + href;
+      a.setAttribute('data-title', title);
+      a.setAttribute('aria-label', `${num} — ${title}`);
+      a.style.setProperty('--x', `${(x / 14).toFixed(1)}%`);
+      a.style.setProperty('--y', `${(y / 10).toFixed(1)}%`);
+      a.style.setProperty('--ink', `var(--accent-${ink})`);
+      a.textContent = num;
+      map.append(a);
+    });
+    const foot = document.createElement('div');
+    foot.className = 'nav-carte-foot';
+    foot.innerHTML = `<span>Les quatre projets, sur le territoire</span><a href="${base}index.html">Ouvrir la carte →</a>`;
+    wrap.append(foot);
+    mainNav.append(wrap);
+  };
+
   if (navToggle && mainNav) {
     navToggle.addEventListener('click', () => {
       const isOpen = mainNav.classList.toggle('is-open');
       navToggle.setAttribute('aria-expanded', isOpen);
+      navToggle.setAttribute('aria-label', isOpen ? 'Fermer le menu' : 'Ouvrir le menu');
+      document.body.classList.toggle('menu-open', isOpen);
+      if (isOpen) buildNavCarte();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && mainNav.classList.contains('is-open')) navToggle.click();
     });
     mainNav.querySelectorAll('.nav-link').forEach(link => {
       link.addEventListener('click', () => {
