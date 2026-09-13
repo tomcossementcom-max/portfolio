@@ -104,15 +104,16 @@ body {
 }
 
 /* ==========================================================================
-   FIL D'EAU — la signature vivante du site (voir js/fil-eau.js)
-   Un seul trait bleu descend chaque page : dans la marge par défaut, entre
-   les blocs quand le HTML pose des ancres data-fil, dessiné au rythme du
-   scroll, et il réagit — au scroll rapide, au curseur, aux gouttes. Il
-   passe sous les images et les bandes de fond (z-index négatif) et ne
-   recouvre jamais rien. Injecté par JS : sans script, il n'existe pas.
-   La page Approche (qui a sa timeline) le désactive : <body data-fil="off">.
+   LA RIVIÈRE — la signature du site (voir js/fil-eau.js)
+   Une nappe d'eau bleue très diluée traverse chaque page : un filet en haut,
+   une rivière en bas, qui se jette dans le pied de page (l'estuaire, voir
+   .site-footer). Trois couches superposées comme des lavis d'aquarelle
+   (lit, nappe, chenal) et deux filets de courant qui dérivent lentement.
+   Elle passe sous le contenu (z-index négatif) et ne recouvre jamais rien.
+   Injectée par JS : sans script, elle n'existe pas.
    ========================================================================== */
 main { position: relative; }
+@property --fil-flow { syntax: '<number>'; inherits: true; initial-value: 0; }
 .fil-eau {
   position: absolute;
   top: 0; left: 0;
@@ -120,30 +121,43 @@ main { position: relative; }
   z-index: -1;
   pointer-events: none;
   overflow: visible;
+  --fil-scroll: 0;
 }
-.fil-eau path {
+.fil-bed   { fill: var(--water); opacity: 0.045; }
+.fil-water { fill: var(--water); opacity: 0.10; }
+.fil-deep  { fill: var(--water); opacity: 0.075; }
+/* le courant : deux traits pointillés qui dérivent en continu (--fil-flow,
+   animation CSS) et accompagnent le scroll (--fil-scroll, posé par le JS
+   proportionnellement à la distance parcourue — jamais à la vitesse) */
+.fil-current {
   fill: none;
   stroke: var(--water);
-  stroke-width: 2;
+  stroke-width: 1.4;
   stroke-linecap: round;
-  stroke-linejoin: round;
+  stroke-dasharray: 22 34;
+  opacity: 0.32;
+  --fil-flow: 0;
+  stroke-dashoffset: calc((var(--fil-flow) + var(--fil-scroll)) * -1px);
+  animation: fil-flow 18s linear infinite;
 }
-/* le point d'arrivée : l'eau s'infiltre en bas de page */
-.fil-eau-end { fill: var(--water); opacity: 0; transition: opacity .6s ease; }
-.fil-eau.is-complete .fil-eau-end { opacity: 1; }
-/* la goutte qui descend le long du trait, et l'onde à l'arrivée */
-.fil-eau-drop { fill: var(--water); }
-.fil-eau-ripple {
+.fil-current--2 { stroke-dasharray: 14 30; opacity: 0.22; animation-duration: 26s; }
+@keyframes fil-flow { from { --fil-flow: 0; } to { --fil-flow: 224; } }
+/* la goutte qui tombe, et les ondes (goutte, curseur) */
+.fil-drop { fill: var(--water); opacity: 0.8; }
+.fil-ripple {
   fill: none;
   stroke: var(--water);
-  stroke-width: 1.5;
+  stroke-width: 1.4;
   transform-box: fill-box;
   transform-origin: center;
-  animation: fil-ripple .9s ease-out forwards;
+  animation: fil-ripple 1s ease-out forwards;
 }
 @keyframes fil-ripple {
-  from { transform: scale(0.15); opacity: 0.9; }
-  to   { transform: scale(1);    opacity: 0; }
+  from { transform: scale(0.2); opacity: 0.8; }
+  to   { transform: scale(1);   opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fil-current { animation: none; }
 }
 
 /* ==========================================================================
@@ -1578,6 +1592,8 @@ h1 em, h2 em, h3 em,
   border-top: 1px solid var(--line);
   color: var(--text-dim);
   font-size: var(--fs-sm);
+  /* l'estuaire : la rivière de la page se jette ici, le fond se teinte eau */
+  background: linear-gradient(180deg, var(--bg) 0%, color-mix(in srgb, var(--water) 9%, var(--bg)) 55%, color-mix(in srgb, var(--water) 13%, var(--bg)) 100%);
 }
 .footer-inner {
   max-width: var(--container);
@@ -1810,13 +1826,15 @@ body.lb-open { overflow: hidden; }
 .photo figcaption { margin-top: 0.5rem; font-size: var(--fs-xs); color: var(--text-faint); }
 .photo--placeholder {
   aspect-ratio: var(--ph-ratio, 3 / 2);
-  border: 1px dashed var(--line);
+  border: 1px solid var(--line);
   background: var(--bg-alt);
   display: flex; align-items: center; justify-content: center;
   padding: 1rem; text-align: center;
-  font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: 0.06em;
+  font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--text-faint);
 }
+.photo--placeholder span { display: flex; flex-direction: column; align-items: center; gap: .35rem; }
+.photo--placeholder b { font-weight: 600; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.04em; line-height: 1; color: #dad7cf; }
 @media (max-width: 1024px) { .photo-grid { columns: 2; } }
 @media (max-width: 720px)  { .photo-grid { columns: 1; } }
 
