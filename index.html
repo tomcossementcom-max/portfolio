@@ -77,7 +77,7 @@
 }
 </script>
 </head>
-<body>
+<body data-fil="off">
 
 <!-- ============================================================ -->
 <!-- HEADER / NAVIGATION (identique sur toutes les pages) -->
@@ -107,94 +107,180 @@
 <main id="top">
 
   <!-- ============================================================ -->
-  <!-- COUVERTURE — typographique, sur fond crème, comme les pages projet.
-       Le nom en très grand, la phrase-manifeste, et beaucoup de blanc ;
-       la vidéo n'arrive qu'en dessous, en pleine largeur et en pleine
-       lumière, sans voile sombre ni texte par-dessus. -->
+  <!-- LA CARTE — la page d'accueil est un plan de situation.
+       Le bassin de la Meuse autour de Liège, en schéma (projection
+       équirectangulaire locale, 1 km = 25 unités du viewBox ; positions des
+       villes d'après leurs coordonnées, tracés des rivières simplifiés à la
+       main) ; les quatre projets sont posés à leur place, Arc-et-Senans en
+       encart. Le cartouche, comme sur un plan, tient lieu de titre. -->
   <!-- ============================================================ -->
-  <section class="case-cover home-cover">
-    <div class="case-cover-inner home-cover-inner">
+  <section class="carte" aria-label="Carte des projets">
+    <div class="carte-cartouche">
       <span class="project-cat" data-reveal>Portfolio — Bachelier en architecture des jardins et du paysage</span>
       <h1>Thomas Cossement</h1>
       <p class="case-cover-lead" data-reveal>
         Construire avec le vivant&nbsp;: vers un urbanisme guidé par le paysage.
       </p>
+      <dl class="carte-meta" data-reveal>
+        <div><dt>Plan</dt><dd>Carte des projets — bassin de la Meuse, Liège</dd></div>
+        <div><dt>Échelle</dt><dd>Schéma de situation, approximatif</dd></div>
+        <div><dt>Légende</dt><dd>01 à 04 — cliquer un numéro ouvre le projet</dd></div>
+      </dl>
     </div>
-    <div class="home-cover-foot" data-reveal>
-      <span class="home-cover-meta">Quatre projets — de la friche industrielle à la place communale</span>
-      <a href="projets.html" class="home-cover-link">Découvrir les projets →</a>
+
+    <div class="carte-map">
+      <svg class="carte-svg" viewBox="0 0 1400 1000" role="img" aria-labelledby="carte-title carte-desc">
+        <title id="carte-title">Carte de situation des projets</title>
+        <desc id="carte-desc">Schéma du bassin de la Meuse autour de Liège : le Jardin du Palimpseste à Herstal, Confluant à Waremme sur le Geer, la place bioclimatique à Haccourt (Oupeye) ; en encart, Effet Morpho à Arc-et-Senans dans le Doubs.</desc>
+        <defs>
+          <!-- les cours d'eau : un même tracé, repris en plusieurs épaisseurs (lit, nappe, chenal, courant) -->
+          <path id="r-meuse" d="M 300 1015 C 470 940, 690 870, 793 832 S 890 785, 925 741 C 960 700, 995 678, 1026 655 C 1058 630, 1064 585, 1058 555 C 1052 520, 1085 490, 1107 463 C 1125 440, 1136 420, 1134 390 C 1130 360, 1128 330, 1128 305 C 1127 250, 1128 190, 1128 136 L 1130 -15"/>
+          <path id="r-ourthe" d="M 943 1015 C 950 985, 940 950, 943 930 C 950 880, 975 840, 969 805 C 962 780, 942 760, 925 745"/>
+          <path id="r-geer" d="M 212 652 C 265 620, 320 580, 361 563 C 430 540, 490 520, 529 508 C 600 480, 680 400, 730 333 C 790 255, 940 190, 1128 136"/>
+          <!-- l'encart : la Loue, qui longe la Saline royale -->
+          <path id="r-loue" d="M 1052 952 C 1110 930, 1150 890, 1215 872 C 1280 855, 1330 822, 1378 782"/>
+        </defs>
+
+        <!-- rivières -->
+        <g class="carte-rivers">
+          <use href="#r-meuse" class="rv rv-bed" style="stroke-width: 54"/>
+          <use href="#r-meuse" class="rv rv-water" style="stroke-width: 36"/>
+          <use href="#r-meuse" class="rv rv-deep" style="stroke-width: 15"/>
+          <use href="#r-meuse" class="rv fil-current"/>
+          <use href="#r-ourthe" class="rv rv-bed" style="stroke-width: 30"/>
+          <use href="#r-ourthe" class="rv rv-water" style="stroke-width: 18"/>
+          <use href="#r-ourthe" class="rv rv-deep" style="stroke-width: 7"/>
+          <use href="#r-ourthe" class="rv fil-current fil-current--2"/>
+          <use href="#r-geer" class="rv rv-bed" style="stroke-width: 24"/>
+          <use href="#r-geer" class="rv rv-water" style="stroke-width: 14"/>
+          <use href="#r-geer" class="rv rv-deep" style="stroke-width: 5"/>
+          <use href="#r-geer" class="rv fil-current fil-current--2"/>
+        </g>
+        <!-- noms des cours d'eau, posés le long du tracé -->
+        <g class="carte-hydro">
+          <text><textPath href="#r-meuse" startOffset="82%">Meuse</textPath></text>
+          <text><textPath href="#r-geer" startOffset="47%">Geer</textPath></text>
+          <text><textPath href="#r-ourthe" startOffset="12%">Ourthe</textPath></text>
+        </g>
+
+        <!-- villes-repères -->
+        <g class="carte-places">
+          <circle cx="925" cy="741" r="7"/>
+          <text x="905" y="790" text-anchor="end"><tspan class="pl-name">Liège</tspan><tspan class="pl-sub" x="905" dy="20">Atelier CUP · Haute École Charlemagne</tspan></text>
+          <circle cx="730" cy="333" r="5"/>
+          <text x="712" y="322" text-anchor="end" class="pl-name">Tongeren</text>
+          <circle cx="1128" cy="136" r="5"/>
+          <text x="1150" y="142" class="pl-name">Maastricht</text>
+          <text x="330" y="975" class="pl-sub">vers Huy, Namur</text>
+          <text x="925" y="992" text-anchor="end" class="pl-sub">vers l'Ardenne</text>
+        </g>
+
+        <!-- nord et échelle -->
+        <g class="carte-north" transform="translate(1330 70)">
+          <path d="M 0 30 L 0 -26 M -9 -14 L 0 -26 L 9 -14"/>
+          <text x="0" y="52" text-anchor="middle">N</text>
+        </g>
+        <g class="carte-scale" transform="translate(60 930)">
+          <path d="M 0 0 L 125 0 M 0 -6 L 0 6 M 125 -6 L 125 6"/>
+          <text x="62" y="22" text-anchor="middle">5 km</text>
+        </g>
+
+        <!-- encart : Arc-et-Senans, à 400 km au sud -->
+        <g class="carte-inset">
+          <rect x="1040" y="705" width="340" height="270"/>
+          <use href="#r-loue" class="rv rv-bed" style="stroke-width: 26"/>
+          <use href="#r-loue" class="rv rv-water" style="stroke-width: 16"/>
+          <use href="#r-loue" class="rv rv-deep" style="stroke-width: 6"/>
+          <use href="#r-loue" class="rv fil-current fil-current--2"/>
+          <text><textPath href="#r-loue" startOffset="8%">Loue</textPath></text>
+          <text x="1058" y="732" class="pl-sub">Encart — Doubs, France · ≈ 400 km au sud</text>
+          <text x="1058" y="754" class="pl-sub">Saline royale d'Arc-et-Senans</text>
+        </g>
+      </svg>
+
+      <!-- les quatre sites : des liens HTML posés sur la carte (position en % du
+           viewBox 1400 x 1000), pour que le numéro se transforme en couverture
+           du projet à la navigation (View Transitions) -->
+      <a class="map-site map-site--01 map-site--left" href="palimpseste.html" style="--x: 73.3%; --y: 65.5%; --ink: var(--accent-palimpseste)">
+        <svg class="map-num" viewBox="0 0 120 80" aria-hidden="true"><defs><text id="mn-01" x="60" y="66" text-anchor="middle" font-size="64" vector-effect="non-scaling-stroke">01</text></defs><use href="#mn-01" class="ring ring--2"/><use href="#mn-01" class="ring ring--2 ring--erase"/><use href="#mn-01" class="ring ring--1"/><use href="#mn-01" class="ring ring--1 ring--erase"/><use href="#mn-01" class="core"/></svg>
+        <span class="map-label"><b>Le Jardin du Palimpseste</b><span>Herstal — friche industrielle</span></span>
+      </a>
+      <a class="map-site map-site--03 " href="confluant.html" style="--x: 25.8%; --y: 56.3%; --ink: var(--accent-confluant)">
+        <svg class="map-num" viewBox="0 0 120 80" aria-hidden="true"><defs><text id="mn-03" x="60" y="66" text-anchor="middle" font-size="64" vector-effect="non-scaling-stroke">03</text></defs><use href="#mn-03" class="ring ring--2"/><use href="#mn-03" class="ring ring--2 ring--erase"/><use href="#mn-03" class="ring ring--1"/><use href="#mn-03" class="ring ring--1 ring--erase"/><use href="#mn-03" class="core"/></svg>
+        <span class="map-label"><b>Confluant</b><span>Waremme — place Albert Ier</span></span>
+      </a>
+      <a class="map-site map-site--04 map-site--left" href="haccourt.html" style="--x: 79.1%; --y: 46.3%; --ink: var(--accent-haccourt)">
+        <svg class="map-num" viewBox="0 0 120 80" aria-hidden="true"><defs><text id="mn-04" x="60" y="66" text-anchor="middle" font-size="64" vector-effect="non-scaling-stroke">04</text></defs><use href="#mn-04" class="ring ring--2"/><use href="#mn-04" class="ring ring--2 ring--erase"/><use href="#mn-04" class="ring ring--1"/><use href="#mn-04" class="ring ring--1 ring--erase"/><use href="#mn-04" class="core"/></svg>
+        <span class="map-label"><b>Place bioclimatique</b><span>Haccourt (Oupeye) — Atelier CUP</span></span>
+      </a>
+      <a class="map-site map-site--02 map-site--left" href="morpho.html" style="--x: 86.8%; --y: 87.2%; --ink: var(--accent-morpho)">
+        <svg class="map-num" viewBox="0 0 120 80" aria-hidden="true"><defs><text id="mn-02" x="60" y="66" text-anchor="middle" font-size="64" vector-effect="non-scaling-stroke">02</text></defs><use href="#mn-02" class="ring ring--2"/><use href="#mn-02" class="ring ring--2 ring--erase"/><use href="#mn-02" class="ring ring--1"/><use href="#mn-02" class="ring ring--1 ring--erase"/><use href="#mn-02" class="core"/></svg>
+        <span class="map-label"><b>Effet Morpho</b><span>Arc-et-Senans — concours</span></span>
+      </a>
     </div>
   </section>
 
   <!-- ============================================================ -->
-  <!-- VIDÉO — pleine largeur, pleine lumière.
-       Extrait (13-38s, sans le carton de titre "EFFET MORPHO" ni le
-       filigrane résiduel) de la vidéo 3D fournie (effet morpho.mp4),
-       réencodée pour le web. Pour la changer : remplace
-       assets/video/hero-loop-morpho.mp4 (16:9, ~20-30s, muette) et
-       l'image poster ci-dessous. -->
+  <!-- LÉGENDE — les quatre projets, dans l'ordre de la numérotation -->
   <!-- ============================================================ -->
-  <figure class="case-figure home-video">
-    <video autoplay muted loop playsinline poster="assets/images/projet-02-morpho-ambiance-lumiere-1200.webp">
-      <source src="assets/video/hero-loop-morpho.mp4" type="video/mp4">
-    </video>
-    <figcaption>
-      Effet Morpho — extrait de la vidéo 3D du projet de concours pour la Saline Royale
-      d'Arc-et-Senans · <a href="morpho.html">voir le projet</a>
-    </figcaption>
-  </figure>
-
-  <!-- ============================================================ -->
-  <!-- SÉLECTION — deux projets en grand, puis renvoi vers l'index complet
-       (projets.html). La home ne montre plus tout : elle donne envie. -->
-  <!-- ============================================================ -->
-  <section class="featured" id="projets">
-
-    <div class="section-head">
+  <section class="legende" aria-label="Les quatre projets">
+    <div class="legende-head">
       <span class="section-num" data-reveal>01</span>
-      <h2 data-reveal>Sélection</h2>
+      <h2 data-reveal>Légende</h2>
       <p class="section-intro" data-reveal>
-        Deux projets pour donner le ton — un concours, et un premier travail en agence.
-        Les quatre sont dans l'index.
+        Quatre études de cas, de l'échelle du quartier à l'échelle sensible du détail — et
+        <a href="projets.html">l'index complet</a> avec toutes les planches.
       </p>
     </div>
-
-    <a class="feat" href="morpho.html" style="--card-accent: var(--accent-morpho)">
-      <span class="bignum feat-num" aria-hidden="true">02</span>
-      <div class="feat-media" data-fil="right">
-        <picture>
-          <source type="image/avif" srcset="assets/images/projet-02-morpho-ambiance-lumiere-800.avif 800w, assets/images/projet-02-morpho-ambiance-lumiere-1200.avif 1200w, assets/images/projet-02-morpho-ambiance-lumiere-1600.avif 1600w, assets/images/projet-02-morpho-ambiance-lumiere.avif 2400w" sizes="(max-width: 1024px) 92vw, 62vw">
-          <source type="image/webp" srcset="assets/images/projet-02-morpho-ambiance-lumiere-800.webp 800w, assets/images/projet-02-morpho-ambiance-lumiere-1200.webp 1200w, assets/images/projet-02-morpho-ambiance-lumiere-1600.webp 1600w, assets/images/projet-02-morpho-ambiance-lumiere.webp 2400w" sizes="(max-width: 1024px) 92vw, 62vw">
-          <img src="assets/images/projet-02-morpho-ambiance-lumiere.jpg" alt="Effet Morpho — rendu golden hour, parois dichroïques et cerisiers en fleurs" loading="lazy" decoding="async" width="2400" height="1600">
-        </picture>
-      </div>
-      <div class="feat-text">
-        <span class="pcard-cat">Biomimétisme &amp; concours — Arc-et-Senans</span>
+    <div class="legende-grid">
+      <a class="leg" href="palimpseste.html" data-reveal>
+        <span class="leg-num">01</span>
+        <div class="leg-media">
+          <picture>
+              <source type="image/avif" srcset="assets/images/projet-01-palimpseste-aquarelle-800.avif 800w, assets/images/projet-01-palimpseste-aquarelle-1200.avif 1200w, assets/images/projet-01-palimpseste-aquarelle-1600.avif 1600w, assets/images/projet-01-palimpseste-aquarelle.avif 2400w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 22vw">
+              <source type="image/webp" srcset="assets/images/projet-01-palimpseste-aquarelle-800.webp 800w, assets/images/projet-01-palimpseste-aquarelle-1200.webp 1200w, assets/images/projet-01-palimpseste-aquarelle-1600.webp 1600w, assets/images/projet-01-palimpseste-aquarelle.webp 2400w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 22vw">
+              <img src="assets/images/projet-01-palimpseste-aquarelle.jpg" alt="Le Jardin du Palimpseste — aquarelle du chemin planté, totems corten et arche en osier" loading="lazy" decoding="async" width="2400" height="1419">
+            </picture>
+        </div>
+        <h2>Le Jardin du Palimpseste</h2>
+        <p>Herstal — reconversion d'une friche industrielle</p>
+      </a>
+      <a class="leg" href="morpho.html" data-reveal>
+        <span class="leg-num">02</span>
+        <div class="leg-media">
+          <picture>
+              <source type="image/avif" srcset="assets/images/projet-02-morpho-ambiance-lumiere-800.avif 800w, assets/images/projet-02-morpho-ambiance-lumiere-1200.avif 1200w, assets/images/projet-02-morpho-ambiance-lumiere-1600.avif 1600w, assets/images/projet-02-morpho-ambiance-lumiere.avif 2400w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 22vw">
+              <source type="image/webp" srcset="assets/images/projet-02-morpho-ambiance-lumiere-800.webp 800w, assets/images/projet-02-morpho-ambiance-lumiere-1200.webp 1200w, assets/images/projet-02-morpho-ambiance-lumiere-1600.webp 1600w, assets/images/projet-02-morpho-ambiance-lumiere.webp 2400w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 22vw">
+              <img src="assets/images/projet-02-morpho-ambiance-lumiere.jpg" alt="Effet Morpho — rendu golden hour, parois dichroïques et cerisiers en fleurs" loading="lazy" decoding="async" width="2400" height="1600">
+            </picture>
+        </div>
         <h2>Effet Morpho</h2>
-        <p>Un jardin qui change de couleur au pas du visiteur, comme l'aile du papillon dont il tire son nom.</p>
-        <span class="feat-link">Voir le projet →</span>
-      </div>
-    </a>
-
-    <a class="feat feat--reverse" href="haccourt.html" style="--card-accent: var(--accent-haccourt)">
-      <span class="bignum feat-num" aria-hidden="true">04</span>
-      <div class="feat-media" data-fil="left">
-        <picture>
-          <source type="image/avif" srcset="assets/images/projet-04-haccourt-plan-avp001-800.avif 800w, assets/images/projet-04-haccourt-plan-avp001-1200.avif 1200w, assets/images/projet-04-haccourt-plan-avp001-1600.avif 1600w, assets/images/projet-04-haccourt-plan-avp001.avif 1945w" sizes="(max-width: 1024px) 92vw, 62vw">
-          <source type="image/webp" srcset="assets/images/projet-04-haccourt-plan-avp001-800.webp 800w, assets/images/projet-04-haccourt-plan-avp001-1200.webp 1200w, assets/images/projet-04-haccourt-plan-avp001-1600.webp 1600w, assets/images/projet-04-haccourt-plan-avp001.webp 1945w" sizes="(max-width: 1024px) 92vw, 62vw">
-          <img src="assets/images/projet-04-haccourt-plan-avp001.jpg" alt="Place bioclimatique de Haccourt — plan d'avant-projet" loading="lazy" decoding="async" width="1945" height="1836">
-        </picture>
-      </div>
-      <div class="feat-text">
-        <span class="pcard-cat">Projet en agence — Haccourt (Oupeye)</span>
+        <p>Arc-et-Senans — concours, Festival des jardins</p>
+      </a>
+      <a class="leg" href="confluant.html" data-reveal>
+        <span class="leg-num">03</span>
+        <div class="leg-media">
+          <picture>
+              <source type="image/avif" srcset="assets/images/projet-03-confluant-axe-retrouve-800.avif 800w, assets/images/projet-03-confluant-axe-retrouve-1200.avif 1200w, assets/images/projet-03-confluant-axe-retrouve-1600.avif 1600w, assets/images/projet-03-confluant-axe-retrouve.avif 2400w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 22vw">
+              <source type="image/webp" srcset="assets/images/projet-03-confluant-axe-retrouve-800.webp 800w, assets/images/projet-03-confluant-axe-retrouve-1200.webp 1200w, assets/images/projet-03-confluant-axe-retrouve-1600.webp 1600w, assets/images/projet-03-confluant-axe-retrouve.webp 2400w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 22vw">
+              <img src="assets/images/projet-03-confluant-axe-retrouve.jpg" alt="Confluant — gradins et platanes conservés, avenue Reine Astrid à Waremme" loading="lazy" decoding="async" width="2400" height="1475">
+            </picture>
+        </div>
+        <h2>Confluant</h2>
+        <p>Waremme — masterplan et place multimodale</p>
+      </a>
+      <a class="leg" href="haccourt.html" data-reveal>
+        <span class="leg-num">04</span>
+        <div class="leg-media">
+          <picture>
+              <source type="image/avif" srcset="assets/images/projet-04-haccourt-plan-avp001-800.avif 800w, assets/images/projet-04-haccourt-plan-avp001-1200.avif 1200w, assets/images/projet-04-haccourt-plan-avp001-1600.avif 1600w, assets/images/projet-04-haccourt-plan-avp001.avif 1945w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 22vw">
+              <source type="image/webp" srcset="assets/images/projet-04-haccourt-plan-avp001-800.webp 800w, assets/images/projet-04-haccourt-plan-avp001-1200.webp 1200w, assets/images/projet-04-haccourt-plan-avp001-1600.webp 1600w, assets/images/projet-04-haccourt-plan-avp001.webp 1945w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 22vw">
+              <img src="assets/images/projet-04-haccourt-plan-avp001.jpg" alt="Place bioclimatique de Haccourt — plan d'avant-projet, zones d'infiltration et arbres projetés" loading="lazy" decoding="async" width="1945" height="1836">
+            </picture>
+        </div>
         <h2>Place bioclimatique</h2>
-        <p>Végétaliser et désimperméabiliser une place communale — plans d'avant-projet dessinés chez Atelier CUP.</p>
-        <span class="feat-link">Voir le projet →</span>
-      </div>
-    </a>
-
-    <div class="featured-all" data-reveal>
-      <a href="projets.html">Voir les quatre projets →</a>
+        <p>Haccourt (Oupeye) — avant-projet, Atelier CUP</p>
+      </a>
     </div>
   </section>
 

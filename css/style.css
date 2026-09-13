@@ -181,15 +181,20 @@ main { position: relative; }
 .site-header { view-transition-name: site-header; }
 ::view-transition-old(site-header),
 ::view-transition-new(site-header) { animation: none; }
-/* paires carte <-> couverture : mêmes noms, sur des pages différentes */
+/* paires carte <-> couverture : mêmes noms, sur des pages différentes
+   (les marqueurs de la carte de l'accueil portent les mêmes, voir .map-site) */
+.map-site--01 .map-num { view-transition-name: num-01; } .map-site--01 .map-label b { view-transition-name: title-01; }
+.map-site--02 .map-num { view-transition-name: num-02; } .map-site--02 .map-label b { view-transition-name: title-02; }
+.map-site--03 .map-num { view-transition-name: num-03; } .map-site--03 .map-label b { view-transition-name: title-03; }
+.map-site--04 .map-num { view-transition-name: num-04; } .map-site--04 .map-label b { view-transition-name: title-04; }
 .pcard:nth-child(1) .pcard-num, .page-palimpseste .case-cover-num { view-transition-name: num-01; }
-.pcard:nth-child(2) .pcard-num, .feat:not(.feat--reverse) .feat-num, .page-morpho .case-cover-num { view-transition-name: num-02; }
+.pcard:nth-child(2) .pcard-num, .page-morpho .case-cover-num { view-transition-name: num-02; }
 .pcard:nth-child(3) .pcard-num, .page-confluant .case-cover-num { view-transition-name: num-03; }
-.pcard:nth-child(4) .pcard-num, .feat--reverse .feat-num, .page-haccourt .case-cover-num { view-transition-name: num-04; }
+.pcard:nth-child(4) .pcard-num, .page-haccourt .case-cover-num { view-transition-name: num-04; }
 .pcard:nth-child(1) h2, .page-palimpseste .case-cover h1 { view-transition-name: title-01; }
-.pcard:nth-child(2) h2, .feat:not(.feat--reverse) .feat-text h2, .page-morpho .case-cover h1 { view-transition-name: title-02; }
+.pcard:nth-child(2) h2, .page-morpho .case-cover h1 { view-transition-name: title-02; }
 .pcard:nth-child(3) h2, .page-confluant .case-cover h1 { view-transition-name: title-03; }
-.pcard:nth-child(4) h2, .feat--reverse .feat-text h2, .page-haccourt .case-cover h1 { view-transition-name: title-04; }
+.pcard:nth-child(4) h2, .page-haccourt .case-cover h1 { view-transition-name: title-04; }
 
 /* Transition douce entre pages (voir js/script.js) : la page reste visible
    par défaut (jamais d'état "invisible en attendant le JS" — si le script
@@ -373,43 +378,197 @@ h1 em, h2 em, h3 em,
 .nav-toggle[aria-expanded="true"] span:last-child { transform: translateY(-3.5px) rotate(-45deg); }
 
 /* ==========================================================================
-   COUVERTURE DE L'ACCUEIL — même gabarit que les couvertures de projet
-   (.case-cover), un peu plus basse pour que la vidéo pointe dès le premier
-   écran et donne envie de descendre.
+   LA CARTE — l'accueil est un plan de situation (index.html)
+   Le cartouche en haut à gauche (comme sur un plan), la carte qui remplit
+   l'écran : rivières dessinées avec les mêmes lavis que la rivière des
+   autres pages, villes-repères, nord, échelle, encart. Les quatre projets
+   sont des liens HTML posés en % sur la carte (.map-site), avec le numéro
+   en courbes de niveau — le même qui devient géant sur la couverture du
+   projet (View Transitions).
    ========================================================================== */
-.home-cover { min-height: 72svh; }
-.home-cover-inner { max-width: none; }
-.home-cover h1 { max-width: 9ch; } /* "Thomas / Cossement" sur deux lignes */
-.home-cover-foot {
+.carte {
+  position: relative;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: clamp(5.5rem, 9vw, 7rem) var(--gutter) clamp(2rem, 4vw, 3rem);
+  min-height: 100svh;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem 2rem;
-  margin-top: clamp(2.5rem, 5vw, 4rem);
-  padding-top: 1.5rem;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.carte-cartouche {
+  position: absolute;
+  z-index: 2;
+  top: clamp(5.5rem, 9vw, 7rem);
+  left: var(--gutter);
+  max-width: 34rem;
+  padding-right: 1rem;
+}
+.carte-cartouche .project-cat { margin-bottom: 0.75rem; }
+.carte-cartouche h1 { font-size: var(--fs-h1); margin: 0 0 1rem; max-width: 9ch; }
+.carte-cartouche .case-cover-lead { font-size: var(--fs-lead); max-width: 34ch; }
+.carte-meta {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 0.35rem;
+  font-size: var(--fs-xs);
+}
+.carte-meta div { display: grid; grid-template-columns: 4.5rem 1fr; gap: 0.75rem; }
+.carte-meta dt { font-family: var(--font-head); letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); }
+.carte-meta dd { color: var(--text-dim); }
+
+/* la carte garde son format (1400 x 1000) et tient dans l'écran : sa largeur
+   est bornée par la hauteur disponible, pour que le cadre HTML (où sont posés
+   les marqueurs en %) coïncide exactement avec le dessin. Calée à droite,
+   comme le dessin sur un plan dont le cartouche occupe la gauche. */
+.carte-map {
+  position: relative;
+  width: min(100%, calc((100svh - clamp(7.5rem, 13vw, 10rem)) * 1.4));
+  aspect-ratio: 1400 / 1000;
+  margin: 0 0 0 auto;
+}
+.carte-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+
+/* rivières : mêmes lavis que la rivière des pages (.fil-*) */
+.rv { fill: none; stroke: var(--water); stroke-linecap: round; stroke-linejoin: round; }
+.rv-bed   { opacity: 0.045; }
+.rv-water { opacity: 0.14; }
+.rv-deep  { opacity: 0.10; }
+.carte-svg .fil-current { stroke-width: 1.5; stroke-dasharray: 16 26; opacity: 0.36; }
+.carte-svg .fil-current--2 { stroke-dasharray: 9 20; opacity: 0.28; }
+.carte-hydro text, .carte-inset textPath {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 22px;
+  fill: var(--water);
+  opacity: 0.75;
+  letter-spacing: 0.06em;
+}
+.carte-hydro textPath { dominant-baseline: middle; }
+.carte-places circle { fill: none; stroke: var(--text-dim); stroke-width: 1.5; }
+.carte-places text, .carte-inset text { font-family: var(--font-head); fill: var(--text-dim); }
+.pl-name { font-size: 20px; font-weight: 500; }
+.pl-sub  { font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; fill: var(--text-faint); }
+.carte-north path, .carte-scale path { fill: none; stroke: var(--text-dim); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.carte-north text, .carte-scale text { font-family: var(--font-head); font-size: 14px; letter-spacing: 0.1em; fill: var(--text-dim); }
+.carte-inset rect { fill: var(--bg); stroke: var(--line); stroke-width: 1.5; }
+.carte-inset text { font-family: var(--font-head); }
+.carte-inset .pl-sub { fill: var(--text-faint); }
+
+/* les quatre sites */
+.map-site {
+  position: absolute;
+  left: var(--x); top: var(--y);
+  transform: translate(-50%, -50%);
+  display: flex; align-items: center; gap: 0.35rem;
+  color: var(--text);
+  text-decoration: none;
+  z-index: 3;
+}
+.map-site--left { flex-direction: row-reverse; transform: translate(-50%, -50%); }
+/* le numéro reste centré sur le lieu : on décale l'étiquette, pas le numéro */
+.map-site .map-num { flex: none; width: clamp(3.4rem, 6.2vw, 5.6rem); height: auto; overflow: visible; }
+.map-site:not(.map-site--left) { transform: translate(calc(-1 * clamp(1.7rem, 3.1vw, 2.8rem)), -50%); }
+.map-site--left { transform: translate(calc(-100% + clamp(1.7rem, 3.1vw, 2.8rem)), -50%); }
+.map-num text { font-family: var(--font-head); font-weight: 600; letter-spacing: -0.04em; }
+.map-num .core { fill: color-mix(in srgb, var(--ink) 34%, var(--bg)); transition: fill .3s; }
+.map-num .ring { fill: none; stroke-linejoin: round; stroke-linecap: round; transition: stroke .3s; }
+.map-num .ring--1 { stroke: color-mix(in srgb, var(--ink) 40%, var(--bg)); stroke-width: 12px; }
+.map-num .ring--2 { stroke: color-mix(in srgb, var(--ink) 22%, var(--bg)); stroke-width: 24px; }
+.map-num .ring--erase { stroke: var(--bg); }
+.map-num .ring--1.ring--erase { stroke-width: 9.5px; }
+.map-num .ring--2.ring--erase { stroke-width: 21.5px; }
+.map-label {
+  display: flex; flex-direction: column; gap: 0.1rem;
+  font-family: var(--font-head);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.map-site--left .map-label { text-align: right; align-items: flex-end; }
+.map-label b { font-weight: 600; font-size: clamp(0.85rem, 1.1vw, 1.05rem); transition: color .3s; }
+.map-label span { font-size: var(--fs-xs); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); }
+.map-site:hover .map-label b, .map-site:focus-visible .map-label b { color: var(--ink); }
+.map-site:hover .map-num .core { fill: color-mix(in srgb, var(--ink) 55%, var(--bg)); }
+.map-site:hover .map-num .ring--1 { stroke: color-mix(in srgb, var(--ink) 65%, var(--bg)); }
+.map-site:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; }
+
+/* apparition : les rivières se dessinent, puis les sites arrivent un à un */
+@media (prefers-reduced-motion: no-preference) {
+  .carte-rivers .rv-bed, .carte-rivers .rv-water, .carte-rivers .rv-deep, .carte-inset .rv-bed, .carte-inset .rv-water, .carte-inset .rv-deep {
+    stroke-dasharray: 2400;
+    stroke-dashoffset: 2400;
+    animation: carte-draw 2.4s var(--ease) forwards;
+  }
+  .carte-rivers .fil-current, .carte-inset .fil-current, .carte-hydro, .carte-places, .carte-north, .carte-scale, .carte-inset text {
+    opacity: 0;
+    animation: carte-fade .8s ease-out 1.6s forwards;
+  }
+  .carte-inset .fil-current { opacity: 0; }
+  .map-site { opacity: 0; animation: carte-pop .7s var(--ease) both; }
+  .map-site--01 { animation-delay: 1.4s; }
+  .map-site--02 { animation-delay: 1.7s; }
+  .map-site--03 { animation-delay: 2.0s; }
+  .map-site--04 { animation-delay: 2.3s; }
+}
+@keyframes carte-draw { to { stroke-dashoffset: 0; } }
+@keyframes carte-fade { to { opacity: 1; } }
+@keyframes carte-pop {
+  from { opacity: 0; transform: translate(var(--tx, -50%), calc(-50% + 12px)); }
+  to   { opacity: 1; transform: translate(var(--tx, -50%), -50%); }
+}
+.map-site:not(.map-site--left) { --tx: calc(-1 * clamp(1.7rem, 3.1vw, 2.8rem)); }
+.map-site--left { --tx: calc(-100% + clamp(1.7rem, 3.1vw, 2.8rem)); }
+
+/* la légende : les quatre projets en ligne */
+.legende {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: clamp(3rem, 6vw, 5rem) var(--gutter) clamp(5rem, 9vw, 8rem);
   border-top: 1px solid var(--line);
 }
-.home-cover-meta {
+.legende-head { margin-bottom: clamp(2rem, 4vw, 3rem); }
+.legende-head h2 { font-size: var(--fs-h2); margin-bottom: 1rem; }
+.legende-head .section-intro a { color: var(--text); border-bottom: 1px solid var(--text); transition: color .3s, border-color .3s; }
+.legende-head .section-intro a:hover { color: var(--accent); border-color: var(--accent); }
+.legende-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1rem, 2.5vw, 2.5rem);
+}
+.leg { position: relative; display: block; color: var(--text); }
+.leg-num {
+  display: block;
   font-family: var(--font-head);
   font-size: var(--fs-sm);
-  letter-spacing: 0.04em;
-  color: var(--text-faint);
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  margin-bottom: 0.6rem;
 }
-.home-cover-link {
-  font-family: var(--font-head);
-  font-size: var(--fs-sm);
-  letter-spacing: 0.04em;
-  color: var(--text);
-  border-bottom: 1px solid var(--text);
-  padding-bottom: .2rem;
-  transition: color .3s, border-color .3s;
+.leg-media { aspect-ratio: 4 / 3; overflow: hidden; background: var(--bg-alt); }
+.leg-media img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--ease); }
+.leg:hover .leg-media img, .leg:focus-visible .leg-media img { transform: scale(1.03); }
+.leg h2 { font-size: var(--fs-h3); margin: 0.9rem 0 0.35rem; transition: color .3s; }
+.leg:hover h2 { color: var(--accent); }
+.leg p { font-family: var(--font-serif); font-size: var(--fs-sm); color: var(--text-dim); line-height: 1.5; }
+
+@media (max-width: 1024px) {
+  .legende-grid { grid-template-columns: repeat(2, 1fr); }
+  .map-label b { font-size: 0.8rem; }
 }
-.home-cover-link:hover { color: var(--accent); border-color: var(--accent); }
-/* la vidéo de l'accueil : jamais plus haute qu'un écran */
-.home-video video { max-height: 85svh; }
-.home-video figcaption a { color: var(--text-dim); border-bottom: 1px solid var(--line); transition: color .3s, border-color .3s; }
-.home-video figcaption a:hover { color: var(--accent); border-color: var(--accent); }
+@media (max-width: 720px) {
+  .carte { min-height: 0; padding-top: 5.5rem; }
+  .carte-cartouche { position: static; max-width: none; margin-bottom: 1.5rem; }
+  .carte-map { max-height: none; }
+  .map-site .map-num { width: 2.4rem; }
+  .map-site:not(.map-site--left) { transform: translate(-1.2rem, -50%); --tx: -1.2rem; }
+  .map-site--left { transform: translate(calc(-100% + 1.2rem), -50%); --tx: calc(-100% + 1.2rem); }
+  .map-label { display: none; } /* sur mobile, la légende sous la carte fait le travail */
+  /* et les petits textes de la carte (illisibles à cette taille) s'effacent : restent les rivières et les numéros */
+  .carte-hydro, .carte-places text, .carte-inset text, .carte-scale, .carte-north { display: none; }
+  .legende-grid { grid-template-columns: 1fr; }
+}
 
 /* ==========================================================================
    NUMÉROS EN TRÈS GRAND — la signature typographique du site
@@ -514,103 +673,6 @@ h1 em, h2 em, h3 em,
   line-height: 1.55;
 }
 .pcard:focus-visible { outline: 2px solid var(--card-accent, var(--accent)); outline-offset: 6px; }
-
-/* ==========================================================================
-   SÉLECTION (accueil) — deux projets en grand, puis un lien vers l'index
-   Remplace le carrousel : la home ne cherche plus à tout montrer, elle
-   donne envie d'aller voir l'index.
-   ========================================================================== */
-.featured { padding-bottom: clamp(3rem, 6vw, 5rem); }
-
-.feat {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  column-gap: clamp(1rem, 2.5vw, 2.5rem);
-  align-items: end;
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: clamp(2.5rem, 5vw, 4rem) var(--gutter);
-  color: inherit;
-}
-.feat + .feat { border-top: 1px solid var(--line); }
-.feat-media {
-  grid-column: 1 / 9;
-  position: relative;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  background: var(--bg-alt);
-}
-.feat--reverse .feat-media { grid-column: 5 / 13; }
-.feat-media img {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  transition: transform .8s var(--ease);
-}
-.feat:hover .feat-media img,
-.feat:focus-visible .feat-media img { transform: scale(1.03); }
-.feat-media::after {
-  content: '';
-  position: absolute; inset: 0;
-  background: var(--card-accent, var(--accent));
-  mix-blend-mode: color;
-  opacity: 0;
-  transition: opacity .6s ease;
-}
-.feat:hover .feat-media::after { opacity: 0.25; }
-
-.feat-num {
-  position: absolute;
-  z-index: 2;
-  left: var(--gutter);
-  top: clamp(0.5rem, 1.5vw, 1.5rem);
-  font-size: clamp(6rem, 15vw, 14rem);
-}
-.feat--reverse .feat-num { left: auto; right: var(--gutter); }
-
-.feat-text {
-  grid-column: 9 / 13;
-  padding-bottom: 0.5rem;
-}
-.feat--reverse .feat-text { grid-column: 1 / 5; grid-row: 1; }
-.feat-text h2 { font-size: var(--fs-h2); margin: 0.5rem 0 0.9rem; transition: color .3s; }
-.feat:hover .feat-text h2 { color: var(--card-accent, var(--accent)); }
-.feat-text p {
-  font-family: var(--font-serif);
-  color: var(--text-dim);
-  font-size: var(--fs-body);
-  line-height: 1.6;
-  max-width: 34ch;
-  margin-bottom: 1.25rem;
-}
-.feat-link {
-  display: inline-flex; align-items: center; gap: .5rem;
-  font-family: var(--font-head);
-  font-size: var(--fs-sm);
-  letter-spacing: .04em;
-  color: var(--text);
-  border-bottom: 1px solid var(--text);
-  padding-bottom: .15rem;
-}
-.feat:focus-visible { outline: 2px solid var(--card-accent, var(--accent)); outline-offset: 4px; }
-
-.featured-all {
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: clamp(2rem, 4vw, 3rem) var(--gutter) 0;
-  display: flex;
-  justify-content: flex-end;
-}
-.featured-all a {
-  font-family: var(--font-head);
-  font-size: var(--fs-lead);
-  color: var(--text);
-  border-bottom: 1px solid var(--text);
-  padding-bottom: .2rem;
-  transition: color .3s, border-color .3s;
-}
-.featured-all a:hover { color: var(--accent); border-color: var(--accent); }
 
 /* ==========================================================================
    ABOUT TEASER (accueil)
@@ -1658,9 +1720,6 @@ h1 em, h2 em, h3 em,
   .about-grid, .contact { grid-template-columns: 1fr; }
   .case-section > *, .case-section--right > *, .case-section--wide > * { grid-column: 1 / 13; }
   .case-pull p { grid-column: 1 / 13; }
-  .feat-media, .feat--reverse .feat-media { grid-column: 1 / 13; }
-  .feat-text, .feat--reverse .feat-text { grid-column: 1 / 13; grid-row: auto; padding-top: 1.25rem; }
-  .feat--reverse .feat-num { right: auto; left: var(--gutter); }
   .pcard:nth-child(n) { grid-column: 1 / 13; margin-top: 0; }
   .about-media { position: static; max-width: 340px; }
   .teaser-grid { grid-template-columns: 1fr; }
@@ -1849,11 +1908,9 @@ body.lb-open { overflow: hidden; }
   html { scroll-behavior: auto; }
   body { background: #fff; color: #000; font-size: 11pt; line-height: 1.45; }
   .site-header, .site-footer, .nav-toggle, .main-nav, .case-nav, .fil-eau,
-  .home-video, .project-video, .featured-all, .home-cover-foot, .back-top,
   .manifesto-scroll, .timeline-track, .contact-form { display: none !important; }
   main { padding-top: 0; }
   /* neutralise les états intermédiaires des animations (opacité, balayage) */
-  [data-reveal], .case-figure, .case-plan, .case-pair figure, .pcard-media, .feat-media,
   .case-cover-num, .timeline-step, .project-tags li {
     opacity: 1 !important; transform: none !important; clip-path: none !important;
   }
