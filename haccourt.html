@@ -23,6 +23,7 @@
 
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="stylesheet" href="css/style.css">
+<script>document.documentElement.classList.add('js')</script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -132,6 +133,73 @@
       <dd>Géomètres Maréchal &amp; Baudinet</dd>
     </div>
   </dl>
+
+  <!-- ============================================================ -->
+  <!-- LES CINQ CALQUES — les axonométries du projet (situation existante,
+       structure paysagère, eaux, mobilité, usages) superposées sur le même
+       dessin ; la scène reste fixe et les calques se succèdent au fil du
+       défilement (voir [data-strates] dans js/script.js). Les titres sont
+       ceux des planches. Fonds transparents : le dessin est posé sur le
+       papier de la page. -->
+  <!-- ============================================================ -->
+  <section class="strates" data-strates aria-label="Les cinq calques du projet">
+    <div class="strates-stage">
+      <div class="strates-media">
+        <figure class="strate">
+          <picture>
+            <source type="image/avif" srcset="assets/images/projet-04-haccourt-axo-existant.avif">
+            <source type="image/webp" srcset="assets/images/projet-04-haccourt-axo-existant.webp">
+            <img src="assets/images/projet-04-haccourt-axo-existant.png" alt="Axonométrie de la place de Haccourt — situation existante" loading="lazy" decoding="async" width="2000" height="1089">
+          </picture>
+          <figcaption>Axonométrie — Situation existante</figcaption>
+        </figure>
+        <figure class="strate">
+          <picture>
+            <source type="image/avif" srcset="assets/images/projet-04-haccourt-axo-vegetation.avif">
+            <source type="image/webp" srcset="assets/images/projet-04-haccourt-axo-vegetation.webp">
+            <img src="assets/images/projet-04-haccourt-axo-vegetation.png" alt="Axonométrie de la place de Haccourt — structure paysagère — îlot de fraîcheur" loading="lazy" decoding="async" width="2000" height="1089">
+          </picture>
+          <figcaption>Axonométrie — Structure paysagère — îlot de fraîcheur</figcaption>
+        </figure>
+        <figure class="strate">
+          <picture>
+            <source type="image/avif" srcset="assets/images/projet-04-haccourt-axo-eau.avif">
+            <source type="image/webp" srcset="assets/images/projet-04-haccourt-axo-eau.webp">
+            <img src="assets/images/projet-04-haccourt-axo-eau.png" alt="Axonométrie de la place de Haccourt — gestion des eaux — jardin de pluie" loading="lazy" decoding="async" width="2000" height="1089">
+          </picture>
+          <figcaption>Axonométrie — Gestion des eaux — jardin de pluie</figcaption>
+        </figure>
+        <figure class="strate">
+          <picture>
+            <source type="image/avif" srcset="assets/images/projet-04-haccourt-axo-mobilite.avif">
+            <source type="image/webp" srcset="assets/images/projet-04-haccourt-axo-mobilite.webp">
+            <img src="assets/images/projet-04-haccourt-axo-mobilite.png" alt="Axonométrie de la place de Haccourt — axe de communication et zone d'occupation" loading="lazy" decoding="async" width="2000" height="1089">
+          </picture>
+          <figcaption>Axonométrie — Axe de communication et zone d'occupation</figcaption>
+        </figure>
+        <figure class="strate">
+          <picture>
+            <source type="image/avif" srcset="assets/images/projet-04-haccourt-axo-usages.avif">
+            <source type="image/webp" srcset="assets/images/projet-04-haccourt-axo-usages.webp">
+            <img src="assets/images/projet-04-haccourt-axo-usages.png" alt="Axonométrie de la place de Haccourt — usages et mémoires" loading="lazy" decoding="async" width="2000" height="1089">
+          </picture>
+          <figcaption>Axonométrie — Usages et mémoires</figcaption>
+        </figure>
+      </div>
+      <div class="strates-side">
+        <h2>Un même dessin, cinq calques</h2>
+        <p>L'axonométrie de la place, lue couche par couche.</p>
+        <ol class="strates-list">
+        <li><span>01</span>Situation existante</li>
+        <li><span>02</span>Structure paysagère — îlot de fraîcheur</li>
+        <li><span>03</span>Gestion des eaux — jardin de pluie</li>
+        <li><span>04</span>Axe de communication et zone d'occupation</li>
+        <li><span>05</span>Usages et mémoires</li>
+        </ol>
+        <p class="strates-hint" aria-hidden="true">Faire défiler</p>
+      </div>
+    </div>
+  </section>
 
   <!-- ============================================================ -->
   <!-- PLANCHE AVP 001 — dans le conteneur (format presque carré).

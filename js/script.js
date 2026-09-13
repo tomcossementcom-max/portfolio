@@ -147,17 +147,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!reduceMotion) {
       /* Generic fade-in-up reveal for every [data-reveal] element */
+      /* le texte aussi suit le défilement : il se lève et apparaît à mesure
+         qu'il entre dans l'écran (du bas jusqu'à 72 %), sans à-coup */
       document.querySelectorAll('main [data-reveal]').forEach(el => {
-        gsap.from(el, {
-          opacity: 0,
-          y: 36,
-          duration: 1,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: el,
-            start: 'top 85%',
-            toggleActions: 'play none none reverse'
-          }
+        gsap.fromTo(el, { opacity: 0, y: 30 }, {
+          opacity: 1, y: 0, ease: 'none',
+          scrollTrigger: { trigger: el, start: 'top 97%', end: 'top 72%', scrub: 0.3 }
         });
       });
 
@@ -188,21 +183,45 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
 
-      /* Les planches se révèlent par balayage, de haut en bas (comme le
-         fil d'eau), avec un très léger recul de l'image — plutôt que le
-         même fondu que le texte. Cartes de l'index et de la sélection :
-         balayage seul, leur zoom au survol est géré en CSS. */
-      gsap.utils.toArray('main .case-figure, main .case-plan, main .case-pair figure').forEach(fig => {
+      /* Les planches se révèlent par balayage, de haut en bas (comme la
+         rivière), LIÉ AU DÉFILEMENT : la planche se découvre à mesure qu'elle
+         monte dans l'écran, du bas jusqu'au milieu — le même tempo que la
+         carte de l'accueil. Léger recul de l'image pendant le balayage. */
+      gsap.utils.toArray('main .case-figure, main .case-plan, main .case-pair figure, main .pcard-media, main .photo').forEach(fig => {
         const media = fig.querySelector('img, video');
-        const tl = gsap.timeline({ scrollTrigger: { trigger: fig, start: 'top 88%' } });
-        tl.fromTo(fig, { clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)', duration: 1.1, ease: 'power3.out' }, 0);
-        if (media) tl.fromTo(media, { scale: 1.05 }, { scale: 1, duration: 1.5, ease: 'power2.out', clearProps: 'transform' }, 0);
-      });
-      gsap.utils.toArray('main .pcard-media, main .feat-media').forEach(fig => {
-        gsap.fromTo(fig, { clipPath: 'inset(0 0 100% 0)' }, {
-          clipPath: 'inset(0 0 0% 0)', duration: 1.1, ease: 'power3.out',
-          scrollTrigger: { trigger: fig, start: 'top 88%' }
+        const tl = gsap.timeline({
+          scrollTrigger: { trigger: fig, start: 'top 96%', end: 'top 55%', scrub: 0.4 }
         });
+        tl.fromTo(fig, { clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)', ease: 'none' }, 0);
+        if (media && !fig.classList.contains('pcard-media')) {
+          tl.fromTo(media, { scale: 1.05 }, { scale: 1, ease: 'none' }, 0);
+        }
+      });
+
+      /* LES CALQUES ([data-strates]) : la scène est collée, les calques se
+         succèdent en fondu au fil du défilement, la liste suit. */
+      document.querySelectorAll('[data-strates]').forEach(section => {
+        const layers = [...section.querySelectorAll('.strate')];
+        const items = [...section.querySelectorAll('.strates-list li')];
+        if (layers.length < 2) return;
+        const n = layers.length;
+        const tl = gsap.timeline({
+          defaults: { ease: 'none' },
+          scrollTrigger: {
+            trigger: section, start: 'top top', end: 'bottom bottom', scrub: 0.5,
+            onUpdate: st => {
+              const i = Math.min(n - 1, Math.floor(st.progress * n * 0.999));
+              items.forEach((li, k) => li.classList.toggle('is-active', k === i));
+            }
+          }
+        });
+        // chaque calque arrive en fondu sur le précédent, sur une fraction de la course
+        for (let i = 1; i < n; i++) {
+          const at = (i / n) - 0.06;
+          tl.fromTo(layers[i], { opacity: 0 }, { opacity: 1, duration: 0.12 }, at);
+          tl.to(layers[i - 1], { opacity: 0, duration: 0.12 }, at + 0.06);
+        }
+        if (items[0]) items[0].classList.add('is-active');
       });
     } else {
       document.querySelectorAll('[data-reveal]').forEach(el => {

@@ -758,6 +758,133 @@ body.menu-open .site-header { background: transparent; backdrop-filter: none; bo
 }
 
 /* ==========================================================================
+   LES CALQUES (.strates) — un même dessin, plusieurs couches, lues au fil du
+   scroll : la scène reste collée, les calques se succèdent en fondu, la
+   liste à côté suit. Sans script (html sans .js) ou sous
+   prefers-reduced-motion : les calques se lisent simplement à la suite.
+   ========================================================================== */
+.strates {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 4rem) var(--gutter);
+}
+.strates-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: center;
+}
+.strates-media { position: relative; }
+.strate { margin: 0; }
+.strate img { width: 100%; height: auto; display: block; }
+.strate figcaption { display: none; }
+.strates-side h2 { font-size: var(--fs-h3); margin-bottom: .6rem; }
+.strates-side > p { font-family: var(--font-serif); color: var(--text-dim); font-size: var(--fs-sm); margin-bottom: 1.5rem; }
+.strates-list { display: flex; flex-direction: column; gap: .55rem; }
+.strates-list li {
+  font-family: var(--font-head);
+  font-size: var(--fs-sm);
+  color: var(--text-faint);
+  display: flex; gap: .8rem; align-items: baseline;
+  padding: .35rem 0;
+  border-top: 1px solid var(--line);
+  transition: color .35s;
+}
+.strates-list li span { font-size: var(--fs-xs); letter-spacing: .14em; color: var(--accent); flex: none; }
+.strates-list li.is-active { color: var(--text); }
+.strates-hint { margin-top: 1.5rem; font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .14em; text-transform: uppercase; color: var(--text-faint); }
+/* sans animation : les calques à la suite */
+html:not(.js) .strate { margin-bottom: 1rem; }
+html:not(.js) .strates-hint { display: none; }
+/* avec animation : la section fait plusieurs écrans, la scène est collée, les
+   calques empilés au même endroit */
+@media (prefers-reduced-motion: no-preference) {
+  html.js .strates { height: calc(100svh + 5 * 55svh); padding-top: 0; padding-bottom: 0; }
+  html.js .strates-stage { position: sticky; top: 0; height: 100svh; }
+  html.js .strates-media { aspect-ratio: 2000 / 1089; }
+  html.js .strate { position: absolute; inset: 0; opacity: 0; }
+  html.js .strate:first-child { opacity: 1; }
+}
+@media (max-width: 1024px) {
+  .strates-stage { grid-template-columns: 1fr; align-content: center; gap: 1.25rem; }
+  .strates-side h2 { font-size: 1.1rem; }
+  .strates-list { flex-direction: row; flex-wrap: wrap; gap: .4rem .9rem; }
+  .strates-list li { border-top: 0; padding: 0; font-size: var(--fs-xs); }
+  .strates-hint { display: none; }
+}
+
+/* ==========================================================================
+   LA CARTE DU REGARD (regard.html) — côtes et fleuves d'Europe de l'Ouest et
+   du Maroc, les photos posées là où elles ont été prises (voir js/regard.js)
+   ========================================================================== */
+.regard-carte {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--gutter) clamp(2rem, 5vw, 4rem);
+}
+.regard-map {
+  position: relative;
+  width: min(100%, 78vh);
+  margin: 0 auto;
+  aspect-ratio: 1;
+}
+.regard-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.regard-coast { fill: none; stroke: var(--text); stroke-width: .8px; stroke-linejoin: round; opacity: .55; }
+.regard-river { fill: none; stroke: var(--water); stroke-width: 1.4px; stroke-linecap: round; stroke-linejoin: round; opacity: .8; }
+.regard-home {
+  position: absolute; left: var(--x); top: var(--y);
+  transform: translate(-50%, -50%);
+  display: flex; align-items: center; gap: .45rem;
+  z-index: 2;
+}
+.regard-home i { width: .55rem; height: .55rem; border-radius: 50%; border: 1.5px solid var(--text); background: var(--bg); }
+.regard-home b { font-family: var(--font-head); font-weight: 500; font-size: var(--fs-xs); letter-spacing: .12em; text-transform: uppercase; color: var(--text-dim); }
+.regard-lieu {
+  position: absolute; left: var(--x); top: var(--y);
+  z-index: 3;
+}
+.regard-lieu i {
+  position: absolute; left: 0; top: 0;
+  width: .6rem; height: .6rem; border-radius: 50%;
+  background: var(--accent);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 3px var(--bg);
+}
+.regard-pin {
+  position: absolute;
+  left: calc(.9rem + var(--i) * 1.1rem); top: calc(-5.2rem - var(--i) * .9rem);
+  width: 5rem; height: 5rem;
+  background: var(--bg);
+  padding: 3px;
+  box-shadow: 0 6px 18px rgba(44, 45, 42, .18), 0 0 0 1px var(--line);
+  transform: rotate(calc(-3deg + var(--i) * 5deg));
+  transition: transform .4s var(--ease), box-shadow .4s;
+  z-index: calc(1 + var(--i));
+}
+.regard-pin::after {
+  /* le fil qui relie la vignette au point */
+  content: ''; position: absolute; left: -.9rem; bottom: -.3rem; width: .9rem; height: 1px; background: var(--text-faint); transform-origin: right; transform: rotate(35deg);
+  opacity: .6;
+}
+.regard-pin img, .regard-pin picture { width: 100%; height: 100%; object-fit: cover; display: block; }
+.regard-pin:hover, .regard-pin:focus-visible { transform: rotate(0) scale(1.08); box-shadow: 0 10px 26px rgba(44, 45, 42, .24), 0 0 0 1px var(--line); z-index: 9; outline: none; }
+.regard-lieu b {
+  position: absolute; left: .9rem; top: .35rem;
+  font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 1rem; white-space: nowrap; color: var(--text);
+}
+.regard-note {
+  max-width: var(--container);
+  margin: 1rem auto 0;
+  font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .1em; text-transform: uppercase; color: var(--text-faint);
+  display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+}
+@media (max-width: 720px) {
+  .regard-map { width: 100%; }
+  .regard-pin { width: 3.4rem; height: 3.4rem; top: calc(-3.7rem - var(--i) * .7rem); left: calc(.6rem + var(--i) * .8rem); }
+  .regard-lieu b { font-size: .85rem; }
+}
+
+/* ==========================================================================
    NUMÉROS EN TRÈS GRAND — la signature typographique du site
    Le site est numéroté depuis le début (01/02/03…) mais en 0,7rem. Ici on
    l'assume : un chiffre fantôme, très pâle, qui déborde sur l'image ou le

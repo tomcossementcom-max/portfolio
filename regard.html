@@ -51,8 +51,18 @@
     </p>
   </div>
 
+  <!-- ============================================================ -->
+  <!-- LA CARTE DU REGARD — les photos posées là où elles ont été prises
+       (côtes et fleuves Natural Earth, voir js/regard.js). Une photo rejoint
+       la carte quand sa <figure class="photo"> porte data-place. -->
+  <!-- ============================================================ -->
+  <section class="regard-carte" aria-label="Carte des photographies">
+    <div class="regard-map"></div>
+    <p class="regard-note"><span>D'où viennent les photos — cliquer une vignette l'ouvre en grand</span><span>De l'Atlantique à l'Adriatique, des Pays-Bas au Maroc</span></p>
+  </section>
+
   <section class="photo-grid" aria-label="Photographies">
-      <figure class="photo">
+      <figure class="photo" data-place="amsterdam">
         <picture>
           <source type="image/avif" srcset="assets/images/regard-01-800.avif 800w, assets/images/regard-01.avif 1333w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
           <source type="image/webp" srcset="assets/images/regard-01-800.webp 800w, assets/images/regard-01.webp 1333w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
@@ -60,7 +70,7 @@
         </picture>
         <figcaption>Amsterdam — l'Amstel</figcaption>
       </figure>
-      <figure class="photo">
+      <figure class="photo" data-place="amsterdam">
         <picture>
           <source type="image/avif" srcset="assets/images/regard-02-800.avif 800w, assets/images/regard-02-1200.avif 1200w, assets/images/regard-02-1600.avif 1600w, assets/images/regard-02.avif 2000w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
           <source type="image/webp" srcset="assets/images/regard-02-800.webp 800w, assets/images/regard-02-1200.webp 1200w, assets/images/regard-02-1600.webp 1600w, assets/images/regard-02.webp 2000w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
@@ -68,7 +78,7 @@
         </picture>
         <figcaption>Amsterdam — tour A'DAM</figcaption>
       </figure>
-      <figure class="photo">
+      <figure class="photo" data-place="porto">
         <picture>
           <source type="image/avif" srcset="assets/images/regard-03-800.avif 800w, assets/images/regard-03-1200.avif 1200w, assets/images/regard-03-1600.avif 1600w, assets/images/regard-03.avif 2000w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
           <source type="image/webp" srcset="assets/images/regard-03-800.webp 800w, assets/images/regard-03-1200.webp 1200w, assets/images/regard-03-1600.webp 1600w, assets/images/regard-03.webp 2000w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
@@ -76,7 +86,7 @@
         </picture>
         <figcaption>Porto — le pont Dom-Luís</figcaption>
       </figure>
-      <figure class="photo">
+      <figure class="photo" data-place="porto">
         <picture>
           <source type="image/avif" srcset="assets/images/regard-04-800.avif 800w, assets/images/regard-04.avif 1338w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
           <source type="image/webp" srcset="assets/images/regard-04-800.webp 800w, assets/images/regard-04.webp 1338w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
@@ -98,7 +108,7 @@
           <img src="assets/images/regard-06.jpg" alt="Photographie de Thomas Cossement" loading="lazy" decoding="async" width="1333" height="2000">
         </picture>
       </figure>
-      <figure class="photo">
+      <figure class="photo" data-place="rovinj">
         <picture>
           <source type="image/avif" srcset="assets/images/regard-07-800.avif 800w, assets/images/regard-07.avif 1334w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
           <source type="image/webp" srcset="assets/images/regard-07-800.webp 800w, assets/images/regard-07.webp 1334w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
@@ -113,7 +123,7 @@
           <img src="assets/images/regard-08.jpg" alt="Photographie de Thomas Cossement" loading="lazy" decoding="async" width="1334" height="2000">
         </picture>
       </figure>
-      <figure class="photo">
+      <figure class="photo" data-place="essaouira">
         <picture>
           <source type="image/avif" srcset="assets/images/regard-09-800.avif 800w, assets/images/regard-09-1200.avif 1200w, assets/images/regard-09-1600.avif 1600w, assets/images/regard-09.avif 2000w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
           <source type="image/webp" srcset="assets/images/regard-09-800.webp 800w, assets/images/regard-09-1200.webp 1200w, assets/images/regard-09-1600.webp 1600w, assets/images/regard-09.webp 2000w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
@@ -207,5 +217,7 @@
 <script src="js/script.js"></script>
 <script src="js/fil-eau.js"></script>
 <script src="js/lightbox.js"></script>
+<script src="js/regard-data.js"></script>
+<script src="js/regard.js"></script>
 </body>
 </html>
