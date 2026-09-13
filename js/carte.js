@@ -17,7 +17,8 @@
 (() => {
   const stage = document.querySelector('.carte-stage');
   if (!stage) return;
-  const svg  = stage.querySelector('.carte-svg');
+  const svg  = stage.querySelector('.carte-svg:not(.carte-relief)');
+  const relief = stage.querySelector('.carte-relief');
   const zoom = stage.querySelector('.carte-zoom');
   const sites = [...stage.querySelectorAll('.site')];
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -30,7 +31,7 @@
   });
   if (window.Relief) {
     const { paths } = Relief.contours({ x: 0, y: 0, w: 1400, h: 1000, cell: 8 });
-    Relief.fill(svg.querySelector('.carte-contours'), paths);
+    Relief.fill(relief.querySelector('.carte-contours'), paths);
   }
 
   /* ---------- 2. les sites, en pixels ---------- */
@@ -41,8 +42,10 @@
     // en portrait, la carte tient dans l'écran (meet) sur un cadrage resserré
     // autour des sites ; en paysage, elle remplit l'écran (slice)
     const vb = portrait ? [250, 60, 1150, 940] : [0, 0, 1400, 1000];
-    svg.setAttribute('viewBox', vb.join(' '));
-    svg.setAttribute('preserveAspectRatio', portrait ? 'xMidYMid meet' : 'xMidYMid slice');
+    [svg, relief].forEach(s => {
+      s.setAttribute('viewBox', vb.join(' '));
+      s.setAttribute('preserveAspectRatio', portrait ? 'xMidYMid meet' : 'xMidYMid slice');
+    });
     const k = portrait ? Math.min(W / vb[2], H / vb[3]) : Math.max(W / vb[2], H / vb[3]);
     const ox = (W - vb[2] * k) / 2, oy = (H - vb[3] * k) / 2;
     sites.forEach(s => {
@@ -67,7 +70,7 @@
       defaults: { ease: 'none' },
       scrollTrigger: { trigger: '.carte', start: 'top top', end: 'bottom bottom', scrub: 0.5 }
     });
-    tl.fromTo(svg.querySelector('.carte-contours'), { opacity: 0.35 }, { opacity: 1, duration: 0.3 }, 0)
+    tl.fromTo(relief, { opacity: 0.35 }, { opacity: 1, duration: 0.3 }, 0)
       .fromTo(title, { opacity: 1, y: 0 }, { opacity: 0, y: -24, duration: 0.14, ease: 'power1.in' }, 0.06)
       .fromTo(hint, { opacity: 1 }, { opacity: 0, duration: 0.06 }, 0)
       .fromTo(svg.querySelector('.carte-rivers'), { opacity: 0 }, { opacity: 1, duration: 0.06 }, 0.08);
@@ -83,7 +86,7 @@
         .fromTo(s.querySelector('.site-dot'), { scale: 0.6 }, { scale: 1, duration: 0.09, ease: 'power2.out' }, 0.42 + i * 0.1);
     });
     tl.fromTo(foot, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.12, ease: 'power1.out' }, 0.84)
-      .fromTo(svg, { scale: 1.06 }, { scale: 1, duration: 1 }, 0);
+      .fromTo([svg, relief], { scale: 1.06 }, { scale: 1, duration: 1 }, 0);
   } else {
     // sans séquence : tout est en place, le nom laisse la place au manifeste
     if (title) title.style.display = 'none';
@@ -101,18 +104,42 @@
       zoom.style.setProperty('--zy', `${dot.top + dot.height / 2 - box.top}px`);
       stage.classList.add('is-zooming');
       s.classList.add('is-target');
-      try { sessionStorage.setItem('carte-site', s.className.match(/site--(\d\d)/)[1]); } catch (_) {}
-      setTimeout(() => { location.href = s.href; }, 620);
+      try {
+        sessionStorage.setItem('carte-site', s.className.match(/site--(\d\d)/)[1]);
+        sessionStorage.setItem('carte-via', 'zoom');
+      } catch (_) {}
+      setTimeout(() => { location.href = s.href; }, 700);
     });
+  });
+
+  /* ---------- 4b. retour par le cache du navigateur (bfcache) ----------
+     Si le navigateur restaure la page telle qu'on l'a quittée (bouton
+     Précédent), elle est encore zoomée sur le site : on rejoue le retour. */
+  window.addEventListener('pageshow', e => {
+    if (!e.persisted || !stage.classList.contains('is-zooming')) return;
+    stage.classList.remove('is-zooming');
+    sites.forEach(s => s.classList.remove('is-target'));
+    stage.classList.add('is-returning');
+    setTimeout(() => {
+      stage.classList.add('is-returning-out');
+      setTimeout(() => stage.classList.remove('is-returning', 'is-returning-out'), 950);
+    }, 60);
   });
 
   /* ---------- 5. le retour : on revient d'un projet, la carte se ré-ouvre ----------
      La couverture du projet a un lien « voir sur la carte » (et le bouton
      Précédent du navigateur) : la carte arrive zoomée sur ce site et
      s'éloigne jusqu'à la vue entière — l'inverse du clic. */
-  let back = null;
-  try { back = sessionStorage.getItem('carte-site'); sessionStorage.removeItem('carte-site'); } catch (_) {}
-  const from = back && stage.querySelector(`.site--${back}`);
+  let back = null, via = null;
+  try {
+    back = sessionStorage.getItem('carte-site'); via = sessionStorage.getItem('carte-via');
+    sessionStorage.removeItem('carte-site'); sessionStorage.removeItem('carte-via');
+  } catch (_) {}
+  // on ne « revient » que depuis la pastille d'une couverture (via = pin) ou par
+  // le bouton Précédent ; arriver par le logo ou le menu rejoue la séquence
+  const nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+  const isBack = nav && nav.type === 'back_forward';
+  const from = back && (via === 'pin' || isBack) && stage.querySelector(`.site--${back}`);
   if (from && !reduceMotion) {
     const dot = from.querySelector('.site-dot').getBoundingClientRect();
     const box = zoom.getBoundingClientRect();

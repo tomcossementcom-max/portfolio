@@ -11,7 +11,7 @@
 (() => {
   const main = document.querySelector('main');
   if (!main) return;
-  const figures = [...main.querySelectorAll('.case-figure, .case-plan, .case-pair figure')]
+  const figures = [...main.querySelectorAll('.case-figure, .case-plan, .case-pair figure, .photo')]
     .filter(f => f.querySelector('img'));
   if (figures.length < 2) return;
 

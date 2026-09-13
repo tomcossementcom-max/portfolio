@@ -45,7 +45,9 @@ document.addEventListener('DOMContentLoaded', () => {
   /* dessus et s'éloigne (voir js/carte.js).                        */
   /* ------------------------------------------------------------ */
   document.querySelectorAll('[data-carte-site]').forEach(a => {
-    a.addEventListener('click', () => { try { sessionStorage.setItem('carte-site', a.dataset.carteSite); } catch (_) {} });
+    a.addEventListener('click', () => {
+      try { sessionStorage.setItem('carte-site', a.dataset.carteSite); sessionStorage.setItem('carte-via', 'pin'); } catch (_) {}
+    });
   });
 
   /* ------------------------------------------------------------ */

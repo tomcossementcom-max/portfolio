@@ -6,20 +6,11 @@
 <title>Regard — Thomas Cossement</title>
 <meta name="description" content="Photographies de Thomas Cossement — le regard qui l'a mené vers l'architecture du paysage.">
 <!--
-  PAGE « REGARD » — PRÊTE, EN ATTENTE DES PHOTOS.
-  Elle n'est pas encore reliée au menu ni indexée (meta robots ci-dessous).
-  Pour l'activer :
-  1. dépose 12 à 20 photos (JPG, 2000 px de large ou plus) dans assets/images/,
-     nommées regard-01.jpg, regard-02.jpg, … ;
-  2. lance  python tools/optimise-images.py  (variantes AVIF/WebP) ;
-  3. remplace chaque <figure class="photo photo--placeholder"> ci-dessous par le
-     gabarit <picture> donné en commentaire dans la grille, avec ta légende ;
-  4. supprime la ligne <meta name="robots" content="noindex"> ;
-  5. (fait) « Regard » est dans le menu de chaque page (header + footer) — par exemple
-     en 04, et décale À propos en 05 et Contact en 06 ;
-  6. ajoute la page dans sitemap.xml.
+  PAGE « REGARD » — pour ajouter une photo : dépose regard-NN.jpg (2000 px)
+  dans assets/images/, lance  python tools/optimise-images.py, et copie une
+  <figure class="photo"> de la grille ci-dessous en adaptant le nom, la
+  légende et width/height.
 -->
-<meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
@@ -56,34 +47,129 @@
     <p data-reveal>
       C'est en partie par la photographie que j'ai développé ma sensibilité au paysage&nbsp;:
       apprendre à cadrer, à lire la lumière, à observer la nature autrement. Quelques images,
-      sans autre intention que de montrer ce que je regarde — la sélection est en cours de
-      montage.
+      sans autre intention que de montrer ce que je regarde.
     </p>
   </div>
 
-  <!-- GRILLE — trois colonnes qui s'écoulent (deux sur tablette, une sur mobile) ;
-       les photos gardent leur format d'origine, portrait ou paysage.
-       Gabarit d'une photo, à copier pour chaque image :
-
-       <figure class="photo">
-         <picture>
-           <source type="image/avif" srcset="assets/images/regard-01-800.avif 800w, assets/images/regard-01-1200.avif 1200w, assets/images/regard-01.avif 2000w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
-           <source type="image/webp" srcset="assets/images/regard-01-800.webp 800w, assets/images/regard-01-1200.webp 1200w, assets/images/regard-01.webp 2000w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
-           <img src="assets/images/regard-01.jpg" alt="Ce que montre la photo" loading="lazy" decoding="async" width="2000" height="1333">
-         </picture>
-         <figcaption>Lieu, année</figcaption>
-       </figure>
-  -->
   <section class="photo-grid" aria-label="Photographies">
-    <figure class="photo photo--placeholder" style="--ph-ratio: 3 / 2"><span><b>01</b>à venir</span></figure>
-    <figure class="photo photo--placeholder" style="--ph-ratio: 4 / 5"><span><b>02</b>à venir</span></figure>
-    <figure class="photo photo--placeholder" style="--ph-ratio: 3 / 2"><span><b>03</b>à venir</span></figure>
-    <figure class="photo photo--placeholder" style="--ph-ratio: 4 / 5"><span><b>04</b>à venir</span></figure>
-    <figure class="photo photo--placeholder" style="--ph-ratio: 1 / 1"><span><b>05</b>à venir</span></figure>
-    <figure class="photo photo--placeholder" style="--ph-ratio: 3 / 2"><span><b>06</b>à venir</span></figure>
-    <figure class="photo photo--placeholder" style="--ph-ratio: 4 / 5"><span><b>07</b>à venir</span></figure>
-    <figure class="photo photo--placeholder" style="--ph-ratio: 3 / 2"><span><b>08</b>à venir</span></figure>
-    <figure class="photo photo--placeholder" style="--ph-ratio: 3 / 2"><span><b>09</b>à venir</span></figure>
+      <figure class="photo">
+        <picture>
+          <source type="image/avif" srcset="assets/images/regard-01-800.avif 800w, assets/images/regard-01.avif 1333w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <source type="image/webp" srcset="assets/images/regard-01-800.webp 800w, assets/images/regard-01.webp 1333w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <img src="assets/images/regard-01.jpg" alt="Amsterdam — l'Amstel" loading="lazy" decoding="async" width="1333" height="2000">
+        </picture>
+        <figcaption>Amsterdam — l'Amstel</figcaption>
+      </figure>
+      <figure class="photo">
+        <picture>
+          <source type="image/avif" srcset="assets/images/regard-02-800.avif 800w, assets/images/regard-02-1200.avif 1200w, assets/images/regard-02-1600.avif 1600w, assets/images/regard-02.avif 2000w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <source type="image/webp" srcset="assets/images/regard-02-800.webp 800w, assets/images/regard-02-1200.webp 1200w, assets/images/regard-02-1600.webp 1600w, assets/images/regard-02.webp 2000w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <img src="assets/images/regard-02.jpg" alt="Amsterdam — tour A'DAM" loading="lazy" decoding="async" width="2000" height="1299">
+        </picture>
+        <figcaption>Amsterdam — tour A'DAM</figcaption>
+      </figure>
+      <figure class="photo">
+        <picture>
+          <source type="image/avif" srcset="assets/images/regard-03-800.avif 800w, assets/images/regard-03-1200.avif 1200w, assets/images/regard-03-1600.avif 1600w, assets/images/regard-03.avif 2000w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <source type="image/webp" srcset="assets/images/regard-03-800.webp 800w, assets/images/regard-03-1200.webp 1200w, assets/images/regard-03-1600.webp 1600w, assets/images/regard-03.webp 2000w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <img src="assets/images/regard-03.jpg" alt="Porto — le pont Dom-Luís" loading="lazy" decoding="async" width="2000" height="1333">
+        </picture>
+        <figcaption>Porto — le pont Dom-Luís</figcaption>
+      </figure>
+      <figure class="photo">
+        <picture>
+          <source type="image/avif" srcset="assets/images/regard-04-800.avif 800w, assets/images/regard-04.avif 1338w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <source type="image/webp" srcset="assets/images/regard-04-800.webp 800w, assets/images/regard-04.webp 1338w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <img src="assets/images/regard-04.jpg" alt="Porto" loading="lazy" decoding="async" width="1338" height="2000">
+        </picture>
+        <figcaption>Porto</figcaption>
+      </figure>
+      <figure class="photo">
+        <picture>
+          <source type="image/avif" srcset="assets/images/regard-05-800.avif 800w, assets/images/regard-05-1200.avif 1200w, assets/images/regard-05.avif 1477w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <source type="image/webp" srcset="assets/images/regard-05-800.webp 800w, assets/images/regard-05-1200.webp 1200w, assets/images/regard-05.webp 1477w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <img src="assets/images/regard-05.jpg" alt="Photographie de Thomas Cossement" loading="lazy" decoding="async" width="1477" height="2000">
+        </picture>
+      </figure>
+      <figure class="photo">
+        <picture>
+          <source type="image/avif" srcset="assets/images/regard-06-800.avif 800w, assets/images/regard-06.avif 1333w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <source type="image/webp" srcset="assets/images/regard-06-800.webp 800w, assets/images/regard-06.webp 1333w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <img src="assets/images/regard-06.jpg" alt="Photographie de Thomas Cossement" loading="lazy" decoding="async" width="1333" height="2000">
+        </picture>
+      </figure>
+      <figure class="photo">
+        <picture>
+          <source type="image/avif" srcset="assets/images/regard-07-800.avif 800w, assets/images/regard-07.avif 1334w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <source type="image/webp" srcset="assets/images/regard-07-800.webp 800w, assets/images/regard-07.webp 1334w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <img src="assets/images/regard-07.jpg" alt="Rovinj, Istrie" loading="lazy" decoding="async" width="1334" height="2000">
+        </picture>
+        <figcaption>Rovinj, Istrie</figcaption>
+      </figure>
+      <figure class="photo">
+        <picture>
+          <source type="image/avif" srcset="assets/images/regard-08-800.avif 800w, assets/images/regard-08.avif 1334w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <source type="image/webp" srcset="assets/images/regard-08-800.webp 800w, assets/images/regard-08.webp 1334w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <img src="assets/images/regard-08.jpg" alt="Photographie de Thomas Cossement" loading="lazy" decoding="async" width="1334" height="2000">
+        </picture>
+      </figure>
+      <figure class="photo">
+        <picture>
+          <source type="image/avif" srcset="assets/images/regard-09-800.avif 800w, assets/images/regard-09-1200.avif 1200w, assets/images/regard-09-1600.avif 1600w, assets/images/regard-09.avif 2000w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <source type="image/webp" srcset="assets/images/regard-09-800.webp 800w, assets/images/regard-09-1200.webp 1200w, assets/images/regard-09-1600.webp 1600w, assets/images/regard-09.webp 2000w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <img src="assets/images/regard-09.jpg" alt="Essaouira — le port" loading="lazy" decoding="async" width="2000" height="1333">
+        </picture>
+        <figcaption>Essaouira — le port</figcaption>
+      </figure>
+      <figure class="photo">
+        <picture>
+          <source type="image/avif" srcset="assets/images/regard-10-800.avif 800w, assets/images/regard-10-1200.avif 1200w, assets/images/regard-10-1600.avif 1600w, assets/images/regard-10.avif 2000w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <source type="image/webp" srcset="assets/images/regard-10-800.webp 800w, assets/images/regard-10-1200.webp 1200w, assets/images/regard-10-1600.webp 1600w, assets/images/regard-10.webp 2000w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <img src="assets/images/regard-10.jpg" alt="Photographie de Thomas Cossement" loading="lazy" decoding="async" width="2000" height="1333">
+        </picture>
+      </figure>
+      <figure class="photo">
+        <picture>
+          <source type="image/avif" srcset="assets/images/regard-11-800.avif 800w, assets/images/regard-11-1200.avif 1200w, assets/images/regard-11-1600.avif 1600w, assets/images/regard-11.avif 2000w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <source type="image/webp" srcset="assets/images/regard-11-800.webp 800w, assets/images/regard-11-1200.webp 1200w, assets/images/regard-11-1600.webp 1600w, assets/images/regard-11.webp 2000w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <img src="assets/images/regard-11.jpg" alt="Photographie de Thomas Cossement" loading="lazy" decoding="async" width="2000" height="1333">
+        </picture>
+      </figure>
+      <figure class="photo">
+        <picture>
+          <source type="image/avif" srcset="assets/images/regard-12-800.avif 800w, assets/images/regard-12.avif 1333w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <source type="image/webp" srcset="assets/images/regard-12-800.webp 800w, assets/images/regard-12.webp 1333w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <img src="assets/images/regard-12.jpg" alt="Photographie de Thomas Cossement" loading="lazy" decoding="async" width="1333" height="2000">
+        </picture>
+      </figure>
+      <figure class="photo">
+        <picture>
+          <source type="image/avif" srcset="assets/images/regard-13.avif 888w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <source type="image/webp" srcset="assets/images/regard-13.webp 888w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <img src="assets/images/regard-13.jpg" alt="Photographie de Thomas Cossement" loading="lazy" decoding="async" width="888" height="1200">
+        </picture>
+      </figure>
+      <figure class="photo">
+        <picture>
+          <source type="image/avif" srcset="assets/images/regard-14-800.avif 800w, assets/images/regard-14-1200.avif 1200w, assets/images/regard-14.avif 1500w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <source type="image/webp" srcset="assets/images/regard-14-800.webp 800w, assets/images/regard-14-1200.webp 1200w, assets/images/regard-14.webp 1500w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <img src="assets/images/regard-14.jpg" alt="Photographie de Thomas Cossement" loading="lazy" decoding="async" width="1500" height="2000">
+        </picture>
+      </figure>
+      <figure class="photo">
+        <picture>
+          <source type="image/avif" srcset="assets/images/regard-15-800.avif 800w, assets/images/regard-15-1200.avif 1200w, assets/images/regard-15.avif 1500w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <source type="image/webp" srcset="assets/images/regard-15-800.webp 800w, assets/images/regard-15-1200.webp 1200w, assets/images/regard-15.webp 1500w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <img src="assets/images/regard-15.jpg" alt="Photographie de Thomas Cossement" loading="lazy" decoding="async" width="1500" height="2000">
+        </picture>
+      </figure>
+      <figure class="photo">
+        <picture>
+          <source type="image/avif" srcset="assets/images/regard-16-800.avif 800w, assets/images/regard-16-1200.avif 1200w, assets/images/regard-16.avif 1500w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <source type="image/webp" srcset="assets/images/regard-16-800.webp 800w, assets/images/regard-16-1200.webp 1200w, assets/images/regard-16.webp 1500w" sizes="(max-width: 720px) 92vw, (max-width: 1024px) 46vw, 30vw">
+          <img src="assets/images/regard-16.jpg" alt="Photographie de Thomas Cossement" loading="lazy" decoding="async" width="1500" height="2000">
+        </picture>
+      </figure>
   </section>
 
 </main>
@@ -120,5 +206,6 @@
 <script src="js/relief.js"></script>
 <script src="js/script.js"></script>
 <script src="js/fil-eau.js"></script>
+<script src="js/lightbox.js"></script>
 </body>
 </html>

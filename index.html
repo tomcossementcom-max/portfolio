@@ -23,6 +23,15 @@
 
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="stylesheet" href="css/style.css">
+<!-- les pages projet sont pré-rendues au survol d'une pastille (navigateurs
+     qui le permettent), pré-chargées ailleurs : l'entrée est immédiate -->
+<script type="speculationrules">
+{ "prerender": [{ "source": "list", "urls": ["palimpseste.html", "morpho.html", "confluant.html", "haccourt.html"], "eagerness": "moderate" }] }
+</script>
+<link rel="prefetch" href="palimpseste.html">
+<link rel="prefetch" href="morpho.html">
+<link rel="prefetch" href="confluant.html">
+<link rel="prefetch" href="haccourt.html">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -119,13 +128,17 @@
   <section class="carte" aria-label="Carte des projets">
     <div class="carte-stage">
       <div class="carte-zoom">
+        <!-- le relief dans son propre calque : son opacité s'anime au scroll sans
+             redessiner les milliers de segments (voir .carte-relief) -->
+        <svg class="carte-svg carte-relief" viewBox="0 0 1400 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <g class="carte-contours"></g>
+        </svg>
         <svg class="carte-svg" viewBox="0 0 1400 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
           <defs>
             <path id="r-meuse" d="M 300 1060 C 470 940, 690 870, 793 832 S 890 785, 925 741 C 960 700, 995 678, 1026 655 C 1058 630, 1064 585, 1058 555 C 1052 520, 1085 490, 1107 463 C 1125 440, 1136 420, 1134 390 C 1130 360, 1128 330, 1128 305 C 1127 250, 1128 190, 1128 136 L 1130 -60"/>
             <path id="r-ourthe" d="M 943 1060 C 950 985, 940 950, 943 930 C 950 880, 975 840, 969 805 C 962 780, 942 760, 925 745"/>
             <path id="r-geer" d="M 212 652 C 265 620, 320 580, 361 563 C 430 540, 490 520, 529 508 C 600 480, 680 400, 730 333 C 790 255, 940 190, 1128 136"/>
           </defs>
-          <g class="carte-contours"></g>
           <g class="carte-rivers">
             <use href="#r-meuse" class="river river-halo" style="stroke-width: 52"/>
             <use href="#r-ourthe" class="river river-halo" style="stroke-width: 30"/>

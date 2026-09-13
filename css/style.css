@@ -486,6 +486,11 @@ h1 em, h2 em, h3 em,
 .relief .river-halo { opacity: .10; }
 .relief .river-main { opacity: .75; }
 @keyframes relief-in { from { opacity: 0; } to { opacity: 1; } }
+/* la couverture d'un projet « atterrit » : le fragment de carte arrive un peu
+   plus zoomé que sa place et s'y pose, dans la continuité du zoom de la carte */
+.case-cover .relief { animation: relief-in .9s ease-out both, relief-land 1.4s cubic-bezier(.2, .7, .2, 1) both; transform-origin: 50% 50%; }
+@keyframes relief-land { from { transform: scale(1.18); } to { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .case-cover .relief { animation: none; } }
 /* derrière un en-tête de page : plus discret, sans ruban trop présent */
 .page-hero .relief, .manifesto-hero .relief { opacity: .7; }
 .page-hero .relief .river-main, .manifesto-hero .relief .river-main { opacity: .45; }
@@ -515,8 +520,11 @@ h1 em, h2 em, h3 em,
   overflow: hidden;
   background: var(--bg);
 }
-.carte-zoom { position: absolute; inset: 0; transform-origin: var(--zx, 50%) var(--zy, 50%); }
+.carte-zoom { position: absolute; inset: 0; transform-origin: var(--zx, 50%) var(--zy, 50%); will-change: transform; }
 .carte-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+/* le relief est un calque à part : son opacité et son échelle s'animent sur
+   le compositeur, sans redessiner les segments à chaque image */
+.carte-relief { will-change: opacity, transform; }
 
 /* le relief : lignes très fines, les multiples de 50 m un peu plus marquées */
 .carte-contours path { fill: none; stroke: var(--text); stroke-width: .7px; vector-effect: non-scaling-stroke; opacity: .16; }
@@ -607,7 +615,7 @@ h1 em, h2 em, h3 em,
 .carte-stage.is-returning .carte-title, .carte-stage.is-returning .carte-hint { display: none; }
 
 /* le zoom au clic : la carte plonge vers le site, les autres s'effacent */
-.carte-stage.is-zooming .carte-zoom { transform: scale(2.6); transition: transform .65s cubic-bezier(.7, 0, .3, 1); }
+.carte-stage.is-zooming .carte-zoom { transform: scale(2.8); transition: transform 1.1s cubic-bezier(.55, 0, .2, 1); }
 .carte-stage.is-zooming .site:not(.is-target), .carte-stage.is-zooming .carte-foot, .carte-stage.is-zooming .carte-title, .carte-stage.is-zooming .carte-hint { opacity: 0 !important; transition: opacity .3s; }
 .carte-stage.is-zooming .site.is-target .site-label { opacity: 0; transition: opacity .3s; }
 
