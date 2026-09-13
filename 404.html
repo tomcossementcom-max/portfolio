@@ -37,7 +37,7 @@
 
 <main id="top">
 
-  <section class="case-cover">
+  <section class="case-cover" data-relief="1700,1500,700,500">
     <svg class="bignum case-cover-num" viewBox="0 0 200 120" aria-hidden="true">
       <!-- le numéro et ses courbes de niveau : le même glyphe repris en <use>,
            contour épais coloré puis contour un peu plus fin à la couleur du fond,
@@ -51,10 +51,10 @@
     </svg>
     <div class="case-cover-inner">
       <span class="project-cat" data-reveal>Erreur 404</span>
-      <h1 data-reveal>Page introuvable</h1>
+      <h1 data-reveal>Hors carte</h1>
       <p class="case-cover-lead" data-reveal>
-        Cette adresse ne mène nulle part — la page a été déplacée, ou n'a jamais existé.
-        Le paysage, lui, continue par ici.
+        Cette page n'est sur aucune de mes cartes — l'adresse a changé, ou n'a jamais existé.
+        <a href="/portfolio/">Revenir à la carte</a> ou passer par <a href="/portfolio/projets.html">les projets</a>.
       </p>
     </div>
     <div class="home-cover-foot" data-reveal>
@@ -65,7 +65,7 @@
 
 </main>
 
-<footer class="site-footer">
+<footer class="site-footer" data-relief="0,0,1400,1000" data-relief-class="relief--footer">
   <div class="footer-inner">
     <div class="footer-brand">
       <span class="footer-name">Thomas Cossement</span>
@@ -93,6 +93,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="/portfolio/js/relief.js"></script>
 <script src="/portfolio/js/script.js"></script>
 <script src="/portfolio/js/fil-eau.js"></script>
 </body>

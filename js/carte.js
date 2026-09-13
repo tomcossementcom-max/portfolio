@@ -1,10 +1,7 @@
 /* ==========================================================================
    LA CARTE DE L'ACCUEIL — affiche topographique (index.html)
-   1. Le relief : des courbes de niveau calculées ici, à partir d'un relief
-      plausible du bassin de la Meuse — un plateau (Hesbaye ~170 m au NW,
-      Herve/Ardenne ~280 m au SE, Limbourg ~100 m au NE) creusé par les
-      vallées (Meuse, Ourthe, Geer), plus un léger bruit. Isolignes tous
-      les 10 m (marching squares), les multiples de 50 un peu plus marqués.
+   1. Le relief : les courbes de niveau du bassin de la Meuse, calculées
+      par js/relief.js (le même relief que sur toutes les autres pages).
    2. Les sites : leurs coordonnées sont celles du viewBox (data-x/y) ;
       converties en pixels pour rester exactement sur la carte, que celle-ci
       remplisse l'écran (paysage, « slice ») ou tienne dedans (portrait).
@@ -26,60 +23,11 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const NS = 'http://www.w3.org/2000/svg';
 
-  /* ---------- 1. le relief ---------- */
-  const contours = () => {
-    const g = svg.querySelector('.carte-contours');
-    const rivers = ['r-meuse', 'r-ourthe', 'r-geer'].map(id => {
-      const p = svg.querySelector('#' + id), pts = [], L = p.getTotalLength();
-      for (let s = 0; s <= L; s += 8) { const q = p.getPointAtLength(s); pts.push(q.x, q.y); }
-      return pts;
-    });
-    const depth = [160, 90, 70], width = [120, 70, 60];
-    const cell = 8, nx = Math.floor(1400 / cell) + 1, ny = Math.floor(1000 / cell) + 1;
-    const E = new Float32Array(nx * ny);
-    for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
-      const x = i * cell, y = j * cell, u = x / 1400, v = y / 1000;
-      let e = 170 * (1 - u) * (1 - v) + 100 * u * (1 - v) + 200 * (1 - u) * v + 280 * u * v
-            + 12 * Math.sin(x / 140) * Math.cos(y / 110) + 8 * Math.sin(x / 70 + y / 90) + 5 * Math.cos(x / 45 - y / 60);
-      for (let r = 0; r < 3; r++) {
-        const pts = rivers[r]; let d2 = Infinity;
-        for (let k = 0; k < pts.length; k += 2) { const dx = pts[k] - x, dy = pts[k + 1] - y, q = dx * dx + dy * dy; if (q < d2) d2 = q; }
-        e -= depth[r] * Math.exp(-d2 / (width[r] * width[r]));
-      }
-      E[j * nx + i] = e;
-    }
-    const lerp = (a, b, va, vb, L) => a + (b - a) * ((L - va) / (vb - va || 1));
-    const frag = document.createDocumentFragment();
-    for (let L = 50; L <= 300; L += 10) {
-      let d = '';
-      for (let j = 0; j < ny - 1; j++) for (let i = 0; i < nx - 1; i++) {
-        const a = E[j * nx + i], b = E[j * nx + i + 1], c = E[(j + 1) * nx + i + 1], dd = E[(j + 1) * nx + i];
-        const code = (a >= L ? 8 : 0) | (b >= L ? 4 : 0) | (c >= L ? 2 : 0) | (dd >= L ? 1 : 0);
-        if (code === 0 || code === 15) continue;
-        const x0 = i * cell, y0 = j * cell;
-        const top = [lerp(x0, x0 + cell, a, b, L), y0], right = [x0 + cell, lerp(y0, y0 + cell, b, c, L)];
-        const bottom = [lerp(x0, x0 + cell, dd, c, L), y0 + cell], left = [x0, lerp(y0, y0 + cell, a, dd, L)];
-        const seg = (p, q) => { d += `M${p[0].toFixed(1)} ${p[1].toFixed(1)}L${q[0].toFixed(1)} ${q[1].toFixed(1)}`; };
-        switch (code) {
-          case 1: case 14: seg(left, bottom); break;
-          case 2: case 13: seg(bottom, right); break;
-          case 3: case 12: seg(left, right); break;
-          case 4: case 11: seg(top, right); break;
-          case 5: seg(top, left); seg(bottom, right); break;
-          case 6: case 9: seg(top, bottom); break;
-          case 7: case 8: seg(top, left); break;
-          case 10: seg(top, right); seg(left, bottom); break;
-        }
-      }
-      if (!d) continue;
-      const path = document.createElementNS(NS, 'path');
-      path.setAttribute('d', d);
-      if (L % 50 === 0) path.setAttribute('class', 'index');
-      frag.append(path);
-    }
-    g.replaceChildren(frag);
-  };
-  contours();
+  /* ---------- 1. le relief (voir js/relief.js) ---------- */
+  if (window.Relief) {
+    const { paths } = Relief.contours({ x: 0, y: 0, w: 1400, h: 1000, cell: 8 });
+    Relief.fill(svg.querySelector('.carte-contours'), paths);
+  }
 
   /* ---------- 2. les sites, en pixels ---------- */
   const place = () => {
@@ -149,7 +97,34 @@
       zoom.style.setProperty('--zy', `${dot.top + dot.height / 2 - box.top}px`);
       stage.classList.add('is-zooming');
       s.classList.add('is-target');
+      try { sessionStorage.setItem('carte-site', s.className.match(/site--(\d\d)/)[1]); } catch (_) {}
       setTimeout(() => { location.href = s.href; }, 620);
     });
   });
+
+  /* ---------- 5. le retour : on revient d'un projet, la carte se ré-ouvre ----------
+     La couverture du projet a un lien « voir sur la carte » (et le bouton
+     Précédent du navigateur) : la carte arrive zoomée sur ce site et
+     s'éloigne jusqu'à la vue entière — l'inverse du clic. */
+  let back = null;
+  try { back = sessionStorage.getItem('carte-site'); sessionStorage.removeItem('carte-site'); } catch (_) {}
+  const from = back && stage.querySelector(`.site--${back}`);
+  if (from && !reduceMotion) {
+    const dot = from.querySelector('.site-dot').getBoundingClientRect();
+    const box = zoom.getBoundingClientRect();
+    zoom.style.setProperty('--zx', `${dot.left + dot.width / 2 - box.left}px`);
+    zoom.style.setProperty('--zy', `${dot.top + dot.height / 2 - box.top}px`);
+    stage.classList.add('is-returning');
+    // la séquence est déjà « jouée » quand on revient : on se place à la fin
+    // de la section, carte entière découverte
+    const section = document.querySelector('.carte');
+    if (section) window.scrollTo({ top: section.offsetTop + section.offsetHeight - window.innerHeight, behavior: 'instant' });
+    if (window.ScrollTrigger) ScrollTrigger.refresh();
+    const release = () => {
+      stage.classList.add('is-returning-out');
+      setTimeout(() => stage.classList.remove('is-returning', 'is-returning-out'), 950);
+    };
+    const go = () => setTimeout(release, 60);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(go); else go();
+  }
 })();

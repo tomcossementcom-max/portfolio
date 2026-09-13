@@ -1,8 +1,8 @@
 /* ==========================================================================
    LA RIVIÈRE — la signature du site
-   Chaque page est traversée par une rivière : une nappe d'eau bleue, très
-   diluée, qui naît en filet en haut de page et s'élargit en descendant,
-   jusqu'à se jeter dans le pied de page (teinté eau, l'estuaire).
+   Chaque page est traversée par une rivière : le même ruban bleu que sur la
+   carte de l'accueil, qui naît en filet en haut de page et s'élargit en
+   descendant, jusqu'à se jeter dans le pied de page (teinté eau, l'estuaire).
    - elle SUIT LA MISE EN PAGE : dans la marge par défaut, elle passe entre
      les cartes de l'index, entre l'image et le texte de la sélection, le
      long des blocs décalés et des citations des pages projet (ancres
@@ -67,7 +67,7 @@
   // largeur de la rivière à la hauteur y : un filet en haut, une nappe en bas
   const widthAt = y => {
     const t = Math.min(1, Math.max(0, y / Math.max(1, H)));
-    return mobile() ? 8 + 26 * t : 16 + 124 * Math.pow(t, 0.85);
+    return mobile() ? 4 + 8 * t : 7 + 19 * Math.pow(t, 0.9);
   };
 
   /* ---------- ligne de base : la marge, puis les ancres ---------- */
@@ -158,7 +158,7 @@
       for (let i = 0; i <= n; i++) d += `${i ? ' L' : 'M'} ${(xs[i] + ws[i] * k).toFixed(1)} ${Math.min(i * STEP, H)}`;
       return d;
     };
-    bed.setAttribute('d', band(1.7));
+    bed.setAttribute('d', band(2.4)); // le halo, comme sur la carte
     water.setAttribute('d', band(1));
     deep.setAttribute('d', band(0.42));
     cur1.setAttribute('d', line(-0.22));

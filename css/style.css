@@ -128,13 +128,15 @@ main { position: relative; }
   overflow: visible;
   --fil-scroll: 0;
 }
-.fil-bed   { fill: var(--water); opacity: 0.045; }
-.fil-water { fill: var(--water); opacity: 0.10; }
-.fil-deep  { fill: var(--water); opacity: 0.075; }
+/* le même ruban que les rivières de la carte : un trait plein et son halo */
+.fil-bed   { fill: var(--water); opacity: 0.10; }
+.fil-water { fill: var(--water); opacity: 0.72; }
+.fil-deep  { display: none; }
 /* le courant : deux traits pointillés qui dérivent en continu (--fil-flow,
    animation CSS) et accompagnent le scroll (--fil-scroll, posé par le JS
    proportionnellement à la distance parcourue — jamais à la vitesse) */
 .fil-current {
+  display: none; /* le courant pointillé n'existe plus : la carte n'en a pas */
   fill: none;
   stroke: var(--water);
   stroke-width: 1.4;
@@ -188,10 +190,10 @@ main { position: relative; }
 ::view-transition-new(site-header) { animation: none; }
 /* paires carte <-> couverture : mêmes noms, sur des pages différentes
    (les pastilles de la carte de l'accueil portent les mêmes, voir .site) */
-.site--01 .site-dot b { view-transition-name: num-01; } .site--01 .site-label em { view-transition-name: title-01; }
-.site--02 .site-dot b { view-transition-name: num-02; } .site--02 .site-label em { view-transition-name: title-02; }
-.site--03 .site-dot b { view-transition-name: num-03; } .site--03 .site-label em { view-transition-name: title-03; }
-.site--04 .site-dot b { view-transition-name: num-04; } .site--04 .site-label em { view-transition-name: title-04; }
+.site--01 .site-dot { view-transition-name: pin-01; } .site--01 .site-label em { view-transition-name: title-01; }
+.site--02 .site-dot { view-transition-name: pin-02; } .site--02 .site-label em { view-transition-name: title-02; }
+.site--03 .site-dot { view-transition-name: pin-03; } .site--03 .site-label em { view-transition-name: title-03; }
+.site--04 .site-dot { view-transition-name: pin-04; } .site--04 .site-label em { view-transition-name: title-04; }
 .pcard:nth-child(1) .pcard-num, .page-palimpseste .case-cover-num { view-transition-name: num-01; }
 .pcard:nth-child(2) .pcard-num, .page-morpho .case-cover-num { view-transition-name: num-02; }
 .pcard:nth-child(3) .pcard-num, .page-confluant .case-cover-num { view-transition-name: num-03; }
@@ -377,6 +379,39 @@ h1 em, h2 em, h3 em,
 .nav-toggle[aria-expanded="true"] span:last-child { transform: translateY(-3.5px) rotate(-45deg); }
 
 /* ==========================================================================
+   LE RELIEF — le motif qui unit les pages (voir js/relief.js)
+   Un fragment de la même carte, en courbes de niveau et rubans d'eau, derrière
+   les couvertures de projet (fenêtré sur le site), les en-têtes des autres
+   pages et le pied de page. Toujours sous le contenu, jamais au-dessus.
+   ========================================================================== */
+/* le conteneur isole son empilement : le relief passe en z-index négatif, donc
+   au-dessus de son fond mais sous tout son contenu, positionné ou non */
+[data-relief] { position: relative; isolation: isolate; }
+.relief {
+  position: absolute; inset: 0; z-index: -1;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  animation: relief-in 1.2s ease-out both;
+}
+.relief-contours path { fill: none; stroke: var(--text); stroke-width: .7px; vector-effect: non-scaling-stroke; opacity: .14; }
+.relief-contours path.index { opacity: .28; stroke-width: .9px; }
+.relief .river-halo { opacity: .10; }
+.relief .river-main { opacity: .75; }
+@keyframes relief-in { from { opacity: 0; } to { opacity: 1; } }
+/* derrière un en-tête de page : plus discret, sans ruban trop présent */
+.page-hero .relief, .manifesto-hero .relief { opacity: .7; }
+.page-hero .relief .river-main, .manifesto-hero .relief .river-main { opacity: .45; }
+/* sous le pied de page : très pâle, le territoire continue sous la page */
+.site-footer { overflow: hidden; }
+.relief--footer { opacity: .55; }
+.relief--footer .relief-contours path { opacity: .12; }
+.relief--footer .relief-contours path.index { opacity: .22; }
+.relief--footer .river-main { opacity: .35; }
+.relief--footer .river-halo { opacity: .06; }
+@media (prefers-reduced-motion: reduce) { .relief { animation: none; } }
+@media print { .relief { display: none !important; } }
+
+/* ==========================================================================
    LA CARTE — l'accueil est une affiche topographique (index.html)
    Plein écran, rien autour : le relief en courbes de niveau (calculé par
    js/carte.js), les rivières en rubans, les quatre projets à leur place.
@@ -444,6 +479,17 @@ h1 em, h2 em, h3 em,
 .site { transform: translate(calc(-1 * var(--half)), -50%); --half: clamp(1.3rem, 1.8vw, 1.7rem); }
 .site--left { transform: translate(calc(-100% + var(--half)), -50%); }
 
+/* la pastille sur la couverture d'un projet : au centre du fragment de carte,
+   c'est-à-dire sur le site ; elle ramène à la carte */
+.site--cover {
+  left: 50%; top: 50%; /* le transform de .site centre la pastille (pas l'étiquette) sur ce point */
+  z-index: 2;
+}
+.site--cover .site-label span { color: var(--text-dim); }
+.site--cover .site-label { opacity: 0; transform: translateX(-6px); transition: opacity .35s, transform .35s var(--ease); }
+.site--cover:hover .site-label, .site--cover:focus-visible .site-label { opacity: 1; transform: none; }
+@media (hover: none) { .site--cover .site-label { opacity: 1; transform: none; } }
+
 /* textes de la scène */
 .carte-title {
   position: absolute; left: var(--gutter); bottom: clamp(2rem, 6vw, 4.5rem);
@@ -465,6 +511,12 @@ h1 em, h2 em, h3 em,
   font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .16em; text-transform: uppercase; color: var(--text-faint);
   z-index: 4;
 }
+
+/* le retour d'un projet : la carte arrive zoomée sur le site, puis s'éloigne
+   jusqu'à la vue entière (l'inverse du clic) */
+.carte-stage.is-returning .carte-zoom { transform: scale(2.6); }
+.carte-stage.is-returning-out .carte-zoom { transform: scale(1); transition: transform .9s cubic-bezier(.2, .7, .2, 1); }
+.carte-stage.is-returning .carte-title, .carte-stage.is-returning .carte-hint { display: none; }
 
 /* le zoom au clic : la carte plonge vers le site, les autres s'effacent */
 .carte-stage.is-zooming .carte-zoom { transform: scale(2.6); transition: transform .65s cubic-bezier(.7, 0, .3, 1); }
@@ -728,9 +780,9 @@ body.home .nav-toggle[aria-expanded="true"] span { background: var(--text) !impo
 .case-cover {
   position: relative;
   min-height: 88svh;
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: clamp(9rem, 16vw, 13rem) var(--gutter) clamp(3rem, 6vw, 5rem);
+  /* pleine largeur (le relief remplit l'écran), contenu aligné sur le conteneur */
+  --cover-pad: max(var(--gutter), calc((100% - var(--container)) / 2 + var(--gutter)));
+  padding: clamp(9rem, 16vw, 13rem) var(--cover-pad) clamp(3rem, 6vw, 5rem);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -747,7 +799,7 @@ body.home .nav-toggle[aria-expanded="true"] span { background: var(--text) !impo
   height: auto;
   /* +48px : les courbes de niveau débordent du glyphe de 48 px ; c'est la
      courbe la plus large qui s'aligne sur la gouttière, pas le chiffre */
-  right: calc(var(--gutter) + 48px - var(--num) * 0.12);
+  right: calc(var(--cover-pad) + 48px - var(--num) * 0.12);
   top: calc(clamp(4.5rem, 9vw, 7rem) + 48px - var(--num) * 0.28);
   overflow: visible;
   mix-blend-mode: normal;
@@ -770,6 +822,9 @@ body.home .nav-toggle[aria-expanded="true"] span { background: var(--text) !impo
 .case-cover-num .ring--2.ring--erase { stroke-width: 45px; }
 .case-cover-num .ring--3.ring--erase { stroke-width: 69px; }
 .case-cover-num .ring--4.ring--erase { stroke-width: 93px; }
+/* sur le relief, le terrain fournit déjà ses lignes : deux courbes suffisent */
+[data-relief] .case-cover-num .ring--3, [data-relief] .case-cover-num .ring--4 { display: none; }
+[data-relief] .case-cover-num .core { fill: color-mix(in srgb, var(--ink) 20%, var(--bg)); }
 .case-cover-inner { position: relative; z-index: 1; max-width: 46ch; }
 .case-cover .project-cat { margin-bottom: 1rem; max-width: 40ch; }
 .case-cover h1 {
@@ -1733,7 +1788,7 @@ body.home .nav-toggle[aria-expanded="true"] span { background: var(--text) !impo
   .case-cover { min-height: 70svh; }
   .case-cover-num {
     --num: clamp(8rem, 40vw, 14rem);
-    right: calc(var(--gutter) + 24px - var(--num) * 0.12);
+    right: calc(var(--cover-pad) + 24px - var(--num) * 0.12);
     top: calc(clamp(4rem, 12vw, 6rem) + 24px - var(--num) * 0.28);
   }
   .case-cover-num .ring--3, .case-cover-num .ring--4 { display: none; } /* deux courbes suffisent en petit */

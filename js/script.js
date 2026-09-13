@@ -40,6 +40,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ------------------------------------------------------------ */
+  /* RETOUR À LA CARTE — la pastille d'une couverture de projet     */
+  /* mémorise son site : la carte de l'accueil arrive alors zoomée  */
+  /* dessus et s'éloigne (voir js/carte.js).                        */
+  /* ------------------------------------------------------------ */
+  document.querySelectorAll('[data-carte-site]').forEach(a => {
+    a.addEventListener('click', () => { try { sessionStorage.setItem('carte-site', a.dataset.carteSite); } catch (_) {} });
+  });
+
+  /* ------------------------------------------------------------ */
   /* CURRENT-PAGE NAV HIGHLIGHT                                    */
   /* ------------------------------------------------------------ */
   const currentPath = location.pathname.split('/').pop() || 'index.html';
