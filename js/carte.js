@@ -34,24 +34,74 @@
     Relief.fill(relief.querySelector('.carte-contours'), paths);
   }
 
-  /* ---------- 2. les sites, en pixels ---------- */
+  /* ---------- 1b. le relief rasterisé ----------
+     Les courbes font des dizaines de milliers de segments : les faire
+     grossir (zoom au clic) ou varier en opacité (séquence) coûte cher en
+     vecteur. On les dessine une fois dans un <canvas> à la résolution de
+     l'écran ; le SVG vectoriel ne sert plus qu'à ce dessin. Le canvas est un
+     simple bitmap pour le compositeur : zoom et fondu restent fluides. */
+  const canvas = document.createElement('canvas');
+  canvas.className = 'carte-relief-canvas';
+  canvas.setAttribute('aria-hidden', 'true');
+  relief.after(canvas);
+  let rasterTimer = 0;
+  const rasterize = () => {
+    const W = stage.clientWidth, H = stage.clientHeight;
+    if (!W || !H) return;
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const vb = relief.getAttribute('viewBox');
+    const par = relief.getAttribute('preserveAspectRatio');
+    const [, , vw, vh] = vb.split(' ').map(Number);
+    const k = par.includes('slice') ? Math.max(W / vw, H / vh) : Math.min(W / vw, H / vh);
+    const ink = getComputedStyle(document.body).color || '#2c2d2a';
+    // le SVG rendu en image ne voit pas la feuille de style : tout en attributs
+    const paths = [...relief.querySelectorAll('path')].map(pth => {
+      const index = pth.classList.contains('index');
+      return `<path d="${pth.getAttribute('d')}" fill="none" stroke="${ink}" stroke-opacity="${index ? 0.32 : 0.16}" stroke-width="${((index ? 0.9 : 0.7) / k).toFixed(3)}"/>`;
+    }).join('');
+    const src = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" preserveAspectRatio="${par}" width="${W}" height="${H}">${paths}</svg>`;
+    const img = new Image();
+    img.onload = () => {
+      canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+      canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      ctx.drawImage(img, 0, 0, W, H);
+      relief.hidden = true;
+      canvas.hidden = false;
+    };
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(src);
+  };
+
+  /* ---------- 2. le cadrage et les sites, en pixels ----------
+     Paysage : la carte remplit l'écran en largeur, et la fenêtre verticale
+     est centrée sur les sites (y ≈ 640) plutôt que sur le milieu de la carte
+     — un écran 16/9 ou plus large montre ainsi toujours les quatre projets.
+     Portrait : la carte tient dans l'écran sur un cadrage resserré. */
   const place = () => {
     const W = stage.clientWidth, H = stage.clientHeight;
     if (!W || !H) return;
     const portrait = H > W * 0.95;
-    // en portrait, la carte tient dans l'écran (meet) sur un cadrage resserré
-    // autour des sites ; en paysage, elle remplit l'écran (slice)
-    const vb = portrait ? [250, 60, 1150, 940] : [0, 0, 1400, 1000];
-    [svg, relief].forEach(s => {
-      s.setAttribute('viewBox', vb.join(' '));
-      s.setAttribute('preserveAspectRatio', portrait ? 'xMidYMid meet' : 'xMidYMid slice');
-    });
+    let vb;
+    if (portrait) {
+      vb = [250, 60, 1150, 940];
+    } else {
+      const k = W / 1400, vh = Math.min(1000, H / k);
+      const vy = Math.max(0, Math.min(1000 - vh, 640 - vh / 2));
+      vb = [0, Math.round(vy), 1400, Math.round(vh)];
+    }
+    const par = portrait ? 'xMidYMid meet' : 'xMidYMid slice';
+    [svg, relief].forEach(s => { s.setAttribute('viewBox', vb.join(' ')); s.setAttribute('preserveAspectRatio', par); });
     const k = portrait ? Math.min(W / vb[2], H / vb[3]) : Math.max(W / vb[2], H / vb[3]);
     const ox = (W - vb[2] * k) / 2, oy = (H - vb[3] * k) / 2;
     sites.forEach(s => {
       s.style.left = `${(ox + (s.dataset.x - vb[0]) * k).toFixed(1)}px`;
       s.style.top  = `${(oy + (s.dataset.y - vb[1]) * k).toFixed(1)}px`;
     });
+    // le bitmap du relief suit (après la rafale de redimensionnements)
+    canvas.hidden = true; relief.hidden = false;
+    clearTimeout(rasterTimer);
+    rasterTimer = setTimeout(rasterize, 120);
   };
   place();
   if ('ResizeObserver' in window) new ResizeObserver(place).observe(stage);
@@ -70,7 +120,7 @@
       defaults: { ease: 'none' },
       scrollTrigger: { trigger: '.carte', start: 'top top', end: 'bottom bottom', scrub: 0.5 }
     });
-    tl.fromTo(relief, { opacity: 0.35 }, { opacity: 1, duration: 0.3 }, 0)
+    tl.fromTo([relief, canvas], { opacity: 0.35 }, { opacity: 1, duration: 0.3 }, 0)
       .fromTo(title, { opacity: 1, y: 0 }, { opacity: 0, y: -24, duration: 0.14, ease: 'power1.in' }, 0.06)
       .fromTo(hint, { opacity: 1 }, { opacity: 0, duration: 0.06 }, 0)
       .fromTo(svg.querySelector('.carte-rivers'), { opacity: 0 }, { opacity: 1, duration: 0.06 }, 0.08);
@@ -86,7 +136,7 @@
         .fromTo(s.querySelector('.site-dot'), { scale: 0.6 }, { scale: 1, duration: 0.09, ease: 'power2.out' }, 0.42 + i * 0.1);
     });
     tl.fromTo(foot, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.12, ease: 'power1.out' }, 0.84)
-      .fromTo([svg, relief], { scale: 1.06 }, { scale: 1, duration: 1 }, 0);
+      .fromTo([svg, relief, canvas], { scale: 1.06 }, { scale: 1, duration: 1 }, 0);
   } else {
     // sans séquence : tout est en place, le nom laisse la place au manifeste
     if (title) title.style.display = 'none';
