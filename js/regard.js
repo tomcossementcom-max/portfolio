@@ -52,7 +52,7 @@
   groups.forEach((figs, key) => {
     const pos = pct(key);
     const g = document.createElement('div');
-    g.className = 'regard-lieu';
+    g.className = 'regard-lieu' + (+pos.x > 62 ? ' regard-lieu--left' : '');
     g.style.setProperty('--x', pos.x + '%'); g.style.setProperty('--y', pos.y + '%');
     const dot = document.createElement('i'); g.append(dot);
     figs.forEach((fig, i) => {

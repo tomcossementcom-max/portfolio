@@ -56,6 +56,7 @@
   const mobile = () => window.innerWidth < 720;
 
   let W = 0, H = 0, marginX = 0, contentLeft = 0;
+  let Y0 = 0; // la source : sous la couverture / l'en-tête, qui ont leur propre carte
   let segs = [];                   // ligne de base x(y), par morceaux (smoothstep)
   let xs = [], ws = [];            // centre et largeur, échantillonnés tous les STEP px
   let tip = 0, tipTarget = 0;      // front de la rivière (y, coordonnées <main>)
@@ -66,7 +67,7 @@
   const smooth  = t => t * t * (3 - 2 * t);
   // largeur de la rivière à la hauteur y : un filet en haut, une nappe en bas
   const widthAt = y => {
-    const t = Math.min(1, Math.max(0, y / Math.max(1, H)));
+    const t = Math.min(1, Math.max(0, (y - Y0) / Math.max(1, H - Y0)));
     return mobile() ? 4 + 8 * t : 7 + 19 * Math.pow(t, 0.9);
   };
 
@@ -78,6 +79,8 @@
     const gutter = header ? parseFloat(getComputedStyle(header).paddingLeft) || 24 : 24;
     const container = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--container')) || 1440;
     contentLeft = Math.max(0, (W - container) / 2) + gutter;
+    const head = main.querySelector('.case-cover[data-relief], .page-hero[data-relief], .manifesto-hero[data-relief]');
+    Y0 = head ? head.offsetTop + head.offsetHeight : 0;
     marginX = mobile() ? 6 : Math.max(0, (W - container) / 2) + gutter * 0.6;
 
     const top0 = mainTop();
@@ -140,9 +143,9 @@
       const y = Math.min(i * STEP, H);
       const w = widthAt(y);
       const amp = 4 + w * 0.22;                         // la nappe large méandre plus
-      const taper = Math.min(1, y / 120, (H - y) / 120); // départ et arrivée nets
+      const taper = Math.max(0, Math.min(1, (y - Y0) / 120, (H - y) / 120)); // départ (sous la couverture) et arrivée nets
       xs[i] = baseX(y) + amp * Math.sin((y / PERIOD) * Math.PI * 2) * taper;
-      ws[i] = w;
+      ws[i] = w * Math.max(0, Math.min(1, (y - Y0) / 160)); // rien au-dessus de la source
     }
     const band = k => {
       let left = '', right = '';

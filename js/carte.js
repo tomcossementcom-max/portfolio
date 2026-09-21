@@ -1,52 +1,54 @@
 /* ==========================================================================
    LA CARTE DE L'ACCUEIL — affiche topographique (index.html)
    1. Le relief : les courbes de niveau du bassin de la Meuse, calculées
-      par js/relief.js (le même relief que sur toutes les autres pages).
-   2. Les sites : leurs coordonnées sont celles du viewBox (data-x/y) ;
-      converties en pixels pour rester exactement sur la carte, que celle-ci
-      remplisse l'écran (paysage, « slice ») ou tienne dedans (portrait).
+      par js/relief.js (le même relief que sur toutes les autres pages),
+      puis rasterisées une fois dans un <canvas> : zoom et fondus restent
+      fluides, même sur un portable.
+   2. Le cadrage :
+      - paysage : la carte remplit l'écran en largeur, fenêtre verticale
+        centrée sur les sites — les quatre projets sont toujours visibles ;
+      - portrait (tablette, téléphone) : la carte remplit l'écran en hauteur
+        et la CAMÉRA VOYAGE au fil du scroll, de site en site (Waremme,
+        Haccourt, Herstal, Arc-et-Senans), avant de reculer pour montrer
+        le territoire entier — impossible de faire tenir 40 km de large sur
+        un téléphone sans ce voyage.
    3. La séquence au scroll (GSAP ScrollTrigger, scrub) : la carte reste
       fixe pendant qu'on descend et se découvre — le nom, le relief, l'eau
       qui se dessine, les projets un à un, le manifeste.
    4. Le clic sur un projet : la carte zoome sur le site, puis la page
-      s'ouvre (et, quand le navigateur le permet, le numéro devient celui
-      de la couverture — View Transitions, voir le CSS).
+      s'ouvre (le numéro devient celui de la couverture — View Transitions).
+   5. Le retour depuis une couverture : l'inverse.
    Sans script : la carte est là, complète, les sites en place (repli en %).
    Sous prefers-reduced-motion : tout est visible d'emblée, sans séquence.
    ========================================================================== */
 (() => {
   const stage = document.querySelector('.carte-stage');
   if (!stage) return;
-  const svg  = stage.querySelector('.carte-svg:not(.carte-relief)');
+  const zoom   = stage.querySelector('.carte-zoom');
+  const pan    = stage.querySelector('.carte-pan');
+  const svg    = stage.querySelector('.carte-svg:not(.carte-relief)');
   const relief = stage.querySelector('.carte-relief');
-  const zoom = stage.querySelector('.carte-zoom');
-  const sites = [...stage.querySelectorAll('.site')];
+  const sites  = [...stage.querySelectorAll('.site')];
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const NS = 'http://www.w3.org/2000/svg';
+  const MAP_W = 1400, MAP_H = 1000;
 
   /* ---------- 1. le relief (voir js/relief.js) ---------- */
-  // les rivières réelles (OpenStreetMap), si les données sont là
   if (window.ReliefData && ReliefData.rivers) ReliefData.rivers.forEach(r => {
     const p = svg.querySelector('#r-' + r.id); if (p) p.setAttribute('d', r.d);
   });
   if (window.Relief) {
-    const { paths } = Relief.contours({ x: 0, y: 0, w: 1400, h: 1000, cell: 8 });
+    const { paths } = Relief.contours({ x: 0, y: 0, w: MAP_W, h: MAP_H, cell: 8 });
     Relief.fill(relief.querySelector('.carte-contours'), paths);
   }
 
-  /* ---------- 1b. le relief rasterisé ----------
-     Les courbes font des dizaines de milliers de segments : les faire
-     grossir (zoom au clic) ou varier en opacité (séquence) coûte cher en
-     vecteur. On les dessine une fois dans un <canvas> à la résolution de
-     l'écran ; le SVG vectoriel ne sert plus qu'à ce dessin. Le canvas est un
-     simple bitmap pour le compositeur : zoom et fondu restent fluides. */
+  /* le relief rasterisé : un bitmap à la résolution de l'écran */
   const canvas = document.createElement('canvas');
   canvas.className = 'carte-relief-canvas';
   canvas.setAttribute('aria-hidden', 'true');
   relief.after(canvas);
   let rasterTimer = 0;
   const rasterize = () => {
-    const W = stage.clientWidth, H = stage.clientHeight;
+    const W = layout.svgW, H = layout.svgH;
     if (!W || !H) return;
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     const vb = relief.getAttribute('viewBox');
@@ -73,31 +75,56 @@
     img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(src);
   };
 
-  /* ---------- 2. le cadrage et les sites, en pixels ----------
-     Paysage : la carte remplit l'écran en largeur, et la fenêtre verticale
-     est centrée sur les sites (y ≈ 640) plutôt que sur le milieu de la carte
-     — un écran 16/9 ou plus large montre ainsi toujours les quatre projets.
-     Portrait : la carte tient dans l'écran sur un cadrage resserré. */
+  /* ---------- 2. le cadrage et les sites, en pixels ---------- */
+  const layout = { W: 0, H: 0, portrait: false, k: 1, svgW: 0, svgH: 0 };
+  // la caméra (portrait) : centre visé (coordonnées carte) et échelle
+  const cam = { x: 925, y: 640, s: 1 };
+  const applyCam = () => {
+    if (!layout.portrait) { pan.style.transform = ''; pan.style.removeProperty('--pin-k'); return; }
+    const { W, H, k } = layout;
+    const mw = MAP_W * k * cam.s, mh = MAP_H * k * cam.s;
+    let tx = W / 2 - cam.x * k * cam.s;
+    tx = mw >= W ? Math.min(0, Math.max(W - mw, tx)) : (W - mw) / 2;
+    let ty = H / 2 - cam.y * k * cam.s;
+    ty = mh >= H ? Math.min(0, Math.max(H - mh, ty)) : (H - mh) / 2 - H * 0.05;
+    pan.style.transform = `translate(${tx.toFixed(1)}px, ${ty.toFixed(1)}px) scale(${cam.s.toFixed(4)})`;
+    // les pastilles gardent leur taille quand la carte recule
+    pan.style.setProperty('--pin-k', (1 / cam.s).toFixed(3));
+  };
   const place = () => {
     const W = stage.clientWidth, H = stage.clientHeight;
     if (!W || !H) return;
     const portrait = H > W * 0.95;
-    let vb;
+    Object.assign(layout, { W, H, portrait });
     if (portrait) {
-      vb = [250, 60, 1150, 940];
+      // la carte entière, à l'échelle où elle remplit l'écran en hauteur
+      const k = Math.max(W / MAP_W, H / MAP_H);
+      const mw = MAP_W * k, mh = MAP_H * k;
+      Object.assign(layout, { k, svgW: mw, svgH: mh });
+      [svg, relief, canvas].forEach(s => { s.style.width = mw + 'px'; s.style.height = mh + 'px'; });
+      pan.style.width = mw + 'px'; pan.style.height = mh + 'px';
+      [svg, relief].forEach(s => { s.setAttribute('viewBox', `0 0 ${MAP_W} ${MAP_H}`); s.setAttribute('preserveAspectRatio', 'xMidYMid meet'); });
+      sites.forEach(s => {
+        s.style.left = `${(s.dataset.x * k).toFixed(1)}px`;
+        s.style.top  = `${(s.dataset.y * k).toFixed(1)}px`;
+      });
     } else {
-      const k = W / 1400, vh = Math.min(1000, H / k);
-      const vy = Math.max(0, Math.min(1000 - vh, 640 - vh / 2));
-      vb = [0, Math.round(vy), 1400, Math.round(vh)];
+      // pleine largeur, fenêtre verticale centrée sur les sites (y ≈ 640)
+      const kx = W / MAP_W, vh = Math.min(MAP_H, H / kx);
+      const vy = Math.max(0, Math.min(MAP_H - vh, 640 - vh / 2));
+      const vb = [0, Math.round(vy), MAP_W, Math.round(vh)];
+      [svg, relief, canvas].forEach(s => { s.style.width = ''; s.style.height = ''; });
+      pan.style.width = ''; pan.style.height = '';
+      [svg, relief].forEach(s => { s.setAttribute('viewBox', vb.join(' ')); s.setAttribute('preserveAspectRatio', 'xMidYMid slice'); });
+      const k = Math.max(W / vb[2], H / vb[3]);
+      const ox = (W - vb[2] * k) / 2, oy = (H - vb[3] * k) / 2;
+      Object.assign(layout, { k, svgW: W, svgH: H });
+      sites.forEach(s => {
+        s.style.left = `${(ox + (s.dataset.x - vb[0]) * k).toFixed(1)}px`;
+        s.style.top  = `${(oy + (s.dataset.y - vb[1]) * k).toFixed(1)}px`;
+      });
     }
-    const par = portrait ? 'xMidYMid meet' : 'xMidYMid slice';
-    [svg, relief].forEach(s => { s.setAttribute('viewBox', vb.join(' ')); s.setAttribute('preserveAspectRatio', par); });
-    const k = portrait ? Math.min(W / vb[2], H / vb[3]) : Math.max(W / vb[2], H / vb[3]);
-    const ox = (W - vb[2] * k) / 2, oy = (H - vb[3] * k) / 2;
-    sites.forEach(s => {
-      s.style.left = `${(ox + (s.dataset.x - vb[0]) * k).toFixed(1)}px`;
-      s.style.top  = `${(oy + (s.dataset.y - vb[1]) * k).toFixed(1)}px`;
-    });
+    applyCam();
     // le bitmap du relief suit (après la rafale de redimensionnements)
     canvas.hidden = true; relief.hidden = false;
     clearTimeout(rasterTimer);
@@ -111,12 +138,13 @@
   const title = stage.querySelector('.carte-title');
   const foot  = stage.querySelector('.carte-foot');
   const hint  = stage.querySelector('.carte-hint');
+  let tl = null;
   if (window.gsap && window.ScrollTrigger && !reduceMotion) {
     gsap.registerPlugin(ScrollTrigger);
     const mains = [...svg.querySelectorAll('.river-main')];
     const lengths = mains.map(u => svg.querySelector(u.getAttribute('href')).getTotalLength());
-    const order = ['.site--01', '.site--03', '.site--04', '.site--02'].map(sel => stage.querySelector(sel));
-    const tl = gsap.timeline({
+    const order = ['.site--03', '.site--04', '.site--01', '.site--02'].map(sel => stage.querySelector(sel));
+    tl = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: { trigger: '.carte', start: 'top top', end: 'bottom bottom', scrub: 0.5 }
     });
@@ -129,29 +157,51 @@
                    { strokeDashoffset: 0, duration: 0.34 }, 0.10 + i * 0.03);
     });
     tl.fromTo(svg.querySelector('.carte-city'), { opacity: 0 }, { opacity: 1, duration: 0.08 }, 0.30);
-    order.forEach((s, i) => {
-      // l'opacité sur le lien, l'échelle sur la pastille seule : le lien garde
-      // son transform CSS (c'est lui qui centre la pastille sur le lieu)
-      tl.fromTo(s, { opacity: 0 }, { opacity: 1, duration: 0.09 }, 0.42 + i * 0.1)
-        .fromTo(s.querySelector('.site-dot'), { scale: 0.6 }, { scale: 1, duration: 0.09, ease: 'power2.out' }, 0.42 + i * 0.1);
-    });
-    tl.fromTo(foot, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.12, ease: 'power1.out' }, 0.84)
-      .fromTo([svg, relief, canvas], { scale: 1.06 }, { scale: 1, duration: 1 }, 0);
+
+    if (layout.portrait) {
+      // le voyage : la caméra va de site en site, le projet apparaît à l'arrivée,
+      // puis recule jusqu'à la vue d'ensemble (les quatre projets, en petit)
+      const stops = [[925, 640], [361, 563], [1107, 463], [1026, 655], [1235, 845]];
+      const at = [0.36, 0.50, 0.62, 0.72];
+      for (let i = 1; i < stops.length; i++) {
+        const [x0, y0] = stops[i - 1], [x, y] = stops[i];
+        tl.fromTo(cam, { x: x0, y: y0 }, { x, y, duration: 0.09, ease: 'power1.inOut', onUpdate: applyCam }, at[i - 1]);
+        tl.fromTo(order[i - 1], { opacity: 0 }, { opacity: 1, duration: 0.05 }, at[i - 1] + 0.07);
+      }
+      tl.fromTo(cam, { x: 1235, y: 845, s: 1 }, {
+        x: 798, y: 640,
+        s: () => Math.min(1, (layout.W - 32) / (994 * layout.k)),
+        duration: 0.12, ease: 'power2.inOut', onUpdate: applyCam
+      }, 0.84);
+    } else {
+      order.forEach((s, i) => {
+        // l'opacité sur le lien, l'échelle sur la pastille seule : le lien garde
+        // son transform CSS (c'est lui qui centre la pastille sur le lieu)
+        tl.fromTo(s, { opacity: 0 }, { opacity: 1, duration: 0.09 }, 0.42 + i * 0.1)
+          .fromTo(s.querySelector('.site-dot'), { scale: 0.6 }, { scale: 1, duration: 0.09, ease: 'power2.out' }, 0.42 + i * 0.1);
+      });
+      tl.fromTo([svg, relief, canvas], { scale: 1.06 }, { scale: 1, duration: 1 }, 0);
+    }
+    tl.fromTo(foot, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.12, ease: 'power1.out' }, 0.86);
   } else {
     // sans séquence : tout est en place, le nom laisse la place au manifeste
     if (title) title.style.display = 'none';
     if (hint) hint.style.display = 'none';
+    if (layout.portrait) { cam.x = 798; cam.s = Math.min(1, (layout.W - 32) / (994 * layout.k)); applyCam(); }
   }
 
   /* ---------- 4. le zoom au clic ---------- */
+  const originAt = s => {
+    const dot = s.querySelector('.site-dot').getBoundingClientRect();
+    const box = zoom.getBoundingClientRect();
+    zoom.style.setProperty('--zx', `${dot.left + dot.width / 2 - box.left}px`);
+    zoom.style.setProperty('--zy', `${dot.top + dot.height / 2 - box.top}px`);
+  };
   sites.forEach(s => {
     s.addEventListener('click', e => {
       if (reduceMotion || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       e.preventDefault();
-      const dot = s.querySelector('.site-dot').getBoundingClientRect();
-      const box = zoom.getBoundingClientRect();
-      zoom.style.setProperty('--zx', `${dot.left + dot.width / 2 - box.left}px`);
-      zoom.style.setProperty('--zy', `${dot.top + dot.height / 2 - box.top}px`);
+      originAt(s);
       stage.classList.add('is-zooming');
       s.classList.add('is-target');
       try {
@@ -177,30 +227,26 @@
   });
 
   /* ---------- 5. le retour : on revient d'un projet, la carte se ré-ouvre ----------
-     La couverture du projet a un lien « voir sur la carte » (et le bouton
-     Précédent du navigateur) : la carte arrive zoomée sur ce site et
-     s'éloigne jusqu'à la vue entière — l'inverse du clic. */
+     Depuis la pastille d'une couverture (ou le bouton Précédent) : la carte
+     arrive zoomée sur ce site, entière et découverte, et s'éloigne jusqu'à la
+     vue d'ensemble — l'inverse du clic. Arriver par le logo ou le menu rejoue
+     la séquence. */
   let back = null, via = null;
   try {
     back = sessionStorage.getItem('carte-site'); via = sessionStorage.getItem('carte-via');
     sessionStorage.removeItem('carte-site'); sessionStorage.removeItem('carte-via');
   } catch (_) {}
-  // on ne « revient » que depuis la pastille d'une couverture (via = pin) ou par
-  // le bouton Précédent ; arriver par le logo ou le menu rejoue la séquence
-  const nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
-  const isBack = nav && nav.type === 'back_forward';
+  const navEntry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+  const isBack = navEntry && navEntry.type === 'back_forward';
   const from = back && (via === 'pin' || isBack) && stage.querySelector(`.site--${back}`);
   if (from && !reduceMotion) {
-    const dot = from.querySelector('.site-dot').getBoundingClientRect();
-    const box = zoom.getBoundingClientRect();
-    zoom.style.setProperty('--zx', `${dot.left + dot.width / 2 - box.left}px`);
-    zoom.style.setProperty('--zy', `${dot.top + dot.height / 2 - box.top}px`);
-    stage.classList.add('is-returning');
     // la séquence est déjà « jouée » quand on revient : on se place à la fin
-    // de la section, carte entière découverte
+    // de la section, carte entière découverte, AVANT de viser le site
     const section = document.querySelector('.carte');
     if (section) window.scrollTo({ top: section.offsetTop + section.offsetHeight - window.innerHeight, behavior: 'instant' });
-    if (window.ScrollTrigger) ScrollTrigger.refresh();
+    if (tl) { tl.scrollTrigger.refresh(); tl.progress(1); }
+    originAt(from);
+    stage.classList.add('is-returning');
     const release = () => {
       stage.classList.add('is-returning-out');
       setTimeout(() => stage.classList.remove('is-returning', 'is-returning-out'), 950);

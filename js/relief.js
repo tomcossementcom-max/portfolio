@@ -191,9 +191,26 @@ window.Relief = (() => {
    suite ; le reste après le premier rendu, pour ne pas le retarder. */
 (() => {
   const els = [...document.querySelectorAll('[data-relief]')];
+  // les repères posés sur un fragment ([data-map-x][data-map-y], en coordonnées
+  // carte) sont placés en pixels, exactement — le fragment est en « slice »
+  const placeMarks = el => {
+    const marks = el.querySelectorAll('[data-map-x]');
+    if (!marks.length) return;
+    const [x, y, w, h] = el.dataset.relief.split(',').map(Number);
+    const W = el.clientWidth, H = el.clientHeight;
+    if (!W || !H) return;
+    const k = Math.max(W / w, H / h);
+    const ox = (W - w * k) / 2, oy = (H - h * k) / 2;
+    marks.forEach(m => {
+      m.style.left = `${(ox + (m.dataset.mapX - x) * k).toFixed(1)}px`;
+      m.style.top  = `${(oy + (m.dataset.mapY - y) * k).toFixed(1)}px`;
+    });
+  };
   const mountEl = el => {
     const [x, y, w, h] = el.dataset.relief.split(',').map(Number);
     Relief.mount(el, { x, y, w, h, rivers: el.dataset.reliefRivers !== 'off', cls: el.dataset.reliefClass || '', riverScale: +(el.dataset.reliefRiverScale || 1) });
+    placeMarks(el);
+    if (el.querySelector('[data-map-x]') && 'ResizeObserver' in window) new ResizeObserver(() => placeMarks(el)).observe(el);
   };
   const later = [];
   els.forEach(el => { if (el.getBoundingClientRect().top < window.innerHeight) mountEl(el); else later.push(el); });

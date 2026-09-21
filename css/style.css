@@ -488,7 +488,19 @@ h1 em, h2 em, h3 em,
 @keyframes relief-in { from { opacity: 0; } to { opacity: 1; } }
 /* la couverture d'un projet « atterrit » : le fragment de carte arrive un peu
    plus zoomé que sa place et s'y pose, dans la continuité du zoom de la carte */
-.case-cover .relief { animation: relief-in .9s ease-out both, relief-land 1.4s cubic-bezier(.2, .7, .2, 1) both; transform-origin: 50% 50%; }
+.case-cover .relief {
+  animation: relief-in .9s ease-out both, relief-land 1.4s cubic-bezier(.2, .7, .2, 1) both;
+  transform-origin: 50% 50%;
+  /* le texte (en bas à gauche) reste sur du papier : la carte s'efface dessous */
+  -webkit-mask-image: radial-gradient(ellipse 64% 100% at 2% 100%, transparent 34%, #000 76%);
+  mask-image: radial-gradient(ellipse 64% 100% at 2% 100%, transparent 34%, #000 76%);
+}
+@media (max-width: 720px) {
+  .case-cover .relief {
+    -webkit-mask-image: linear-gradient(to top, transparent 12%, rgba(0,0,0,.35) 40%, #000 62%);
+    mask-image: linear-gradient(to top, transparent 12%, rgba(0,0,0,.35) 40%, #000 62%);
+  }
+}
 @keyframes relief-land { from { transform: scale(1.18); } to { transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) { .case-cover .relief { animation: none; } }
 /* derrière un en-tête de page : plus discret, sans ruban trop présent */
@@ -521,6 +533,9 @@ h1 em, h2 em, h3 em,
   background: var(--bg);
 }
 .carte-zoom { position: absolute; inset: 0; transform-origin: var(--zx, 50%) var(--zy, 50%); will-change: transform; }
+/* la caméra (portrait) : la carte entière, plus grande que l'écran, que
+   js/carte.js déplace et recule au fil du scroll */
+.carte-pan { position: absolute; inset: 0; transform-origin: 0 0; will-change: transform; }
 .carte-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 /* le relief est un calque à part : son opacité et son échelle s'animent sur
    le compositeur, sans redessiner les segments à chaque image */
@@ -560,6 +575,8 @@ h1 em, h2 em, h3 em,
   transition: background .3s, border-color .3s, color .3s;
 }
 .site-dot b { font-weight: 500; }
+/* quand la carte recule (portrait), les pastilles gardent leur taille */
+.carte-pan .site-dot { transform: scale(var(--pin-k, 1)); }
 .site-label { display: flex; flex-direction: column; gap: .15rem; line-height: 1.15; white-space: nowrap; }
 .site--left .site-label { align-items: flex-end; text-align: right; }
 .site-label em {
@@ -580,7 +597,7 @@ h1 em, h2 em, h3 em,
 /* la pastille sur la couverture d'un projet : au centre du fragment de carte,
    c'est-à-dire sur le site ; elle ramène à la carte */
 .site--cover {
-  left: 50%; top: 50%; /* le transform de .site centre la pastille (pas l'étiquette) sur ce point */
+  left: 60%; top: 42%; /* repli ; js/relief.js pose la pastille exactement sur le site */
   z-index: 2;
 }
 .site--cover .site-label span { color: var(--text-dim); }
@@ -634,12 +651,24 @@ body.menu-open .site-header { background: transparent; backdrop-filter: none; bo
   .carte-stage { min-height: 100svh; }
   .site-dot { width: 2.2rem; height: 2.2rem; font-size: .72rem; box-shadow: none; }
   .site { --half: 1.1rem; }
-  .site-label { display: none; } /* sur mobile, la liste sous la carte fait le travail */
+  /* sur mobile, le nom du projet sous la pastille (le lieu est omis) ; il
+     s'efface quand la carte recule vers la vue d'ensemble (--pin-k > 1) */
+  .site-label {
+    position: absolute; top: 100%; left: 50%;
+    transform: translate(-50%, .4rem);
+    align-items: center; text-align: center;
+    opacity: calc(2 - var(--pin-k, 1));
+    pointer-events: none;
+  }
+  .site--left .site-label { align-items: center; text-align: center; }
+  .site-label em { font-size: 1.15rem; text-shadow: 0 0 4px var(--bg), 0 0 8px var(--bg), 0 0 14px var(--bg), 0 0 20px var(--bg); }
+  .site-label span { display: none; }
   .carte-city text { display: none; }
   .carte-title { bottom: 6rem; max-width: 80vw; }
   .carte-foot { flex-direction: column; align-items: flex-start; gap: 1rem; bottom: 1.5rem; }
   .carte-manifesto { max-width: 22ch; }
-  .carte-hint { display: none; }
+  .carte-hint { bottom: 1rem; }
+  .carte-title { bottom: 4.5rem; }
 }
 
 /* la légende : les quatre projets en ligne */
@@ -807,6 +836,11 @@ html:not(.js) .strates-hint { display: none; }
   html.js .strate { position: absolute; inset: 0; opacity: 0; }
   html.js .strate:first-child { opacity: 1; }
 }
+@media (max-width: 720px) {
+  /* le dessin est large ; sur un téléphone on le recadre au centre (la place) */
+  html.js .strates-media { aspect-ratio: 4 / 3; }
+  html.js .strate img { height: 100%; object-fit: cover; }
+}
 @media (max-width: 1024px) {
   .strates-stage { grid-template-columns: 1fr; align-content: center; gap: 1.25rem; }
   .strates-side h2 { font-size: 1.1rem; }
@@ -839,6 +873,7 @@ html:not(.js) .strates-hint { display: none; }
   display: flex; align-items: center; gap: .45rem;
   z-index: 2;
 }
+.regard-home { flex-direction: row-reverse; transform: translate(calc(-100% + .3rem), -50%); }
 .regard-home i { width: .55rem; height: .55rem; border-radius: 50%; border: 1.5px solid var(--text); background: var(--bg); }
 .regard-home b { font-family: var(--font-head); font-weight: 500; font-size: var(--fs-xs); letter-spacing: .12em; text-transform: uppercase; color: var(--text-dim); }
 .regard-lieu {
@@ -870,6 +905,9 @@ html:not(.js) .strates-hint { display: none; }
 }
 .regard-pin img, .regard-pin picture { width: 100%; height: 100%; object-fit: cover; display: block; }
 .regard-pin:hover, .regard-pin:focus-visible { transform: rotate(0) scale(1.08); box-shadow: 0 10px 26px rgba(44, 45, 42, .24), 0 0 0 1px var(--line); z-index: 9; outline: none; }
+.regard-lieu--left .regard-pin { left: auto; right: calc(.9rem + var(--i) * 1.1rem); transform: rotate(calc(3deg - var(--i) * 5deg)); }
+.regard-lieu--left .regard-pin::after { left: auto; right: -.9rem; transform-origin: left; transform: rotate(-35deg); }
+.regard-lieu.regard-lieu--left b { left: auto; right: .9rem; text-align: right; }
 .regard-lieu b {
   position: absolute; left: .9rem; top: .35rem;
   font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 1rem; white-space: nowrap; color: var(--text);
@@ -883,6 +921,8 @@ html:not(.js) .strates-hint { display: none; }
 @media (max-width: 720px) {
   .regard-map { width: 100%; }
   .regard-pin { width: 3.4rem; height: 3.4rem; top: calc(-3.7rem - var(--i) * .7rem); left: calc(.6rem + var(--i) * .8rem); }
+  .regard-lieu--left .regard-pin { left: auto; right: calc(.6rem + var(--i) * .8rem); }
+  .regard-home b { display: none; }
   .regard-lieu b { font-size: .85rem; }
 }
 
@@ -2069,7 +2109,7 @@ html:not(.js) .strates-hint { display: none; }
   .case-cover-num {
     --num: clamp(8rem, 40vw, 14rem);
     right: calc(var(--cover-pad) + 24px - var(--num) * 0.12);
-    top: calc(clamp(4rem, 12vw, 6rem) + 24px - var(--num) * 0.28);
+    top: calc(5.5rem + 40px - var(--num) * 0.28); /* sous le header (60 px), courbes comprises */
   }
   .case-cover-num .ring--3, .case-cover-num .ring--4 { display: none; } /* deux courbes suffisent en petit */
   .case-nav { flex-direction: column; align-items: flex-start; }
