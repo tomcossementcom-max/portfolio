@@ -92,6 +92,21 @@
   --gutter: clamp(1.25rem, 4vw, 4rem);
 
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* L'HEURE — js/lumiere.js pose --lum-chaud (lumière rasante) et --lum-nuit
+     (après le coucher) selon la hauteur du soleil à Liège ; le papier et
+     l'encre s'y accordent, très légèrement. */
+  --lum-chaud: 0;
+  --lum-nuit: 0;
+}
+:root[data-lumiere] {
+  --bg: color-mix(in srgb,
+          color-mix(in srgb, #f9f8f6, #f6efe2 calc(var(--lum-chaud) * 62%)),
+          #edeef2 calc(var(--lum-nuit) * 70%));
+  --bg-alt: color-mix(in srgb,
+          color-mix(in srgb, #f1efe9, #f0e6d6 calc(var(--lum-chaud) * 62%)),
+          #e6e8ee calc(var(--lum-nuit) * 70%));
+  --water: color-mix(in srgb, #3f7ca8, #2b4f74 calc(var(--lum-nuit) * 60%));
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -540,6 +555,22 @@ h1 em, h2 em, h3 em,
 /* le relief est un calque à part : son opacité et son échelle s'animent sur
    le compositeur, sans redessiner les segments à chaque image */
 .carte-relief { will-change: opacity, transform; }
+/* l'ombrage solaire : un lavis sous les courbes (voir js/lumiere.js) */
+.carte-ombre, .relief-ombre {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  display: block; pointer-events: none;
+  opacity: .26;
+  mix-blend-mode: multiply;
+}
+.carte-ombre { will-change: opacity, transform; }
+:root[data-lumiere="nuit"] .carte-ombre, :root[data-lumiere="nuit"] .relief-ombre { opacity: .34; mix-blend-mode: normal; }
+.relief-ombre { z-index: -1; opacity: .2; }
+/* sous le manifeste et le nom, le lavis s'efface : le texte reste lisible */
+.carte-ombre {
+  -webkit-mask-image: radial-gradient(ellipse 52% 60% at 2% 100%, transparent 26%, #000 70%);
+  mask-image: radial-gradient(ellipse 52% 60% at 2% 100%, transparent 26%, #000 70%);
+}
+@media print { .carte-ombre, .relief-ombre { display: none !important; } }
 .carte-relief-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; will-change: opacity, transform; }
 .carte-relief[hidden], .carte-relief-canvas[hidden] { display: none; }
 
@@ -551,7 +582,7 @@ h1 em, h2 em, h3 em,
 .river-halo { opacity: .12; }
 .river-main { opacity: .9; }
 .carte-city circle { fill: var(--text); }
-.carte-city text { font-family: var(--font-head); font-size: 15px; letter-spacing: .14em; text-transform: uppercase; fill: var(--text-dim); }
+.carte-city text { font-family: var(--font-head); font-size: 15px; letter-spacing: .14em; text-transform: uppercase; fill: var(--text-dim); paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
 
 /* les sites : une pastille numérotée sur le lieu, le nom à côté */
 .site {
@@ -582,9 +613,11 @@ h1 em, h2 em, h3 em,
 .site-label em {
   font-family: var(--font-display); font-style: italic; font-weight: 400;
   font-size: clamp(1.25rem, 1.9vw, 1.85rem); color: var(--text);
+  /* un halo de papier : le relief ombré passe dessous sans gêner la lecture */
+  text-shadow: 0 0 5px var(--bg), 0 0 10px var(--bg), 0 0 18px var(--bg);
   transition: color .3s;
 }
-.site-label span { font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .14em; text-transform: uppercase; color: var(--text-faint); }
+.site-label span { font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .14em; text-transform: uppercase; color: var(--text-faint); text-shadow: 0 0 5px var(--bg), 0 0 10px var(--bg); }
 .site-label sup { font-size: .6em; vertical-align: super; }
 .site:hover .site-dot, .site:focus-visible .site-dot { background: var(--ink); border-color: var(--ink); color: var(--bg); }
 .site:hover .site-label em { color: var(--ink); }
@@ -619,6 +652,13 @@ h1 em, h2 em, h3 em,
 }
 .carte-foot > * { pointer-events: auto; }
 .carte-manifesto { font-family: var(--font-display); font-style: italic; font-size: clamp(1.15rem, 1.8vw, 1.6rem); line-height: 1.3; max-width: 26ch; text-wrap: balance; }
+/* l'heure : la carte est éclairée par le vrai soleil de Liège */
+.carte-heure {
+  margin-top: .7rem;
+  font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .1em; text-transform: uppercase;
+  color: var(--text-faint);
+  max-width: 34ch;
+}
 .carte-more { font-family: var(--font-head); font-size: var(--fs-sm); letter-spacing: .06em; color: var(--text); border-bottom: 1px solid var(--text); padding-bottom: .2rem; white-space: nowrap; transition: color .3s, border-color .3s; }
 .carte-more:hover { color: var(--accent); border-color: var(--accent); }
 .carte-hint {
@@ -925,6 +965,62 @@ html:not(.js) .strates-hint { display: none; }
   .regard-home b { display: none; }
   .regard-lieu b { font-size: .85rem; }
 }
+
+/* ==========================================================================
+   LA COUPE (pages projet) — le profil réel du terrain à travers le site
+   (voir js/coupe.js). Pleine largeur, comme une planche : le terrain, la
+   rivière à son point bas, le site marqué. Le tracé se dessine au scroll.
+   ========================================================================== */
+.coupe {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: clamp(3rem, 6vw, 5rem) var(--gutter) clamp(1.5rem, 3vw, 2.5rem);
+}
+.coupe-figure { position: relative; width: 100%; }
+.coupe-svg { display: block; width: 100%; height: clamp(150px, 22vw, 230px); overflow: visible; }
+.coupe-fill { fill: color-mix(in srgb, var(--accent-project) 8%, var(--bg)); }
+.coupe-line { fill: none; stroke: var(--text); stroke-width: 1.4px; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.coupe-base { fill: none; stroke: var(--line); stroke-width: 1px; vector-effect: non-scaling-stroke; }
+.coupe-eau { fill: none; stroke: var(--water); stroke-width: 3px; vector-effect: non-scaling-stroke; stroke-linecap: round; }
+.coupe-eau-label {
+  position: absolute;
+  transform: translate(-50%, calc(-100% - .5rem));
+  display: flex; flex-direction: column; align-items: center; gap: .05rem;
+  white-space: nowrap; pointer-events: none;
+}
+.coupe-eau-label b { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: clamp(.9rem, 1.2vw, 1.05rem); color: var(--water); }
+.coupe-eau-label span { font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .1em; color: var(--text-faint); }
+.coupe-site-line { fill: none; stroke: var(--accent-project); stroke-width: 1px; stroke-dasharray: 3 4; vector-effect: non-scaling-stroke; }
+.coupe-site-dot { fill: var(--accent-project); }
+/* les mentions : en HTML, pour ne pas s'étirer avec le dessin */
+.coupe-site-mark {
+  position: absolute;
+  transform: translate(-50%, calc(-100% - .35rem));
+  display: flex; flex-direction: column; align-items: center; gap: .1rem;
+  white-space: nowrap; pointer-events: none;
+}
+.coupe-site-mark b { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: clamp(.95rem, 1.3vw, 1.15rem); color: var(--text); }
+.coupe-site-mark span { font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .1em; color: var(--text-faint); }
+.coupe-axes {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  display: flex; flex-direction: column; justify-content: space-between;
+  padding: 1.4rem 0 1.9rem;
+  font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .08em; color: var(--text-faint);
+  pointer-events: none;
+}
+.coupe-note {
+  max-width: var(--container);
+  margin: .9rem auto 0;
+  padding: 0 var(--gutter);
+  display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .1em; text-transform: uppercase; color: var(--text-faint);
+}
+@media (max-width: 720px) {
+  .coupe-svg { height: 150px; }
+  .coupe-site-mark span, .coupe-eau-label span { display: none; }
+  .coupe-note { flex-direction: column; gap: .3rem; }
+}
+@media print { .coupe-svg { height: 40mm; } }
 
 /* ==========================================================================
    NUMÉROS EN TRÈS GRAND — la signature typographique du site
@@ -1935,78 +2031,49 @@ html:not(.js) .strates-hint { display: none; }
 /* ==========================================================================
    CONTACT (bas de la page À propos)
    ========================================================================== */
-.contact {
+.coord {
   max-width: var(--container);
   margin: 0 auto;
-  padding: clamp(3rem, 6vw, 5rem) var(--gutter) clamp(6rem, 10vw, 8rem);
-  display: grid;
-  grid-template-columns: 0.8fr 1.2fr;
-  gap: clamp(2.5rem, 6vw, 5rem);
+  padding: clamp(3rem, 7vw, 6rem) var(--gutter) clamp(2rem, 5vw, 4rem);
   border-top: 1px solid var(--line);
 }
-
-.contact-info h2 { font-size: var(--fs-h2); margin-bottom: 1.5rem; }
-.contact-line { margin-bottom: 0.7rem; color: var(--text-dim); font-family: var(--font-serif); font-size: var(--fs-body); }
-.contact-line a { border-bottom: 1px solid transparent; transition: border-color .3s, color .3s; }
-.contact-line a:hover { color: var(--accent); border-color: var(--accent); }
-
-.contact-form { display: flex; flex-direction: column; gap: 1.75rem; padding-top: 0.5rem; }
-
-.field { position: relative; }
-.field input,
-.field textarea {
+.coord-head { max-width: 46ch; margin-bottom: clamp(1.5rem, 4vw, 2.5rem); }
+.coord-head h2 { font-size: var(--fs-h2); margin-bottom: 1rem; }
+.coord-head p { font-family: var(--font-serif); color: var(--text-dim); font-size: var(--fs-lead); line-height: 1.55; }
+/* la carte : le même territoire, recentré sur chez moi */
+.coord-carte {
+  position: relative;
   width: 100%;
-  background: transparent;
-  border: none;
+  aspect-ratio: 16 / 9;
+  max-height: 46vh;
+  border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
-  color: var(--text);
-  font-family: var(--font-body);
-  font-size: 1rem;
-  padding: 0.6rem 0;
-  outline: none;
-  resize: none;
-  transition: border-color .3s;
 }
-.field textarea { min-height: 3.2em; }
-.field input:focus,
-.field textarea:focus { border-color: var(--accent); }
-
-.field label {
-  position: absolute;
-  left: 0; top: 0.6rem;
-  color: var(--text-faint);
-  font-size: 1rem;
-  pointer-events: none;
-  transition: transform .25s var(--ease), font-size .25s var(--ease), color .25s;
-  transform-origin: left top;
+.coord-pin { position: absolute; display: flex; align-items: center; gap: .7rem; transform: translate(-50%, -50%); }
+.coord-pin i {
+  flex: none; width: .75rem; height: .75rem; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 0 5px var(--bg);
 }
-.field input:focus + label,
-.field input:not(:placeholder-shown) + label,
-.field textarea:focus + label,
-.field textarea:not(:placeholder-shown) + label {
-  transform: translateY(-1.3rem);
-  font-size: 0.72rem;
-  color: var(--accent-soft);
+.coord-pin-label { display: flex; flex-direction: column; gap: .1rem; white-space: nowrap; }
+.coord-pin-label em { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: clamp(1.1rem, 1.6vw, 1.5rem); color: var(--text); text-shadow: 0 0 6px var(--bg), 0 0 14px var(--bg); }
+.coord-pin-label span { font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .12em; text-transform: uppercase; color: var(--text-faint); text-shadow: 0 0 6px var(--bg); }
+/* les coordonnées, en bandeau sous la carte */
+.coord-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1rem, 3vw, 2.5rem);
+  padding-top: clamp(1.25rem, 3vw, 2rem);
 }
-
-.btn-submit {
-  align-self: flex-start;
-  background: none;
-  border: 1px solid var(--text);
-  color: var(--text);
-  font-family: var(--font-head);
-  font-size: 0.85rem;
-  letter-spacing: 0.06em;
-  padding: 0.9em 2.2em;
-  cursor: pointer;
-  transition: background .35s var(--ease), color .35s var(--ease), border-color .35s;
-}
-.btn-submit:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
-
-.form-note {
-  font-size: 0.85rem;
-  color: var(--accent-soft);
-  min-height: 1.2em;
+.coord-list li { display: flex; flex-direction: column; gap: .35rem; border-top: 2px solid var(--accent); padding-top: .8rem; }
+.coord-label { font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .14em; text-transform: uppercase; color: var(--text-faint); }
+.coord-list a, .coord-list li > span:not(.coord-label) { font-family: var(--font-serif); font-size: var(--fs-body); color: var(--text); line-height: 1.4; }
+.coord-list a { border-bottom: 1px solid var(--line); width: fit-content; transition: color .3s, border-color .3s; }
+.coord-list a:hover { color: var(--accent); border-color: var(--accent); }
+@media (max-width: 1024px) { .coord-list { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 720px) {
+  .coord-carte { aspect-ratio: 4 / 3; }
+  .coord-pin-label span { display: none; }
+  .coord-list { grid-template-columns: 1fr; gap: 1rem; }
 }
 
 /* ==========================================================================
@@ -2258,7 +2325,7 @@ body.lb-open { overflow: hidden; }
   html { scroll-behavior: auto; }
   body { background: #fff; color: #000; font-size: 11pt; line-height: 1.45; }
   .site-header, .site-footer, .nav-toggle, .main-nav, .case-nav, .fil-eau,
-  .manifesto-scroll, .timeline-track, .contact-form { display: none !important; }
+  .manifesto-scroll, .timeline-track { display: none !important; }
   main { padding-top: 0; }
   /* neutralise les états intermédiaires des animations (opacité, balayage) */
   .case-cover-num, .timeline-step, .project-tags li {

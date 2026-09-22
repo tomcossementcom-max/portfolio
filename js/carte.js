@@ -41,6 +41,27 @@
     Relief.fill(relief.querySelector('.carte-contours'), paths);
   }
 
+  /* l'ombrage solaire : la carte prend l'heure (voir js/lumiere.js) */
+  const ombre = document.createElement('canvas');
+  ombre.className = 'carte-ombre';
+  ombre.setAttribute('aria-hidden', 'true');
+  relief.before(ombre);
+  const sun = window.Lumiere ? Lumiere.soleil() : null;
+  if (sun) {
+    Lumiere.ambiance(sun);
+    ombre.width = 260; ombre.height = Math.round(260 * MAP_H / MAP_W);
+    Lumiere.ombrer(ombre, { x: 0, y: 0, w: MAP_W, h: MAP_H, sun });
+    // la mention d'heure, sous le manifeste
+    const heure = stage.querySelector('.carte-heure');
+    if (heure) {
+      const now = new Date();
+      const hh = now.toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' });
+      const etat = document.documentElement.dataset.lumiere;
+      const dit = { jour: 'en plein jour', rasante: 'en lumière rasante', crepuscule: 'au crépuscule', nuit: 'de nuit' }[etat] || '';
+      heure.textContent = `Le relief est éclairé par le soleil de Liège, ${dit} — ${hh}`;
+    }
+  }
+
   /* le relief rasterisé : un bitmap à la résolution de l'écran */
   const canvas = document.createElement('canvas');
   canvas.className = 'carte-relief-canvas';
@@ -101,7 +122,7 @@
       const k = Math.max(W / MAP_W, H / MAP_H);
       const mw = MAP_W * k, mh = MAP_H * k;
       Object.assign(layout, { k, svgW: mw, svgH: mh });
-      [svg, relief, canvas].forEach(s => { s.style.width = mw + 'px'; s.style.height = mh + 'px'; });
+      [svg, relief, canvas, ombre].forEach(s => { s.style.width = mw + 'px'; s.style.height = mh + 'px'; });
       pan.style.width = mw + 'px'; pan.style.height = mh + 'px';
       [svg, relief].forEach(s => { s.setAttribute('viewBox', `0 0 ${MAP_W} ${MAP_H}`); s.setAttribute('preserveAspectRatio', 'xMidYMid meet'); });
       sites.forEach(s => {
@@ -113,7 +134,7 @@
       const kx = W / MAP_W, vh = Math.min(MAP_H, H / kx);
       const vy = Math.max(0, Math.min(MAP_H - vh, 640 - vh / 2));
       const vb = [0, Math.round(vy), MAP_W, Math.round(vh)];
-      [svg, relief, canvas].forEach(s => { s.style.width = ''; s.style.height = ''; });
+      [svg, relief, canvas, ombre].forEach(s => { s.style.width = ''; s.style.height = ''; });
       pan.style.width = ''; pan.style.height = '';
       [svg, relief].forEach(s => { s.setAttribute('viewBox', vb.join(' ')); s.setAttribute('preserveAspectRatio', 'xMidYMid slice'); });
       const k = Math.max(W / vb[2], H / vb[3]);
@@ -125,6 +146,18 @@
       });
     }
     applyCam();
+    // l'ombrage suit le cadrage (il couvre la même fenêtre que les courbes)
+    if (sun) {
+      const vb = relief.getAttribute('viewBox').split(' ').map(Number);
+      const par = relief.getAttribute('preserveAspectRatio');
+      const ratio = layout.svgW / layout.svgH;
+      const vis = par.includes('slice')
+        ? (ratio > vb[2] / vb[3] ? { w: vb[2], h: vb[2] / ratio } : { w: vb[3] * ratio, h: vb[3] })
+        : { w: vb[2], h: vb[3] };
+      ombre.height = Math.max(40, Math.round(260 / ratio));
+      ombre.width = 260;
+      Lumiere.ombrer(ombre, { x: vb[0] + (vb[2] - vis.w) / 2, y: vb[1] + (vb[3] - vis.h) / 2, w: vis.w, h: vis.h, sun });
+    }
     // le bitmap du relief suit (après la rafale de redimensionnements)
     canvas.hidden = true; relief.hidden = false;
     clearTimeout(rasterTimer);
@@ -148,7 +181,11 @@
       defaults: { ease: 'none' },
       scrollTrigger: { trigger: '.carte', start: 'top top', end: 'bottom bottom', scrub: 0.5 }
     });
-    tl.fromTo([relief, canvas], { opacity: 0.35 }, { opacity: 1, duration: 0.3 }, 0)
+    // l'ombrage garde son opacité de feuille de style (un lavis discret) :
+    // il monte vers elle, pas vers 1
+    const ombreOp = parseFloat(getComputedStyle(ombre).opacity) || 0.26;
+    tl.fromTo(ombre, { opacity: ombreOp * 0.35 }, { opacity: ombreOp, duration: 0.3 }, 0)
+      .fromTo([relief, canvas], { opacity: 0.35 }, { opacity: 1, duration: 0.3 }, 0)
       .fromTo(title, { opacity: 1, y: 0 }, { opacity: 0, y: -24, duration: 0.14, ease: 'power1.in' }, 0.06)
       .fromTo(hint, { opacity: 1 }, { opacity: 0, duration: 0.06 }, 0)
       .fromTo(svg.querySelector('.carte-rivers'), { opacity: 0 }, { opacity: 1, duration: 0.06 }, 0.08);
@@ -180,7 +217,7 @@
         tl.fromTo(s, { opacity: 0 }, { opacity: 1, duration: 0.09 }, 0.42 + i * 0.1)
           .fromTo(s.querySelector('.site-dot'), { scale: 0.6 }, { scale: 1, duration: 0.09, ease: 'power2.out' }, 0.42 + i * 0.1);
       });
-      tl.fromTo([svg, relief, canvas], { scale: 1.06 }, { scale: 1, duration: 1 }, 0);
+      tl.fromTo([svg, relief, canvas, ombre], { scale: 1.06 }, { scale: 1, duration: 1 }, 0);
     }
     tl.fromTo(foot, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.12, ease: 'power1.out' }, 0.86);
   } else {

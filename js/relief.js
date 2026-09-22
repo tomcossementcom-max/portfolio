@@ -146,6 +146,24 @@ window.Relief = (() => {
     g.replaceChildren(frag);
   };
 
+  /* l'ombrage solaire d'un fragment (voir js/lumiere.js) : un canvas posé
+     sous les courbes, dessiné une fois, à l'heure du visiteur */
+  const ombre = (el, { x, y, w, h }) => {
+    if (!window.Lumiere) return;
+    const cv = document.createElement('canvas');
+    cv.className = 'relief-ombre';
+    cv.setAttribute('aria-hidden', 'true');
+    const r = el.getBoundingClientRect();
+    const ratio = r.width && r.height ? r.width / r.height : w / h;
+    // une grille grossière suffit : l'ombrage est un lavis, pas un dessin
+    const cw = 150, chh = Math.max(40, Math.round(cw / ratio));
+    cv.width = cw; cv.height = chh;
+    // le fragment est affiché en « slice » : on ombre la partie réellement vue
+    const vis = ratio > w / h ? { w, h: w / ratio } : { w: h * ratio, h };
+    const ok = Lumiere.ombrer(cv, { x: x + (w - vis.w) / 2, y: y + (h - vis.h) / 2, w: vis.w, h: vis.h, sun: Lumiere.soleil() });
+    if (ok) el.prepend(cv);
+  };
+
   /* insère dans `el` un fragment de carte : courbes + rivières en rubans */
   const mount = (el, { x, y, w, h, cell, rivers: withRivers = true, cls = '', riverScale = 1 }) => {
     if (!el) return null;
@@ -179,10 +197,11 @@ window.Relief = (() => {
       svg.append(gr);
     }
     el.prepend(svg);
+    ombre(el, { x, y, w, h });
     return svg;
   };
 
-  return { RIVERS, LOUE, contours, fill, mount, elevation };
+  return { RIVERS, LOUE, contours, fill, mount, elevation, ombre };
 })();
 
 /* Montage automatique : tout élément [data-relief="x,y,w,h"] reçoit son

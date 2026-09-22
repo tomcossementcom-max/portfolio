@@ -269,20 +269,4 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  /* ------------------------------------------------------------ */
-  /* CONTACT FORM — client-side only placeholder                   */
-  /* Ce site statique n'a pas de backend. Pour un envoi réel,       */
-  /* branche ce formulaire sur Formspree / Netlify Forms / EmailJS  */
-  /* et remplace le bloc ci-dessous par l'envoi réseau approprié.   */
-  /* ------------------------------------------------------------ */
-  const form = document.getElementById('contactForm');
-  const formNote = document.getElementById('formNote');
-  if (form) {
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      formNote.textContent = 'Merci — ce formulaire est un gabarit statique : connecte-le à Formspree / Netlify Forms / EmailJS pour recevoir de vrais messages.';
-      form.reset();
-    });
-  }
-
 });

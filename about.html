@@ -161,55 +161,45 @@
     </div>
 
     <!-- ---------------------------------------------------------- -->
-    <!-- CONTACT -->
+    <!-- COORDONNÉES — la carte du site, recentrée sur Cras-Avernas :
+         l'adresse, le mail et LinkedIn posés dessus. Le fragment de relief
+         est le même territoire que partout ailleurs (voir js/relief.js) ;
+         la pastille du « chez moi » est placée exactement (data-map-x/y).
+         L'e-mail et le téléphone restent obfusqués (voir js/script.js). -->
     <!-- ---------------------------------------------------------- -->
-    <div class="contact" id="contact">
-      <div class="contact-info" data-reveal>
+    <div class="coord" id="contact">
+      <div class="coord-head" data-reveal>
         <span class="section-num">06</span>
-        <h2>Contact</h2>
-        <!--
-          Email et téléphone légèrement obfusqués (base64, décodés en JS au
-          chargement — voir js/script.js) pour limiter le moissonnage
-          automatique par des robots qui scannent le HTML brut à la recherche
-          de motifs d'e-mail/tél. Un vrai lien mailto:/tel: fonctionnel est
-          injecté pour les visiteurs (et reste utilisable au clavier).
-        -->
-        <p class="contact-line">
-          <a href="#" class="js-obfuscated-link" data-encoded="dGguY29zc2VtZW50QGhvdG1haWwuY29t" data-type="email">Afficher l'adresse e-mail</a>
-        </p>
-        <p class="contact-line">
-          <a href="#" class="js-obfuscated-link" data-encoded="KzMyNDc4MTcwODY0" data-display-encoded="MDQ3OCAxNyAwOCA2NA==" data-type="tel">Afficher le numéro de téléphone</a>
-        </p>
-        <p class="contact-line">Rue du Rivage 13, 4280 Cras-Avernas, Belgique</p>
-        <p class="contact-line">
-          <a href="https://www.linkedin.com/in/thomas-cossement-339706370" target="_blank" rel="noopener">LinkedIn ↗</a>
-        </p>
+        <h2>Écrivez-moi</h2>
+        <p>Une question, une proposition de stage, un projet&nbsp;: le plus simple est un
+          message. Je réponds toujours.</p>
       </div>
 
-      <!--
-        FORMULAIRE DE CONTACT — statique côté client.
-        Ce site n'a pas de backend : le formulaire ne peut pas envoyer d'e-mail tel quel.
-        Pour le rendre fonctionnel sans back-end, connecte-le à un service comme
-        Formspree, Netlify Forms ou EmailJS, et remplace l'attribut action ci-dessous.
-      -->
-      <form class="contact-form" id="contactForm" data-reveal>
-        <div class="field">
-          <input type="text" id="name" name="name" required placeholder=" ">
-          <label for="name">Nom</label>
-        </div>
-        <div class="field">
-          <input type="email" id="email" name="email" required placeholder=" ">
-          <label for="email">E-mail</label>
-        </div>
-        <div class="field">
-          <textarea id="message" name="message" rows="3" required placeholder=" "></textarea>
-          <label for="message">Message</label>
-        </div>
-        <button type="submit" class="btn-submit">
-          <span>Envoyer</span>
-        </button>
-        <p class="form-note" id="formNote" aria-live="polite"></p>
-      </form>
+      <div class="coord-carte" data-relief="106,522,260,182" data-relief-class="relief--coord">
+        <span class="coord-pin" data-map-x="235.5" data-map-y="600.5">
+          <i></i>
+          <span class="coord-pin-label"><em>Cras-Avernas</em><span>Hannut, Hesbaye — 50,68° N / 5,18° E</span></span>
+        </span>
+      </div>
+
+      <ul class="coord-list" data-reveal>
+        <li>
+          <span class="coord-label">Écrire</span>
+          <a href="#" class="js-obfuscated-link" data-encoded="dGguY29zc2VtZW50QGhvdG1haWwuY29t" data-type="email">Afficher l'adresse e-mail</a>
+        </li>
+        <li>
+          <span class="coord-label">Appeler</span>
+          <a href="#" class="js-obfuscated-link" data-encoded="KzMyNDc4MTcwODY0" data-display-encoded="MDQ3OCAxNyAwOCA2NA==" data-type="tel">Afficher le numéro de téléphone</a>
+        </li>
+        <li>
+          <span class="coord-label">Venir</span>
+          <span>Rue du Rivage 13, 4280 Cras-Avernas</span>
+        </li>
+        <li>
+          <span class="coord-label">Suivre</span>
+          <a href="https://www.linkedin.com/in/thomas-cossement-339706370" target="_blank" rel="noopener">LinkedIn ↗</a>
+        </li>
+      </ul>
     </div>
   </section>
 
@@ -244,6 +234,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="js/relief-data.js"></script>
+<script src="js/lumiere.js"></script>
 <script src="js/relief.js"></script>
 <script src="js/script.js"></script>
 <script src="js/fil-eau.js"></script>
