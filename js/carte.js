@@ -41,6 +41,79 @@
     Relief.fill(relief.querySelector('.carte-contours'), paths);
   }
 
+  /* ---------- 1b. l'eau ----------
+     Les rivières ne sont plus des traits d'épaisseur constante : chaque cours
+     est une nappe qui naît en filet à sa source et s'élargit vers l'aval,
+     bordée d'un halo (le fond de vallée) et d'un liseré. Et elle S'ÉCOULE :
+     au fil du scroll, un masque la découvre depuis l'amont, dans le sens du
+     courant — les tracés d'ReliefData.flows sont orientés du point haut vers
+     le point bas (voir tools/relief-data.py). */
+  const NS = 'http://www.w3.org/2000/svg';
+  const svgEl = (name, attrs = {}, cls) => {
+    const n = document.createElementNS(NS, name);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    if (cls) n.setAttribute('class', cls);
+    return n;
+  };
+  // largeur de la nappe à la source et à l'embouchure (unités de carte, 1 ≈ 40 m)
+  const LITS = { meuse: [11, 26], ourthe: [7, 13], geer: [4, 11] };
+  const masques = [];
+  const gEaux = svg.querySelector('.carte-rivers');
+  if (window.ReliefData && ReliefData.flows && gEaux) {
+    const defs = svg.querySelector('defs');
+    gEaux.replaceChildren();
+    ReliefData.flows.forEach(f => {
+      const [w0, w1] = LITS[f.id] || [6, 12];
+      // on rééchantillonne le cours à pas régulier, puis on l'adoucit : la
+      // polyligne d'OpenStreetMap est anguleuse, une rivière ne l'est pas
+      const src = svgEl('path', { d: f.d });
+      defs.append(src);
+      const L = src.getTotalLength();
+      const pas = Math.max(2, L / 600);
+      let pts = [];
+      for (let s = 0; s <= L; s += pas) { const q = src.getPointAtLength(s); pts.push([q.x, q.y]); }
+      src.remove();
+      const lisse = pts.map((p2, i) => {
+        let sx = 0, sy = 0, n = 0;
+        for (let k = -2; k <= 2; k++) { const q = pts[i + k]; if (q) { sx += q[0]; sy += q[1]; n++; } }
+        return [sx / n, sy / n];
+      });
+      // la nappe : un polygone dont la demi-largeur croît vers l'aval
+      const demi = i => (w0 + (w1 - w0) * Math.pow(i / (lisse.length - 1), 0.75)) / 2;
+      const bord = (k) => {
+        let d = '';
+        const avant = [], arriere = [];
+        lisse.forEach((p2, i) => {
+          const a = lisse[Math.max(0, i - 1)], b = lisse[Math.min(lisse.length - 1, i + 1)];
+          const tx = b[0] - a[0], ty = b[1] - a[1], n = Math.hypot(tx, ty) || 1;
+          const nx = -ty / n, ny = tx / n, h = demi(i) * k;
+          avant.push(`${(p2[0] + nx * h).toFixed(1)} ${(p2[1] + ny * h).toFixed(1)}`);
+          arriere.unshift(`${(p2[0] - nx * h).toFixed(1)} ${(p2[1] - ny * h).toFixed(1)}`);
+        });
+        return `M ${avant.join(' L ')} L ${arriere.join(' L ')} Z`;
+      };
+      // le masque : le cours, tracé épais, découvert de l'amont vers l'aval
+      const id = `flux-${f.id}`;
+      const masque = svgEl('mask', { id, maskUnits: 'userSpaceOnUse', x: -60, y: -60, width: MAP_W + 120, height: MAP_H + 120 });
+      const trait = svgEl('path', { d: f.d, fill: 'none', stroke: '#fff', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': w1 * 3 });
+      masque.append(trait);
+      defs.append(masque);
+      masques.push(trait);
+
+      const g = svgEl('g', { mask: `url(#${id})` }, 'carte-riviere');
+      g.append(svgEl('path', { d: bord(2.6) }, 'river-halo-nappe'));
+      const branches = (ReliefData.rivers.find(r => r.id === f.id) || {}).d;
+      if (branches) g.append(svgEl('path', { d: branches, 'vector-effect': 'non-scaling-stroke' }, 'river-branches'));
+      g.append(svgEl('path', { d: bord(1), 'vector-effect': 'non-scaling-stroke' }, 'river-nappe'));
+      // le courant : de fins traits clairs qui descendent le cours, sans fin
+      const courant = svgEl('path', { d: f.d, 'vector-effect': 'non-scaling-stroke' }, 'river-courant');
+      courant.style.strokeDasharray = `${(w1 * 1.6).toFixed(0)} ${(w1 * 7).toFixed(0)}`;
+      courant.style.animationDuration = `${Math.round(L / 26)}s`;
+      g.append(courant);
+      gEaux.append(g);
+    });
+  }
+
   /* l'ombrage solaire : la carte prend l'heure (voir js/lumiere.js) */
   const ombre = document.createElement('canvas');
   ombre.className = 'carte-ombre';
@@ -174,8 +247,7 @@
   let tl = null;
   if (window.gsap && window.ScrollTrigger && !reduceMotion) {
     gsap.registerPlugin(ScrollTrigger);
-    const mains = [...svg.querySelectorAll('.river-main')];
-    const lengths = mains.map(u => svg.querySelector(u.getAttribute('href')).getTotalLength());
+    const lengths = masques.map(m => m.getTotalLength());
     const order = ['.site--03', '.site--04', '.site--01', '.site--02'].map(sel => stage.querySelector(sel));
     tl = gsap.timeline({
       defaults: { ease: 'none' },
@@ -189,8 +261,9 @@
       .fromTo(title, { opacity: 1, y: 0 }, { opacity: 0, y: -24, duration: 0.14, ease: 'power1.in' }, 0.06)
       .fromTo(hint, { opacity: 1 }, { opacity: 0, duration: 0.06 }, 0)
       .fromTo(svg.querySelector('.carte-rivers'), { opacity: 0 }, { opacity: 1, duration: 0.06 }, 0.08);
-    mains.forEach((u, i) => {
-      tl.fromTo(u, { strokeDasharray: lengths[i], strokeDashoffset: lengths[i] },
+    // l'eau s'écoule : chaque cours se découvre depuis sa source
+    masques.forEach((m, i) => {
+      tl.fromTo(m, { strokeDasharray: lengths[i], strokeDashoffset: lengths[i] },
                    { strokeDashoffset: 0, duration: 0.34 }, 0.10 + i * 0.03);
     });
     tl.fromTo(svg.querySelector('.carte-city'), { opacity: 0 }, { opacity: 1, duration: 0.08 }, 0.30);

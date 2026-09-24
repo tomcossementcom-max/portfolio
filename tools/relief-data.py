@@ -184,6 +184,26 @@ def river(name_regex, bbox, to_xy, clip, tol=2.5, relations=True):
 def to_path_multi(parts):
     return ' '.join(to_path(p) for p in parts)
 
+def cours(name_regex, bbox, to_xy, clip, tol=2.5, relations=True):
+    """le cours principal, d'un seul tenant, orienté de l'amont vers l'aval :
+    les tronçons OSM sont chaînés, puis le sens est donné par l'altitude des
+    deux extrémités (l'eau part du point haut). C'est ce tracé que la carte
+    de l'accueil fait « couler » au fil du scroll."""
+    line = chain(river_ways(name_regex, bbox, relations))
+    if len(line) < 2: return []
+    # altitude aux deux bouts (Copernicus DEM)
+    ends = [line[0], line[-1]]
+    with rasterio.open(dem_tile(ends[0][1], ends[0][0])) as ds:
+        z = [v[0] for v in ds.sample(ends)]
+    if z[0] < z[1]:
+        line = line[::-1]
+    pts = [to_xy(lon, lat) for lon, lat in line]
+    x0, y0, x1, y1 = clip
+    pts = [(x, y) for x, y in pts if x0 - 200 <= x <= x1 + 200 and y0 - 200 <= y <= y1 + 200]
+    pts = simplify(pts, tol)
+    print(f"  cours de {name_regex}: {len(line)} points -> {len(pts)}, de {max(z):.0f} m vers {min(z):.0f} m")
+    return pts
+
 if __name__ == '__main__':
     print('Altitudes (Copernicus DEM)…')
     xs, ys, main_elev = sample_grid(0, 0, 1400, 1000, 5, main_ll)
@@ -209,11 +229,19 @@ if __name__ == '__main__':
         'meuse-eu': river('^(La )?Meuse$|^Maas$', (50.45, 4.60, 51.15, 5.95), eu_xy, (3000, 0, 4744, 536), tol=1.5, relations=False),
         'rhein':    river('^Rhein$', (50.75, 6.75, 51.15, 7.25), eu_xy, (3000, 0, 4744, 536), tol=1.5, relations=False),
     }
+    # les cours principaux, orientés amont -> aval (pour l'écoulement)
+    print("Cours principaux (amont -> aval)…")
+    flows = {
+        'meuse':  cours('^(La )?Meuse$', bbox_main, main_xy, (0, 0, 1400, 1000)),
+        'ourthe': cours('^Ourthe$', bbox_main, main_xy, (0, 0, 1400, 1000)),
+        'geer':   cours('^(Geer|Jeker)$', bbox_main, main_xy, (0, 0, 1400, 1000)),
+    }
     data = {
         'main': {'x0': 0, 'y0': 0, 'step': 5, 'nx': len(xs), 'ny': len(ys), 'emin': 0, 'scale': 2, 'b64': encode(main_elev)},
         'sud':  {'x0': 1860, 'y0': 1580, 'step': 5, 'nx': len(xs2), 'ny': len(ys2), 'emin': 0, 'scale': 2, 'b64': encode(sud_elev)},
         'eu':   {'x0': 3000, 'y0': 0, 'step': 6, 'nx': len(xs3), 'ny': len(ys3), 'emin': 0, 'scale': 2, 'b64': encode(eu_elev)},
         'rivers': [{'id': k, 'd': to_path_multi(v)} for k, v in rivers.items() if v],
+        'flows': [{'id': k, 'd': to_path(v)} for k, v in flows.items() if len(v) > 1],
         'source': 'Altitudes : Copernicus DEM GLO-30 (ESA, 2021). Rivières : OpenStreetMap (ODbL).',
     }
     js = ('/* Généré par tools/relief-data.py — ne pas éditer à la main.\n'
