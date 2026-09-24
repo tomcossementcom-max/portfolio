@@ -967,62 +967,6 @@ html:not(.js) .strates-hint { display: none; }
 }
 
 /* ==========================================================================
-   LA COUPE (pages projet) — le profil réel du terrain à travers le site
-   (voir js/coupe.js). Pleine largeur, comme une planche : le terrain, la
-   rivière à son point bas, le site marqué. Le tracé se dessine au scroll.
-   ========================================================================== */
-.coupe {
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: clamp(3rem, 6vw, 5rem) var(--gutter) clamp(1.5rem, 3vw, 2.5rem);
-}
-.coupe-figure { position: relative; width: 100%; }
-.coupe-svg { display: block; width: 100%; height: clamp(150px, 22vw, 230px); overflow: visible; }
-.coupe-fill { fill: color-mix(in srgb, var(--accent-project) 8%, var(--bg)); }
-.coupe-line { fill: none; stroke: var(--text); stroke-width: 1.4px; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
-.coupe-base { fill: none; stroke: var(--line); stroke-width: 1px; vector-effect: non-scaling-stroke; }
-.coupe-eau { fill: none; stroke: var(--water); stroke-width: 3px; vector-effect: non-scaling-stroke; stroke-linecap: round; }
-.coupe-eau-label {
-  position: absolute;
-  transform: translate(-50%, calc(-100% - .5rem));
-  display: flex; flex-direction: column; align-items: center; gap: .05rem;
-  white-space: nowrap; pointer-events: none;
-}
-.coupe-eau-label b { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: clamp(.9rem, 1.2vw, 1.05rem); color: var(--water); }
-.coupe-eau-label span { font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .1em; color: var(--text-faint); }
-.coupe-site-line { fill: none; stroke: var(--accent-project); stroke-width: 1px; stroke-dasharray: 3 4; vector-effect: non-scaling-stroke; }
-.coupe-site-dot { fill: var(--accent-project); }
-/* les mentions : en HTML, pour ne pas s'étirer avec le dessin */
-.coupe-site-mark {
-  position: absolute;
-  transform: translate(-50%, calc(-100% - .35rem));
-  display: flex; flex-direction: column; align-items: center; gap: .1rem;
-  white-space: nowrap; pointer-events: none;
-}
-.coupe-site-mark b { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: clamp(.95rem, 1.3vw, 1.15rem); color: var(--text); }
-.coupe-site-mark span { font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .1em; color: var(--text-faint); }
-.coupe-axes {
-  position: absolute; left: 0; top: 0; bottom: 0;
-  display: flex; flex-direction: column; justify-content: space-between;
-  padding: 1.4rem 0 1.9rem;
-  font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .08em; color: var(--text-faint);
-  pointer-events: none;
-}
-.coupe-note {
-  max-width: var(--container);
-  margin: .9rem auto 0;
-  padding: 0 var(--gutter);
-  display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
-  font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .1em; text-transform: uppercase; color: var(--text-faint);
-}
-@media (max-width: 720px) {
-  .coupe-svg { height: 150px; }
-  .coupe-site-mark span, .coupe-eau-label span { display: none; }
-  .coupe-note { flex-direction: column; gap: .3rem; }
-}
-@media print { .coupe-svg { height: 40mm; } }
-
-/* ==========================================================================
    NUMÉROS EN TRÈS GRAND — la signature typographique du site
    Le site est numéroté depuis le début (01/02/03…) mais en 0,7rem. Ici on
    l'assume : un chiffre fantôme, très pâle, qui déborde sur l'image ou le

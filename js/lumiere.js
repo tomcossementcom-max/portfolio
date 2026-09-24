@@ -94,3 +94,7 @@ window.Lumiere = (() => {
 
   return { soleil, ombrer, ambiance };
 })();
+
+/* l'ambiance s'applique tout de suite, sur toutes les pages : le papier et
+   l'encre prennent l'heure, pas seulement la carte de l'accueil */
+Lumiere.ambiance(Lumiere.soleil());
