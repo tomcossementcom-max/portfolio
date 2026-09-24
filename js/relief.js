@@ -87,7 +87,7 @@ window.Relief = (() => {
   };
 
   /* courbes de niveau du fragment [x, y, w, h], en chemins SVG (coordonnées carte) */
-  const contours = ({ x, y, w, h, cell }) => {
+  const contours = ({ x, y, w, h, cell, step }) => {
     const all = samples();
     // seules les rivières qui passent à portée du fragment comptent (vite)
     const rivers = all.filter(r => {
@@ -105,8 +105,9 @@ window.Relief = (() => {
     }
     const lerp = (a, b, va, vb, L) => a + (b - a) * ((L - va) / (vb - va || 1));
     const paths = [];
-    // équidistance 10 m ; 20 m quand le fragment est très accidenté (Jura)
-    const stepL = hi - lo > 320 ? 20 : 10;
+    // équidistance : 10 m par défaut, 20 m quand le fragment est très
+    // accidenté (Jura), ou celle demandée (5 m en gros plan, par exemple)
+    const stepL = step || (hi - lo > 320 ? 20 : 10);
     const L0 = Math.ceil(lo / stepL) * stepL, L1 = Math.floor(hi / stepL) * stepL;
     for (let L = L0; L <= L1; L += stepL) {
       let d = '';

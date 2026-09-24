@@ -23,6 +23,7 @@
 
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="stylesheet" href="css/style.css">
+<script>document.documentElement.classList.add('js')</script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -175,11 +176,14 @@
           message. Je réponds toujours.</p>
       </div>
 
-      <div class="coord-carte" data-relief="106,522,260,182" data-relief-class="relief--coord">
-        <span class="coord-pin" data-map-x="235.5" data-map-y="600.5">
-          <i></i>
-          <span class="coord-pin-label"><em>Cras-Avernas</em><span>Hannut, Hesbaye — 50,68° N / 5,18° E</span></span>
-        </span>
+      <!-- la descente : la carte part du territoire entier (celui de la page
+           d'accueil) et plonge jusqu'à la rue au fil du scroll — voir
+           js/coord.js. Le conteneur haut ne sert qu'à la course du scroll. -->
+      <div class="coord-scroll">
+        <div class="coord-stage">
+          <div class="coord-map"></div>
+          <p class="coord-hint" aria-hidden="true">Descendre jusqu'à chez moi</p>
+        </div>
       </div>
 
       <ul class="coord-list" data-reveal>
@@ -236,6 +240,7 @@
 <script src="js/relief-data.js"></script>
 <script src="js/lumiere.js"></script>
 <script src="js/relief.js"></script>
+<script src="js/coord.js"></script>
 <script src="js/script.js"></script>
 <script src="js/fil-eau.js"></script>
 </body>

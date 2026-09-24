@@ -1984,23 +1984,78 @@ html:not(.js) .strates-hint { display: none; }
 .coord-head { max-width: 46ch; margin-bottom: clamp(1.5rem, 4vw, 2.5rem); }
 .coord-head h2 { font-size: var(--fs-h2); margin-bottom: 1rem; }
 .coord-head p { font-family: var(--font-serif); color: var(--text-dim); font-size: var(--fs-lead); line-height: 1.55; }
-/* la carte : le même territoire, recentré sur chez moi */
-.coord-carte {
+/* la carte : le même territoire que l'accueil, dans lequel on descend au
+   fil du scroll jusqu'à la rue (voir js/coord.js) */
+.coord-scroll { position: relative; }
+@media (prefers-reduced-motion: no-preference) {
+  html.js .coord-scroll { height: 260svh; }
+}
+.coord-stage { position: sticky; top: 0; padding-top: clamp(4.5rem, 8vh, 6rem); }
+.coord-map {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
-  max-height: 46vh;
+  height: clamp(280px, 62svh, 640px);
+  overflow: hidden;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
+  background: var(--bg);
 }
-.coord-pin { position: absolute; display: flex; align-items: center; gap: .7rem; transform: translate(-50%, -50%); }
-.coord-pin i {
-  flex: none; width: .75rem; height: .75rem; border-radius: 50%;
-  background: var(--accent); box-shadow: 0 0 0 5px var(--bg);
+.coord-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.coord-niveau { will-change: opacity; }
+.coord-ombre { opacity: .3; mix-blend-mode: multiply; }
+.coord-contours path { fill: none; stroke: var(--text); stroke-width: .7px; opacity: .16; }
+.coord-contours path.index { opacity: .3; stroke-width: .9px; }
+.coord-eaux .river { fill: none; stroke: var(--water); stroke-linecap: round; stroke-linejoin: round; }
+.coord-eaux .river-halo { opacity: .1; }
+.coord-eaux .river-main { opacity: .8; }
+/* les lieux, posés sur la carte */
+.coord-lieu {
+  position: absolute;
+  /* le point est l'ancre : le nom se pose à côté, sans décaler le lieu */
+  transform: translate(-.25rem, -50%);
+  display: flex; align-items: center; gap: .55rem;
+  white-space: nowrap; pointer-events: none;
 }
-.coord-pin-label { display: flex; flex-direction: column; gap: .1rem; white-space: nowrap; }
-.coord-pin-label em { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: clamp(1.1rem, 1.6vw, 1.5rem); color: var(--text); text-shadow: 0 0 6px var(--bg), 0 0 14px var(--bg); }
-.coord-pin-label span { font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .12em; text-transform: uppercase; color: var(--text-faint); text-shadow: 0 0 6px var(--bg); }
+.coord-lieu--gauche { flex-direction: row-reverse; transform: translate(calc(-100% + .25rem), -50%); }
+.coord-lieu--gauche > span { align-items: flex-end; text-align: right; }
+.coord-lieu i {
+  flex: none; width: .5rem; height: .5rem; border-radius: 50%;
+  border: 1.5px solid var(--text-dim); background: var(--bg);
+}
+.coord-lieu > span { display: flex; flex-direction: column; gap: .05rem; }
+.coord-lieu em {
+  font-family: var(--font-head); font-style: normal; font-size: var(--fs-xs);
+  letter-spacing: .14em; text-transform: uppercase; color: var(--text-dim);
+  text-shadow: 0 0 6px var(--bg), 0 0 12px var(--bg);
+}
+.coord-lieu--moi { transform: translate(-.4rem, -50%); }
+.coord-lieu--moi.coord-lieu--gauche { transform: translate(calc(-100% + .4rem), -50%); }
+.coord-lieu--moi i { width: .8rem; height: .8rem; border: 0; background: var(--accent); box-shadow: 0 0 0 5px var(--bg); }
+.coord-lieu--moi em {
+  font-family: var(--font-display); font-style: italic; text-transform: none; letter-spacing: 0;
+  font-size: clamp(1.15rem, 1.7vw, 1.55rem); color: var(--text);
+}
+.coord-lieu--moi > span > span {
+  font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .12em; text-transform: uppercase;
+  color: var(--text-faint); text-shadow: 0 0 6px var(--bg);
+}
+/* l'échelle graphique : elle suit le zoom */
+.coord-echelle {
+  position: absolute; left: clamp(.9rem, 2vw, 1.5rem); bottom: clamp(.9rem, 2vw, 1.5rem);
+  display: flex; align-items: center; gap: .6rem;
+  font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .1em; text-transform: uppercase; color: var(--text-faint);
+  pointer-events: none;
+}
+.coord-echelle-barre {
+  display: block; height: 6px;
+  border: 1px solid var(--text-faint); border-top: 0;
+  background: linear-gradient(var(--bg), var(--bg));
+}
+.coord-hint {
+  margin-top: .9rem;
+  font-family: var(--font-head); font-size: var(--fs-xs); letter-spacing: .14em; text-transform: uppercase;
+  color: var(--text-faint);
+}
 /* les coordonnées, en bandeau sous la carte */
 .coord-list {
   display: grid;
