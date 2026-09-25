@@ -581,28 +581,26 @@ h1 em, h2 em, h3 em,
 .river { fill: none; stroke: var(--water); stroke-linecap: round; stroke-linejoin: round; }
 .river-halo { opacity: .12; }
 .river-main { opacity: .9; }
-/* l'eau de la carte : une nappe, son halo de vallée et ses bras */
-.river-nappe {
-  fill: var(--water);
-  fill-opacity: .82;
-  stroke: color-mix(in srgb, var(--water) 70%, var(--text));
-  stroke-width: .6px;
-  stroke-opacity: .5;
-}
-.river-halo-nappe { fill: var(--water); fill-opacity: .1; }
-.river-branches { fill: none; stroke: var(--water); stroke-width: 2.5px; stroke-opacity: .45; stroke-linecap: round; stroke-linejoin: round; }
+/* l'eau de la carte : une nappe unie, sans contour.
+   L'opacité est posée sur le calque entier (isolation) : les traits qui se
+   recouvrent — coudes, confluents — ne se voient pas. */
+.carte-nappe { opacity: .8; isolation: isolate; }
+.river-lit { fill: none; stroke: var(--water); stroke-linecap: round; stroke-linejoin: round; }
+/* les bras et les îles font partie de la même eau : même valeur, donc
+   aucune couture visible là où ils rejoignent le lit principal */
+.river-lit--bras { stroke-opacity: 1; }
 /* le courant : des traits clairs qui descendent le cours, en boucle */
+.carte-courants { opacity: .5; }
 .river-courant {
   fill: none;
-  stroke: #fbfaf7;
-  stroke-width: 1.6px;
-  stroke-opacity: .5;
+  stroke: var(--bg);
+  stroke-width: 1.3px;
   stroke-linecap: round;
   animation: courant linear infinite;
 }
 @keyframes courant { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -400; } }
 @media (prefers-reduced-motion: reduce) { .river-courant { animation: none; opacity: 0; } }
-.carte-city circle { fill: var(--text); }
+.carte-city circle { fill: var(--bg); stroke: var(--text); stroke-width: 1.5px; vector-effect: non-scaling-stroke; }
 .carte-city text { font-family: var(--font-head); font-size: 15px; letter-spacing: .14em; text-transform: uppercase; fill: var(--text-dim); paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
 
 /* les sites : une pastille numérotée sur le lieu, le nom à côté */

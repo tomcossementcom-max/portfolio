@@ -42,12 +42,16 @@
   }
 
   /* ---------- 1b. l'eau ----------
-     Les rivières ne sont plus des traits d'épaisseur constante : chaque cours
-     est une nappe qui naît en filet à sa source et s'élargit vers l'aval,
-     bordée d'un halo (le fond de vallée) et d'un liseré. Et elle S'ÉCOULE :
-     au fil du scroll, un masque la découvre depuis l'amont, dans le sens du
-     courant — les tracés d'ReliefData.flows sont orientés du point haut vers
-     le point bas (voir tools/relief-data.py). */
+     Une nappe, sans contour ni halo : elle naît en filet à la source et
+     s'élargit vers l'aval. Elle est construite en traits successifs, à bouts
+     ronds, qui se recouvrent — c'est ce qui évite les artefacts qu'un
+     polygone décalé produit dans les coudes serrés et aux confluents. Tout
+     est réuni dans un seul calque dont l'opacité est posée une fois : les
+     recouvrements sont donc invisibles, même là où deux rivières se
+     rejoignent.
+     Et elle S'ÉCOULE : au fil du scroll, un masque la découvre depuis
+     l'amont, dans le sens du courant (ReliefData.flows est orienté du point
+     haut vers le point bas — voir tools/relief-data.py). */
   const NS = 'http://www.w3.org/2000/svg';
   const svgEl = (name, attrs = {}, cls) => {
     const n = document.createElementNS(NS, name);
@@ -55,63 +59,67 @@
     if (cls) n.setAttribute('class', cls);
     return n;
   };
-  // largeur de la nappe à la source et à l'embouchure (unités de carte, 1 ≈ 40 m)
-  const LITS = { meuse: [11, 26], ourthe: [7, 13], geer: [4, 11] };
+  // largeur du lit à la source et à l'embouchure (unités de carte, 1 ≈ 40 m)
+  const LITS = { meuse: [9, 22], ourthe: [6, 11], geer: [3.5, 9] };
   const masques = [];
   const gEaux = svg.querySelector('.carte-rivers');
   if (window.ReliefData && ReliefData.flows && gEaux) {
     const defs = svg.querySelector('defs');
     gEaux.replaceChildren();
+    const nappe = svgEl('g', {}, 'carte-nappe');      // l'eau : une seule opacité
+    const courants = svgEl('g', {}, 'carte-courants'); // les traits de courant
     ReliefData.flows.forEach(f => {
-      const [w0, w1] = LITS[f.id] || [6, 12];
-      // on rééchantillonne le cours à pas régulier, puis on l'adoucit : la
-      // polyligne d'OpenStreetMap est anguleuse, une rivière ne l'est pas
+      const [w0, w1] = LITS[f.id] || [5, 10];
+      // le cours, rééchantillonné à pas régulier puis adouci (la polyligne
+      // d'OpenStreetMap est anguleuse, une rivière ne l'est pas)
       const src = svgEl('path', { d: f.d });
       defs.append(src);
       const L = src.getTotalLength();
-      const pas = Math.max(2, L / 600);
-      let pts = [];
-      for (let s = 0; s <= L; s += pas) { const q = src.getPointAtLength(s); pts.push([q.x, q.y]); }
+      const pas = Math.max(1.5, L / 900);
+      const brut = [];
+      for (let s = 0; s <= L; s += pas) { const q = src.getPointAtLength(s); brut.push([q.x, q.y]); }
       src.remove();
-      const lisse = pts.map((p2, i) => {
+      const pts = brut.map((p2, i) => {
         let sx = 0, sy = 0, n = 0;
-        for (let k = -2; k <= 2; k++) { const q = pts[i + k]; if (q) { sx += q[0]; sy += q[1]; n++; } }
+        for (let k = -3; k <= 3; k++) { const q = brut[i + k]; if (q) { sx += q[0]; sy += q[1]; n++; } }
         return [sx / n, sy / n];
       });
-      // la nappe : un polygone dont la demi-largeur croît vers l'aval
-      const demi = i => (w0 + (w1 - w0) * Math.pow(i / (lisse.length - 1), 0.75)) / 2;
-      const bord = (k) => {
-        let d = '';
-        const avant = [], arriere = [];
-        lisse.forEach((p2, i) => {
-          const a = lisse[Math.max(0, i - 1)], b = lisse[Math.min(lisse.length - 1, i + 1)];
-          const tx = b[0] - a[0], ty = b[1] - a[1], n = Math.hypot(tx, ty) || 1;
-          const nx = -ty / n, ny = tx / n, h = demi(i) * k;
-          avant.push(`${(p2[0] + nx * h).toFixed(1)} ${(p2[1] + ny * h).toFixed(1)}`);
-          arriere.unshift(`${(p2[0] - nx * h).toFixed(1)} ${(p2[1] - ny * h).toFixed(1)}`);
-        });
-        return `M ${avant.join(' L ')} L ${arriere.join(' L ')} Z`;
-      };
+
+      // la nappe : une suite de traits dont la largeur croît vers l'aval
+      const TRONCONS = 50;
+      const g = svgEl('g', { mask: `url(#flux-${f.id})` }, 'carte-riviere');
+      for (let s = 0; s < TRONCONS; s++) {
+        const i0 = Math.floor(s * (pts.length - 1) / TRONCONS);
+        const i1 = Math.min(pts.length - 1, Math.ceil((s + 1) * (pts.length - 1) / TRONCONS));
+        const sub = pts.slice(i0, i1 + 1);
+        if (sub.length < 2) continue;
+        const u = (s + 0.5) / TRONCONS;
+        const w = w0 + (w1 - w0) * Math.pow(u, 0.75);
+        const d = sub.map((q, i) => `${i ? 'L' : 'M'} ${q[0].toFixed(1)} ${q[1].toFixed(1)}`).join(' ');
+        const path = svgEl('path', { d, 'stroke-width': w.toFixed(2) }, 'river-lit');
+        g.append(path);
+      }
+      // les bras et les îles : des traits fins, dans le même calque
+      const branches = (ReliefData.rivers.find(r => r.id === f.id) || {}).d;
+      if (branches) g.append(svgEl('path', { d: branches, 'stroke-width': Math.max(2, w0 * 0.5).toFixed(1) }, 'river-lit river-lit--bras'));
+      nappe.append(g);
+
       // le masque : le cours, tracé épais, découvert de l'amont vers l'aval
-      const id = `flux-${f.id}`;
-      const masque = svgEl('mask', { id, maskUnits: 'userSpaceOnUse', x: -60, y: -60, width: MAP_W + 120, height: MAP_H + 120 });
-      const trait = svgEl('path', { d: f.d, fill: 'none', stroke: '#fff', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': w1 * 3 });
+      const masque = svgEl('mask', { id: `flux-${f.id}`, maskUnits: 'userSpaceOnUse', x: -80, y: -80, width: MAP_W + 160, height: MAP_H + 160 });
+      const trait = svgEl('path', { d: f.d, fill: 'none', stroke: '#fff', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': w1 * 3.4 });
       masque.append(trait);
       defs.append(masque);
       masques.push(trait);
 
-      const g = svgEl('g', { mask: `url(#${id})` }, 'carte-riviere');
-      g.append(svgEl('path', { d: bord(2.6) }, 'river-halo-nappe'));
-      const branches = (ReliefData.rivers.find(r => r.id === f.id) || {}).d;
-      if (branches) g.append(svgEl('path', { d: branches, 'vector-effect': 'non-scaling-stroke' }, 'river-branches'));
-      g.append(svgEl('path', { d: bord(1), 'vector-effect': 'non-scaling-stroke' }, 'river-nappe'));
       // le courant : de fins traits clairs qui descendent le cours, sans fin
+      const cg = svgEl('g', { mask: `url(#flux-${f.id})` });
       const courant = svgEl('path', { d: f.d, 'vector-effect': 'non-scaling-stroke' }, 'river-courant');
-      courant.style.strokeDasharray = `${(w1 * 1.6).toFixed(0)} ${(w1 * 7).toFixed(0)}`;
-      courant.style.animationDuration = `${Math.round(L / 26)}s`;
-      g.append(courant);
-      gEaux.append(g);
+      courant.style.strokeDasharray = `${(w1 * 1.4).toFixed(0)} ${(w1 * 9).toFixed(0)}`;
+      courant.style.animationDuration = `${Math.round(L / 30)}s`;
+      cg.append(courant);
+      courants.append(cg);
     });
+    gEaux.append(nappe, courants);
   }
 
   /* l'ombrage solaire : la carte prend l'heure (voir js/lumiere.js) */
